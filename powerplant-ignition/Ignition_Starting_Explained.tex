@@ -1,0 +1,2583 @@
+% =====================================================================
+%  Powerplant Test Guide — Ignition and Starting Systems (+ 3 oil questions)
+%  شرح موسّع بالعربية لكل سؤال
+%
+%  طريقة التحويل في Overleaf:
+%    Menu  ->  Compiler  ->  XeLaTeX      (مهم جداً: لن يعمل مع pdfLaTeX)
+%  ثم اضغط Recompile.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2cm,headheight=15pt]{geometry}
+\usepackage{fontspec}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{etoolbox}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=qframe,urlcolor=qframe,unicode=true]{hyperref}
+
+% ---------- اللغات والخطوط ----------
+\usepackage{polyglossia}
+\setmainlanguage[numerals=maghrib]{arabic}
+\setotherlanguage{english}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.18]{Amiri}
+\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.18]{Amiri}
+\newfontfamily\arabicfonttt[Script=Arabic,Scale=1.18]{Amiri}
+
+\linespread{1.12}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+% ---------- الألوان ----------
+\definecolor{qframe}{HTML}{1F4E79}
+\definecolor{qback}{HTML}{F3F7FB}
+\definecolor{ansgreen}{HTML}{1E8449}
+\definecolor{ansback}{HTML}{EAF7EE}
+\definecolor{conceptc}{HTML}{7D3C98}
+\definecolor{wrongc}{HTML}{B03A2E}
+\definecolor{tipback}{HTML}{FFF6D5}
+\definecolor{tipframe}{HTML}{C9A227}
+\definecolor{introback}{HTML}{F4ECF7}
+
+% ---------- اختصارات ----------
+% \en{...}  أي نص إنجليزي داخل جملة عربية (يحافظ على اتجاه اليسار لليمين)
+\newcommand{\en}[1]{\textenglish{#1}}
+
+% ---------- صندوق السؤال الإنجليزي ----------
+\newcommand{\correctletter}{}
+\newcommand{\opt}[2]{%
+  \ifdefstring{\correctletter}{#1}%
+    {\textcolor{ansgreen}{\textbf{#1— #2\ \ $\checkmark$}}}%
+    {#1— #2}\par}
+
+% \Q{رقم}{نص السؤال}{A}{B}{C}{الحرف الصحيح}
+\newcommand{\Q}[6]{%
+  \renewcommand{\correctletter}{#6}%
+  \par\bigskip
+  \phantomsection\label{q#1}%
+  \begin{tcolorbox}[enhanced,breakable,colback=qback,colframe=qframe,
+      arc=2mm,boxrule=0.8pt,fonttitle=\bfseries,
+      title={\en{Question #1}}]
+    \begin{english}
+      #2\par\smallskip
+      \opt{A}{#3}\opt{B}{#4}\opt{C}{#5}
+    \end{english}
+  \end{tcolorbox}}
+
+% ترجمة السؤال
+\newcommand{\tr}[1]{\textbf{\textcolor{qframe}{ترجمة السؤال:}} #1\par}
+
+% الجواب الصحيح
+\newcommand{\ans}[2]{%
+  \begin{tcolorbox}[colback=ansback,colframe=ansgreen,boxrule=0.6pt,arc=1.5mm,
+      left=4pt,right=4pt,top=2pt,bottom=2pt]
+    \textbf{\textcolor{ansgreen}{الجواب الصحيح (\en{#1}):}} #2
+  \end{tcolorbox}}
+
+% الشرح المفصّل
+\newcommand{\sharh}[1]{\textbf{\textcolor{conceptc}{الشرح المفصّل:}}\par #1\par}
+
+% لماذا الخيار الآخر خطأ  \no{A}{السبب}
+\newcommand{\nohead}{\textbf{\textcolor{wrongc}{لماذا الخيارات الأخرى خاطئة؟}}\par}
+\newcommand{\no}[2]{\hspace*{1em}\textcolor{wrongc}{$\times$}\ \textbf{\en{#1}:} #2\par}
+
+% فكرة للحفظ
+\newcommand{\tip}[1]{%
+  \begin{tcolorbox}[colback=tipback,colframe=tipframe,boxrule=0.5pt,arc=1.5mm,
+      left=4pt,right=4pt,top=2pt,bottom=2pt]
+    \textbf{فكرة تساعدك على الحفظ:} #1
+  \end{tcolorbox}}
+
+% صندوق المفهوم في بداية كل فصل
+\newtcolorbox{concept}[1]{enhanced,breakable,colback=introback,colframe=conceptc,
+  boxrule=0.8pt,arc=2mm,fonttitle=\bfseries\large,title={#1}}
+
+% فاصل بين الأسئلة
+\newcommand{\qsep}{\par\medskip\noindent\textcolor{qframe!40}{\rule{\linewidth}{0.4pt}}\par}
+
+% ---------- رأس الصفحة ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small نظام الإشعال وبدء التشغيل}
+\fancyhead[L]{\small\en{Powerplant — Ignition \& Starting}}
+\fancyfoot[C]{\thepage}
+
+\begin{document}
+% ===================== صفحة العنوان =====================
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Huge\bfseries\textcolor{qframe}{نظام الإشعال ونظام بدء التشغيل}\par}
+\vspace{0.6cm}
+{\LARGE\en{Ignition and Starting Systems}\par}
+\vspace{0.4cm}
+{\large\en{Powerplant Test Guide — Questions 8500 to 8632}\par}
+\vspace{1.5cm}
+\begin{tcolorbox}[colback=qback,colframe=qframe,width=0.85\linewidth,arc=2mm]
+\centering
+شرح موسّع بالعربية لكل سؤال من بطاقات \en{Anki}\\[4pt]
+السؤال بالإنجليزية كما سيأتيك في الامتحان، ثم: الترجمة، الجواب الصحيح،\\
+شرح المفهوم خطوة بخطوة، لماذا الخيارات الأخرى خاطئة، وفكرة تساعدك على الحفظ.
+\end{tcolorbox}
+\vfill
+{\large عدد الأسئلة: 134 سؤالاً}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ===================== كيف تستخدم هذا الملف =====================
+\section*{كيف تذاكر من هذا الملف؟}
+\addcontentsline{toc}{section}{كيف تذاكر من هذا الملف؟}
+
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{لا تبدأ بالأسئلة مباشرة.} اقرأ أولاً «الصورة الكبيرة» في الصفحات التالية؛ فهي تشرح كيف يعمل المغناطيس (\en{magneto}) من الصفر. أكثر من نصف الأسئلة تعتمد على هذه الفكرة الواحدة، وإذا فهمتها ستصبح أغلب الأسئلة منطقية بدل أن تحفظها حفظاً.
+  \item \textbf{الأسئلة مرتّبة حسب الموضوع} وليس حسب الرقم، لأن الأسئلة المتشابهة تتكرر بصيغ مختلفة (مثلاً: هناك 6 أسئلة تقريباً عن \en{E-gap}). في بداية كل فصل يوجد صندوق بنفسجي يشرح المفهوم الأساسي لذلك الفصل.
+  \item إذا أردت سؤالاً برقمه، اذهب إلى \textbf{الفهرس الرقمي} في آخر الملف واضغط على الرقم.
+  \item الجواب الصحيح مُعلَّم باللون الأخضر داخل صندوق السؤال. حاول أن تغطيه وتجيب أولاً.
+\end{enumerate}
+
+% ===================== قاموس المصطلحات =====================
+\section{قاموس المصطلحات الأساسية}
+
+\begin{longtable}{|>{\raggedleft\arraybackslash}p{4.2cm}|>{\raggedleft\arraybackslash}p{3.6cm}|>{\raggedleft\arraybackslash}p{7.2cm}|}
+\hline
+\textbf{المصطلح بالإنجليزية} & \textbf{بالعربية} & \textbf{المعنى ببساطة}\\\hline\endhead
+\en{Magneto} & المغناطيس (مولّد الإشعال) & مولّد كهربائي صغير يديره المحرك نفسه، يصنع الكهرباء العالية للشمعات دون حاجة إلى بطارية.\\\hline
+\en{Rotating magnet} & المغناطيس الدوّار & مغناطيس دائم يدور داخل المغناطيس (الماغنيتو) فيغيّر اتجاه الفيض في الملف.\\\hline
+\en{Magnetic flux} & الفيض المغناطيسي & «خطوط» القوة المغناطيسية التي تمر في الحديد.\\\hline
+\en{Pole shoes} & أحذية الأقطاب & قطع حديد ناعم تنقل الفيض من المغناطيس الدوّار إلى قلب الملف.\\\hline
+\en{Coil core} & قلب الملف & القضيب الحديدي الذي تُلَفّ عليه الأسلاك.\\\hline
+\en{Primary coil / winding} & الملف الابتدائي & لفات قليلة من سلك سميك، فيه تيار كبير وجهد منخفض.\\\hline
+\en{Secondary coil / winding} & الملف الثانوي & آلاف اللفات من سلك رفيع جداً، يتولّد فيه الجهد العالي (حوالي 20,000 فولت).\\\hline
+\en{Breaker points} & نقاط القاطع (البلاتين) & مفتاح ميكانيكي صغير يفتحه كام (\en{cam}) فيقطع تيار الملف الابتدائي في لحظة محددة.\\\hline
+\en{Cam / Cam follower} & الكامة / تابع الكامة & الكامة تدفع تابع الكامة فتفتح النقاط. التابع قطعة صغيرة تحتك بالكامة وتتآكل.\\\hline
+\en{Capacitor / Condenser} & المكثّف & يوصَل على التوازي مع النقاط؛ يمتص الشرارة عند فتح النقاط ويسرّع انهيار المجال.\\\hline
+\en{Neutral position} & الوضع المحايد & وضع المغناطيس الدوار الذي يكون فيه الفيض في قلب الملف = صفر.\\\hline
+\en{E-gap (Efficiency gap)} & فجوة الكفاءة & عدد درجات دوران المغناطيس \textbf{بعد} الوضع المحايد التي تُفتح عندها النقاط. هي أفضل لحظة لعمل الشرارة.\\\hline
+\en{Full register} & التطابق الكامل & المغناطيس مواجه تماماً لأحذية الأقطاب، والفيض في القلب أعظم ما يكون.\\\hline
+\en{Distributor (rotor + block)} & الموزّع (دوّار + كتلة) & يوجّه الجهد العالي إلى الشمعة الصحيحة حسب ترتيب الإشعال.\\\hline
+\en{P-lead (Primary lead)} & سلك الابتدائي & السلك الذي يصل الملف الابتدائي بمفتاح الإشعال في قمرة القيادة.\\\hline
+\en{Ignition switch} & مفتاح الإشعال & مفتاح \en{OFF / L / R / BOTH}. عمله «معكوس»: في \en{OFF} يوصل المغناطيس بالأرضي.\\\hline
+\en{Ground / Grounded} & أرضي / مؤرَّض & موصول بهيكل المحرك (مسار رجوع التيار).\\\hline
+\en{Open circuit} & دائرة مفتوحة & دائرة مقطوعة لا يمر فيها تيار.\\\hline
+\en{High-tension} & ضغط (جهد) عالٍ & كلمة \en{tension} هنا تعني «جهد كهربائي».\\\hline
+\en{Ignition harness / lead} & حزمة أسلاك الإشعال & الأسلاك التي تنقل الجهد العالي إلى الشمعات.\\\hline
+\en{Shielding} & التدريع & غلاف معدني مضفّر حول الأسلاك يمنع التشويش على الراديو.\\\hline
+\en{Spark plug} & شمعة الإشعال (البوجيه) & تُحدث الشرارة داخل الأسطوانة.\\\hline
+\en{Heat range (hot / cold plug)} & المدى الحراري (شمعة حارة / باردة) & قدرة الشمعة على تسريب حرارتها إلى رأس الأسطوانة.\\\hline
+\en{Fouling} & اتّساخ الشمعة & ترسبات (كربون/رصاص/زيت) تجعل الكهرباء تتسرب إلى الأرضي دون شرارة.\\\hline
+\en{Preignition} & الاشتعال المبكر & اشتعال الخليط من نقطة ساخنة قبل الشرارة.\\\hline
+\en{Detonation} & التفجّر (الصفع) & انفجار عنيف لما تبقى من الخليط بدل احتراقه بهدوء.\\\hline
+\en{TDC / BTC} & النقطة الميتة العليا / قبل المركز الأعلى & أعلى نقطة يصلها المكبس.\\\hline
+\en{Impulse coupling} & وصلة الدفع & نابض يدير المغناطيس بسرعة لحظياً ويؤخر الشرارة أثناء التشغيل.\\\hline
+\en{Shower of Sparks} & وابل الشرارات & نظام بدء تشغيل يعطي شرارات متتالية متأخرة بمساعدة البطارية.\\\hline
+\en{Igniter / Exciter} & المُشعِل / وحدة الإثارة & ما يقابل الشمعة والمغناطيس في المحرك التوربيني.\\\hline
+\en{Starter-generator} & المُدوِّر-المولّد & آلة واحدة تعمل مُدوِّراً عند التشغيل ثم مولّداً بعده.\\\hline
+\en{Pneumatic / Air turbine starter} & المُدوِّر الهوائي & توربين صغير يدار بالهواء المضغوط لتدوير المحرك.\\\hline
+\end{longtable}
+
+% ===================== الصورة الكبيرة =====================
+\section{الصورة الكبيرة: كيف يصنع المغناطيس (\en{Magneto}) الشرارة؟}
+
+اقرأ هذا القسم ببطء، فهو مفتاح أغلب الأسئلة.
+
+\subsection{لماذا نحتاج جهداً عالياً؟}
+الشرارة يجب أن «تقفز» عبر فجوة هوائية بين قطبي الشمعة داخل أسطوانة فيها خليط مضغوط. الهواء عازل، والهواء المضغوط عازل أقوى. لذلك نحتاج جهداً كبيراً جداً (من 15,000 إلى 20,000 فولت تقريباً) حتى ينكسر عزل الهواء وتقفز الشرارة. المغناطيس (\en{magneto}) هو الجهاز الذي يصنع هذا الجهد، والطائرة لا تحتاج البطارية لكي يعمل؛ يكفي أن يدور المحرك.
+
+\subsection{القانون الوحيد الذي تحتاجه: الحث الكهرومغناطيسي}
+إذا \textbf{تغيّر} الفيض المغناطيسي المارّ داخل ملف، يتولد في الملف جهد كهربائي. وكلما كان التغيّر \textbf{أسرع} وكان عدد اللفات \textbf{أكبر}، كان الجهد أعلى:
+\[
+  V \;\propto\; N \times \frac{\Delta \Phi}{\Delta t}
+\]
+حيث $N$ عدد اللفات، و$\Delta\Phi/\Delta t$ سرعة تغيّر الفيض. احفظ هذه الجملة: \textbf{«الجهد = عدد اللفات × سرعة تغيّر الفيض»}. كثير من الأسئلة (8523، 8539، 8545) هي مجرد تطبيق لها.
+
+\subsection{الدوائر الثلاث في المغناطيس}
+المغناطيس عالي الجهد (\en{high-tension magneto}) فيه ثلاث دوائر فقط (سؤال 8602):
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{الدائرة المغناطيسية (\en{magnetic circuit}):} المغناطيس الدوار + أحذية الأقطاب وامتداداتها + قلب الملف. هنا يسري الفيض المغناطيسي، وليس الكهرباء.
+  \item \textbf{الدائرة الابتدائية (\en{primary circuit}):} الملف الابتدائي + نقاط القاطع + المكثف + مفتاح الإشعال (عبر سلك \en{P-lead}). فيها تيار متردد منخفض الجهد.
+  \item \textbf{الدائرة الثانوية (\en{secondary circuit}):} الملف الثانوي + الموزع + أسلاك الجهد العالي + الشمعات، ثم يعود التيار عبر \textbf{هيكل المحرك}. فيها نبضات جهد عالٍ جداً.
+\end{enumerate}
+
+\begin{center}
+\begin{english}
+\begin{tikzpicture}[font=\small, >=Stealth,
+  box/.style={draw, rounded corners, minimum width=2.6cm, minimum height=0.9cm, align=center, fill=white}]
+  \node[box, fill=qback] (mag) at (0,0) {Rotating\\magnet};
+  \node[box] (pri) at (4,0) {Primary coil\\(few turns)};
+  \node[box] (sec) at (4,-2.2) {Secondary coil\\(thousands of turns)};
+  \node[box, fill=ansback] (pts) at (8.3,0.9) {Breaker points};
+  \node[box, fill=ansback] (cap) at (8.3,-0.4) {Capacitor};
+  \node[box, fill=tipback] (sw)  at (8.3,-1.7) {Ignition switch\\(via P-lead)};
+  \node[box] (dist) at (4,-4.2) {Distributor};
+  \node[box] (plug) at (8.3,-4.2) {Spark plug};
+  \node (gnd) at (11.4,-0.4) {\textbf{Ground}};
+  \draw[->, thick, conceptc] (mag) -- node[above]{flux} (pri);
+  \draw[thick] (pri) -- (sec);
+  \draw[thick] (pri.east) -- ++(0.6,0) coordinate (j);
+  \draw[thick] (j) |- (pts.west);
+  \draw[thick] (j) |- (cap.west);
+  \draw[thick] (j) |- (sw.west);
+  \draw[thick] (pts.east) -| (10.6,-1.7) -- (sw.east);
+  \draw[thick] (cap.east) -- (10.6,-0.4);
+  \draw[thick] (10.6,-0.4) -- (gnd.west);
+  \draw[->, thick, wrongc] (sec) -- node[left]{high voltage} (dist);
+  \draw[->, thick, wrongc] (dist) -- (plug);
+  \draw[->, thick, dashed] (plug.east) -| node[pos=0.75,right,align=left]{returns through\\engine structure} (11.4,-0.8);
+\end{tikzpicture}
+\end{english}
+\end{center}
+\textbf{لاحظ في الرسم:} النقاط والمكثف ومفتاح الإشعال كلها موصولة \textbf{على التوازي} بين طرف الملف الابتدائي والأرضي (أسئلة 8513، 8528).
+
+\subsection{القصة خطوة بخطوة (دورة واحدة)}
+\begin{enumerate}[label=\textbf{الخطوة \arabic*:},leftmargin=*]
+  \item \textbf{التطابق الكامل (\en{full register}):} قطبا المغناطيس الدوار مواجهان تماماً لأحذية الأقطاب، فيكون الفيض في قلب الملف \textbf{أعظم ما يمكن} (سؤال 8506). تقريباً في هذه اللحظة \textbf{تُغلق} النقاط (سؤال 8609).
+  \item \textbf{المغناطيس يتابع الدوران نحو الوضع المحايد:} الفيض يبدأ بالنقصان. هذا التغير يولد جهداً في الملف الابتدائي، ولأن النقاط مغلقة يسري \textbf{تيار ابتدائي} عبرها إلى الأرضي. هذا التيار يصنع مجالاً مغناطيسياً خاصاً به «يعاند» تغير الفيض (قانون لنز)، فيحاول أن يُبقي الفيض في القلب كما هو.
+  \item \textbf{الوضع المحايد (\en{neutral}):} المغناطيس في منتصف المسافة بين الأقطاب؛ فيض المغناطيس وحده في القلب = صفر، ولكن التيار الابتدائي ما زال يمسك الفيض القديم.
+  \item \textbf{بعد المحايد ببضع درجات = \en{E-gap}:} المغناطيس يريد أن يعكس اتجاه الفيض، والتيار الابتدائي يقاومه بقوة. هنا يكون «الإجهاد المغناطيسي» (\en{magnetic stress}) في أقصاه، والتيار الابتدائي في أقصاه (سؤالا 8505، 8540). \textbf{في هذه اللحظة بالضبط تُفتح النقاط} (أسئلة 8511، 8512، 8524، 8535).
+  \item \textbf{انهيار المجال:} بمجرد فتح النقاط ينقطع التيار الابتدائي، فينهار مجاله فجأة وينقلب الفيض في القلب إلى الاتجاه الجديد خلال زمن قصير جداً. سرعة تغير هائلة $\Leftarrow$ جهد هائل في الملف الثانوي ذي الآلاف من اللفات (أسئلة 8514، 8539، 8596).
+  \item \textbf{المكثف يساعد:} لحظة فتح النقاط يريد التيار أن يقفز بينها كشرارة صغيرة (تحرق النقاط وتبطئ الانهيار). المكثف الموصول على التوازي يبتلع هذا التيار، فيمنع الحرق ويجعل الانهيار أسرع (أسئلة 8520، 8526، 8566).
+  \item \textbf{الشرارة:} الجهد في الثانوي يرتفع حتى يصل إلى قيمة تكفي لكسر عزل فجوة الشمعة، وعندها تقفز الشرارة (أعلى جهد يكون \textbf{قبل} الشرارة مباشرة، سؤال 8521). يسري التيار عبر الشمعة ثم يعود إلى المغناطيس عبر \textbf{هيكل المحرك} (سؤال 8562).
+\end{enumerate}
+
+\begin{concept}{ملخص أوضاع المغناطيس الدوار (احفظ هذا الجدول)}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{الوضع} & \textbf{الفيض في قلب الملف} & \textbf{ماذا يحدث للنقاط؟}\\\hline
+\en{Full register} & أعظم قيمة & تُغلق تقريباً\\\hline
+\en{Neutral} & صفر (من المغناطيس وحده) & مغلقة\\\hline
+\en{E-gap} (بعد المحايد ببضع درجات) & ينقلب – أعظم إجهاد & \textbf{تبدأ بالفتح $\Leftarrow$ شرارة}\\\hline
+\end{tabular}
+\end{center}
+\end{concept}
+
+\subsection{مفتاح الإشعال يعمل بالعكس!}
+في أي جهاز منزلي: \en{OFF} = الدائرة مفتوحة. أما مفتاح المغناطيس فالعكس تماماً:
+\begin{itemize}
+  \item \textbf{\en{OFF}:} المفتاح \textbf{مغلق}، يوصل الدائرة الابتدائية بالأرضي مباشرة. التيار الابتدائي يذهب إلى الأرضي ولا تستطيع النقاط قطعه، فلا يوجد انهيار مفاجئ ولا جهد عالٍ ولا شرارة (أسئلة 8570، 8582).
+  \item \textbf{\en{ON / BOTH}:} المفتاح \textbf{مفتوح}، فتصبح النقاط هي الوحيدة التي تتحكم بالتيار، فيعمل المغناطيس.
+\end{itemize}
+\textbf{النتيجة الخطيرة:} إذا انقطع سلك \en{P-lead} أو انفصل، لا يستطيع المفتاح تأريض المغناطيس، فيبقى المغناطيس «حاراً» (\en{hot}) أي يعمل دائماً حتى لو كان المفتاح على \en{OFF}. لذلك يجب أن تعامل المروحة دائماً وكأن المحرك قد يشتغل (أسئلة 8534، 8568، 8599، 8613).
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{وضع المفتاح} & \textbf{المغناطيس الأيسر \en{L}} & \textbf{المغناطيس الأيمن \en{R}} & \textbf{النتيجة}\\\hline
+\en{OFF} & مؤرَّض (متوقف) & مؤرَّض (متوقف) & المحرك يتوقف\\\hline
+\en{L} & يعمل (غير مؤرّض) & مؤرَّض & يعمل على الأيسر فقط\\\hline
+\en{R} & مؤرَّض & يعمل (غير مؤرّض) & يعمل على الأيمن فقط\\\hline
+\en{BOTH} & يعمل & يعمل & الوضع الطبيعي\\\hline
+\end{tabular}
+\end{center}
+
+\newpage
+% =====================================================================
+\section{أسئلة نظام الزيت (موجودة في بداية المجموعة)}
+% =====================================================================
+
+\begin{concept}{المفهوم: خزان الزيت والمحامل}
+هذه الأسئلة الثلاثة ليست عن الإشعال، ولكنها جاءت في بداية مجموعة البطاقات.
+\begin{itemize}
+  \item الزيت \textbf{يتمدد} عندما يسخن (يزداد حجمه)، وأثناء الدوران يختلط به الهواء فيتكوّن \textbf{رغوة}. لذلك لا يُملأ خزان الزيت حتى آخره، بل يُترك فراغ فوق الزيت يسمى \en{expansion space}.
+  \item في المحرك التوربيني، مضخات السحب (\en{scavenge pumps}) تعيد الزيت من المحامل إلى الخزان مخلوطاً بكثير من الهواء. لذلك يوجد في الخزان جزء خاص لفصل الهواء عن الزيت يسمى \en{dwell chamber} أو \en{de-aerator}.
+  \item المحامل نوعان: محامل احتكاكية (\en{plain bearings}) وهي أسطح منزلقة فوق بعضها، ومحامل مضادة للاحتكاك (\en{ball / roller}) فيها كرات أو أسطوانات تتدحرج.
+\end{itemize}
+\end{concept}
+
+\Q{8500}{Why is expansion space required in an engine oil supply tank?}
+{To eliminate oil foaming.}
+{For oil enlargement and collection of foam.}
+{For proper oil tank ventilation.}{B}
+\tr{لماذا يلزم وجود فراغ للتمدد في خزان إمداد زيت المحرك؟}
+\ans{B}{لكي يتمدد فيه الزيت (يكبر حجمه) ولتجمع الرغوة.}
+\sharh{تخيّل زجاجة ماء ملأتها حتى الفوهة ثم وضعتها في الشمس: الماء سيتمدد ويفيض. الزيت كذلك؛ عندما يشتغل المحرك ترتفع حرارة الزيت كثيراً (قد تتجاوز 80 درجة مئوية) فيزداد حجمه. إضافة إلى ذلك، الزيت الراجع من المحرك يكون مخلوطاً بالهواء على شكل رغوة. لذلك يصمَّم الخزان بحيث يبقى فوق الزيت فراغ (عادة لا يقل عن 10\% من سعة الخزان) يستوعب الزيادة في الحجم والرغوة دون أن يفيض الزيت أو يُدفع خارج فتحة التهوية.
+
+كلمة \en{enlargement} في الخيار الصحيح معناها «زيادة الحجم» أي التمدد.}
+\nohead
+\no{A}{الفراغ لا «يزيل» الرغوة، بل فقط يعطيها مكاناً تتجمع فيه. إزالة الرغوة تكون بمواد مانعة للرغوة أو بفاصل الهواء.}
+\no{C}{التهوية (\en{venting}) تتم بأنبوب تهوية خاص، وليست الهدف من فراغ التمدد.}
+\tip{\en{Expansion space} = مكان لـ\textbf{الت}مدد و\textbf{ال}رغوة. الكلمة نفسها \en{expansion} تعني «تمدد»، فاختر الجواب الذي فيه التمدد (\en{enlargement}).}
+\qsep
+
+\Q{8501}{The purpose of a dwell chamber in a turbine engine oil tank is to provide}
+{A collection point for sediments.}
+{For a pressurized oil supply to the oil pump inlet.}
+{Separation of entrained air from scavenged oil.}{C}
+\tr{الغرض من «حجرة المكوث» (\en{dwell chamber}) في خزان زيت المحرك التوربيني هو توفير:}
+\ans{C}{فصل الهواء المحبوس داخل زيت السحب الراجع.}
+\sharh{في المحرك التوربيني تقوم مضخات السحب (\en{scavenge pumps}) بسحب الزيت من حول المحامل وإرجاعه إلى الخزان. هذه المضخات تكون عادة أكبر سعة من مضخة الضغط حتى لا يتجمع الزيت في المحامل، ونتيجة لذلك تسحب معها كمية كبيرة من الهواء، فيرجع الزيت «مخفوقاً» ومليئاً بالفقاعات (\en{entrained air} = هواء محبوس داخل السائل).
+
+الزيت المليء بالهواء لا يصلح للتزييت: الفقاعات تقلل قدرة الزيت على حمل الحرارة وقد تسبب انقطاع ضغط الزيت. لذلك يدخل الزيت الراجع أولاً إلى حجرة خاصة يبقى فيها قليلاً («يمكث» = \en{dwell})، فتصعد الفقاعات إلى الأعلى وتخرج، ثم ينتقل الزيت الخالي من الهواء إلى بقية الخزان. اسمها الآخر \en{de-aerator} أي «مزيل الهواء».}
+\nohead
+\no{A}{تجميع الرواسب يكون في قاع الخزان أو في المرشحات وسدادات التصريف المغناطيسية.}
+\no{B}{الخزان لا يعطي ضغطاً لمدخل المضخة بهذه الحجرة؛ ضغط الخزان (إن وجد) يأتي من نظام الضغط/التهوية.}
+\tip{\en{dwell} = يمكث ويبقى. الزيت «يمكث» قليلاً حتى «يخرج منه الهواء». \en{de-aerator}: \en{de} = إزالة، \en{aer} = هواء.}
+\qsep
+
+\Q{8502}{Which of the following bearing types must be continuously lubricated by pressure oil?}
+{Ball.}
+{Roller.}
+{Plain.}{C}
+\tr{أي أنواع المحامل التالية يجب أن يُزيَّت باستمرار بزيت مضغوط؟}
+\ans{C}{المحامل العادية (الاحتكاكية) \en{Plain}.}
+\sharh{المحمل العادي (\en{plain bearing}) هو ببساطة جلبة (\en{bushing}) أو نصفا قشرة معدنية يدور داخلها عمود، أي سطح ينزلق فوق سطح. هذا النوع لا يعمل إلا إذا كان هناك \textbf{طبقة رقيقة من الزيت المضغوط} تفصل بين العمود والقشرة، فيطفو العمود على الزيت ولا يلمس المعدن المعدنَ. إذا انقطع ضغط الزيت ولو لحظة، يحتك المعدن بالمعدن فوراً، فيسخن ويذوب المحمل. لذلك يحتاج إلى زيت مضغوط \textbf{باستمرار}. مثال ذلك محامل ذراع التوصيل والعمود المرفقي في المحركات المكبسية.}
+\nohead
+\no{A}{المحامل الكروية (\en{ball}) فيها كرات تتدحرج، والاحتكاك فيها قليل، فيكفيها التزييت بالرذاذ أو بكمية قليلة من الزيت.}
+\no{B}{المحامل الأسطوانية (\en{roller}) مثل الكروية، احتكاكها تدحرجي، ولا تحتاج بالضرورة إلى زيت مضغوط مستمر.}
+\tip{\en{Plain} = «عادي» بلا كرات ولا أسطوانات $\Leftarrow$ سطح على سطح $\Leftarrow$ لا بد من «وسادة» زيت مضغوط دائماً.}
+
+\newpage
+% =====================================================================
+\section{مكوّنات المغناطيس (\en{Magneto}) ودائرته المغناطيسية}
+% =====================================================================
+
+\begin{concept}{المفهوم: من ماذا يتكوّن المغناطيس؟}
+\begin{itemize}
+  \item \textbf{المغناطيس الدوّار (\en{rotating magnet}):} مغناطيس دائم (من سبائك قوية مثل \en{Alnico}) يدور بواسطة تروس المحرك. غالباً له \textbf{4 أقطاب} مرتبة بالتناوب: شمال، جنوب، شمال، جنوب.
+  \item \textbf{أحذية الأقطاب (\en{pole shoes}) وامتداداتها:} قطع من \textbf{الحديد الناعم} على شكل رقائق، تحيط بالمغناطيس وتنقل الفيض منه إلى قلب الملف.
+  \item \textbf{قلب الملف (\en{coil core}):} حديد مُرقّق تلتف حوله الأسلاك.
+  \item هذه الأشياء الأربعة معاً هي \textbf{الدائرة المغناطيسية}، أي الطريق المغلق الذي يسري فيه الفيض.
+\end{itemize}
+\textbf{الفرق بين الحديد «الناعم» والحديد «الصلب» مغناطيسياً:}
+\begin{itemize}
+  \item \textbf{الحديد الناعم (\en{soft iron}):} يمرر الفيض بسهولة كبيرة (نفاذية عالية = \en{high permeability})، لكنه \textbf{لا يحتفظ} بالمغناطيسية بعد زوال المؤثر (احتفاظية منخفضة = \en{low retentivity}). ممتاز لنقل الفيض الذي يتغير اتجاهه باستمرار.
+  \item \textbf{الصلب المغناطيسي / \en{Alnico}:} يحتفظ بالمغناطيسية طويلاً، لذلك يصنع منه المغناطيس الدائم نفسه.
+\end{itemize}
+\textbf{لماذا رقائق (\en{laminations})؟} عندما يتغير الفيض داخل قطعة حديد صمّاء تتولد فيها تيارات دوّامية (\en{eddy currents}) تضيع على شكل حرارة. تقسيم الحديد إلى رقائق رقيقة معزولة يقطع طريق هذه التيارات فيقلل الفقد.
+\end{concept}
+
+\Q{8503}{When a magneto is disassembled, keepers are usually placed across the poles of the rotating magnet to reduce the loss of magnetism. These keepers are usually made of}
+{Chrome magnet steel.}
+{Soft iron.}
+{Cobalt steel.}{B}
+\tr{عند فك المغناطيس توضع عادة «حافظات» (\en{keepers}) عبر أقطاب المغناطيس الدوار لتقليل فقدانه لمغناطيسيته. تُصنع هذه الحافظات عادة من:}
+\ans{B}{الحديد الناعم.}
+\sharh{المغناطيس الدائم يحب أن تكون خطوط فيضه في طريق مغلق من الحديد. داخل الماغنيتو يكون هذا الطريق موجوداً (أحذية الأقطاب + قلب الملف). عندما نُخرج المغناطيس الدوّار ونتركه في الهواء، تضطر خطوط الفيض أن تمر عبر الهواء (وهو طريق صعب)، فيضعف المغناطيس تدريجياً.
+
+الحل: نضع قطعة حديد عبر أقطابه لتكمل له الدائرة المغناطيسية، وتسمى «حافظة» (\en{keeper}). يجب أن تكون من \textbf{الحديد الناعم} لأنه يمرر الفيض بسهولة (نفاذية عالية) ولا يصبح هو نفسه مغناطيساً دائماً، فلا يشوّه أقطاب المغناطيس.
+
+ملاحظة من الشرح الأصلي: المغانط الحديثة احتفاظيتها عالية جداً، فلم تعد هذه المشكلة كبيرة كما كانت في الماضي، لكن السؤال ما زال يأتي.}
+\nohead
+\no{A}{الصلب المغناطيسي بالكروم مادة لصنع المغانط الدائمة نفسها، لا لحفظها.}
+\no{C}{صلب الكوبالت أيضاً مادة مغانط دائمة (احتفاظية عالية)، وليس مادة حافظة.}
+\tip{كل شيء في الماغنيتو «ينقل الفيض» = \textbf{حديد ناعم} (الحافظة، أحذية الأقطاب، قلب الملف). الشيء الوحيد الذي «يصنع الفيض» = المغناطيس الدائم.}
+\qsep
+
+\Q{8517}{Magneto pole shoes are generally made of}
+{Laminations of high-grade soft iron.}
+{Laminations of high-grade Alnico.}
+{Pieces of high-carbon iron.}{A}
+\tr{تُصنع أحذية الأقطاب في المغناطيس عادة من:}
+\ans{A}{رقائق من الحديد الناعم عالي الجودة.}
+\sharh{حذاء القطب مهمته \textbf{نقل} الفيض من المغناطيس الدوار إلى قلب الملف. وبما أن المغناطيس يدور، فاتجاه الفيض في أحذية الأقطاب ينقلب مرات كثيرة في الثانية. لذلك نحتاج مادة:
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{نفاذيتها عالية:} تمرر الفيض بأقل فقد $\Leftarrow$ الحديد الناعم.
+  \item \textbf{لا تحتفظ بالمغناطيسية:} حتى ينقلب الفيض فيها بسهولة مع كل دورة $\Leftarrow$ الحديد الناعم.
+  \item \textbf{مقسّمة إلى رقائق:} لأن الفيض المتغير يولد تيارات دوامية (\en{eddy currents}) في الحديد المصمت وتضيع طاقة على شكل حرارة. الرقائق المعزولة عن بعضها تقطع مسار هذه التيارات.
+\end{enumerate}}
+\nohead
+\no{B}{\en{Alnico} (ألومنيوم-نيكل-كوبالت) مادة مغانط دائمة احتفاظيتها عالية؛ لو صنعنا منها أحذية الأقطاب لقاومت انقلاب الفيض. تستخدم للمغناطيس الدوّار نفسه.}
+\no{C}{الحديد عالي الكربون أقرب إلى الصلب، يحتفظ بالمغناطيسية، و«قطع» مصمتة تعني تيارات دوامية كبيرة.}
+\tip{أحذية الأقطاب = \textbf{رقائق} (ضد التيارات الدوامية) من \textbf{حديد ناعم} (ضد الاحتفاظ بالمغناطيسية).}
+\qsep
+
+\Q{8519}{What components make up the magnetic system of a magneto?}
+{Pole shoes, the pole shoe extensions, and the primary coil.}
+{Primary and secondary coils.}
+{Rotating magnet, the pole shoes, the pole shoe extensions, and the coil core.}{C}
+\tr{ما المكونات التي تشكّل النظام (الدائرة) المغناطيسي في المغناطيس؟}
+\ans{C}{المغناطيس الدوار، أحذية الأقطاب، امتدادات أحذية الأقطاب، وقلب الملف.}
+\sharh{الدائرة المغناطيسية هي «الطريق» الذي يسير فيه الفيض المغناطيسي، تماماً كما أن الدائرة الكهربائية هي الطريق الذي يسير فيه التيار. الفيض يخرج من القطب الشمالي للمغناطيس الدوار $\Leftarrow$ يدخل حذاء القطب $\Leftarrow$ يصعد في امتداد الحذاء $\Leftarrow$ يمر في قلب الملف $\Leftarrow$ ينزل في الامتداد الآخر $\Leftarrow$ الحذاء الآخر $\Leftarrow$ يعود إلى القطب الجنوبي. كل هذه القطع \textbf{حديد أو مغناطيس}، ولا يوجد فيها أي سلك.}
+\nohead
+\no{A}{الملف الابتدائي سلك نحاسي يحمل تياراً كهربائياً، فهو جزء من الدائرة الكهربائية الابتدائية، لا من الدائرة المغناطيسية. (لاحظ أنه ذكر «الملف» لا «قلب الملف»).}
+\no{B}{الملفان الابتدائي والثانوي جزء من الدوائر الكهربائية.}
+\tip{الدائرة المغناطيسية = كل ما هو \textbf{حديد}: المغناطيس + الأحذية + الامتدادات + \textbf{القلب}. إذا رأيت كلمة \en{coil} وحدها (ملف) فهي كهرباء، وإذا رأيت \en{coil core} (قلب الملف) فهي مغناطيسية.}
+\qsep
+
+\Q{8602}{Which of the following are distinct circuits of a high-tension magneto? 1. Magnetic. 2. Primary. 3. E-gap. 4. P-lead. 5. Secondary.}
+{1, 2, 5.}
+{1, 3, 4.}
+{2, 4, 5.}{A}
+\tr{أيٌّ مما يلي دوائر مستقلة في المغناطيس عالي الجهد؟ 1. المغناطيسية. 2. الابتدائية. 3. \en{E-gap}. 4. سلك \en{P-lead}. 5. الثانوية.}
+\ans{A}{1، 2، 5: المغناطيسية والابتدائية والثانوية.}
+\sharh{المغناطيس عالي الجهد فيه ثلاث دوائر فقط (راجع «الصورة الكبيرة»):
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{المغناطيسية:} يسري فيها الفيض المغناطيسي.
+  \item \textbf{الابتدائية:} يسري فيها تيار متردد منخفض الجهد.
+  \item \textbf{الثانوية:} تسري فيها نبضات جهد عالٍ متردد.
+\end{enumerate}
+أما \en{E-gap} فهو \textbf{وضع/زاوية} للمغناطيس الدوار، وليس دائرة. و\en{P-lead} مجرد \textbf{سلك} داخل الدائرة الابتدائية (يصلها بمفتاح الإشعال)، وليس دائرة مستقلة.}
+\nohead
+\no{B}{يحتوي على 3 (\en{E-gap}) و4 (\en{P-lead}) وهما ليسا دائرتين.}
+\no{C}{يحتوي على 4 (\en{P-lead}) وهو جزء من الدائرة الابتدائية فقط، وينقصه الدائرة المغناطيسية.}
+\tip{\textbf{م – ا – ث}: مغناطيسية، ابتدائية، ثانوية. أي شيء آخر ليس دائرة.}
+\qsep
+
+\Q{8516}{What is the radial location of the two north poles of a four-pole rotating magnet in a high-tension magneto?}
+{180° apart.}
+{270° apart.}
+{90° apart.}{A}
+\tr{ما الموقع الزاوي للقطبين الشماليين في مغناطيس دوّار رباعي الأقطاب في المغناطيس عالي الجهد؟}
+\ans{A}{بينهما 180 درجة.}
+\sharh{المغناطيس رباعي الأقطاب أقطابه موزعة على محيط دائرة بالتساوي، أي كل 90 درجة قطب، وهي متناوبة: شمال (0°)، جنوب (90°)، شمال (180°)، جنوب (270°). إذن القطبان الشماليان متقابلان، أي بينهما \textbf{180°}، وكذلك القطبان الجنوبيان.
+
+نتيجة مهمة: كلما دار المغناطيس 90° يواجه حذاء القطب قطباً معاكساً، فينقلب اتجاه الفيض في قلب الملف. أي في الدورة الواحدة ينقلب الفيض 4 مرات، فنحصل على \textbf{4 شرارات في كل دورة} للمغناطيس. (هذه المعلومة تفيدك في السؤال 8544).}
+\nohead
+\no{B}{270° بين قطبين معناه أنهما متجاوران من الجهة الأخرى (= 90°)، والمتجاوران دائماً مختلفان (شمال وجنوب).}
+\no{C}{القطبان اللذان بينهما 90° متجاوران، والمتجاوران أحدهما شمالي والآخر جنوبي.}
+\tip{ارسم «ساعة» عليها: 12 = \en{N}، 3 = \en{S}، 6 = \en{N}، 9 = \en{S}. الشماليان عند 12 و6 = متقابلان = 180°.}
+\qsep
+
+\Q{8506}{The greatest density of flux lines in the magnetic circuit of a rotating magnet-type magneto occurs when the magnet is in what position?}
+{Full alignment with the field shoe faces.}
+{A certain angular displacement beyond the neutral position, referred to as E-gap angle or position.}
+{The position where the contact points open.}{A}
+\tr{أكبر كثافة لخطوط الفيض في الدائرة المغناطيسية لمغناطيس ذي مغناطيس دوار تحدث عندما يكون المغناطيس في أي وضع؟}
+\ans{A}{عند التطابق الكامل مع وجوه أحذية الأقطاب.}
+\sharh{عندما يكون قطبا المغناطيس مواجهين تماماً لأحذية الأقطاب (\en{full register} = التطابق الكامل)، تكون الفجوة الهوائية بينهما أصغر ما يمكن ومساحة التقابل أكبر ما يمكن، فيمر أكبر قدر من الفيض في الدائرة المغناطيسية. هذه بديهية: المغناطيس «في وجه» الحديد تماماً.
+
+أما عند \en{E-gap} فالفيض من المغناطيس وحده قريب من الصفر (لأننا بعد الوضع المحايد بقليل) وهو في حالة انقلاب. لا تخلط بين «أكبر فيض» و«أكبر إجهاد/أفضل لحظة للشرارة».}
+\nohead
+\no{B}{وضع \en{E-gap} هو وضع أكبر \textbf{تغيّر} وأكبر \textbf{إجهاد مغناطيسي} وأكبر تيار ابتدائي، وليس وضع أكبر \textbf{كثافة} فيض.}
+\no{C}{النقاط تُفتح عند \en{E-gap}، فهذا الخيار هو نفسه الخيار B بكلمات أخرى.}
+\tip{\en{Full register} = \en{Full flux} (كلاهما يبدأ بـ\en{Full}). \en{E-gap} = لحظة الشرارة.}
+\qsep
+
+\Q{8504}{How is the strength of a magneto magnet checked?}
+{Hold the points open and check the output of the primary coil with an AC ammeter while operating the magneto at a specified speed.}
+{Check the AC voltage reading at the breaker points.}
+{Check the output of the secondary coil with an AC ammeter while operating the magneto at a specified speed.}{A}
+\tr{كيف تُفحص قوة المغناطيس الدائم في الماغنيتو؟}
+\ans{A}{بإبقاء النقاط \textbf{مفتوحة} وقياس خرج الملف الابتدائي بأميتر تيار متردد (\en{AC}) أثناء تشغيل الماغنيتو بسرعة محددة.}
+\sharh{الماغنيتو في الأساس \textbf{مولّد تيار متردد} صغير. خرجه يعتمد على شيئين فقط: سرعة دوران المغناطيس، وقوة المغناطيس الدائم. فإذا ثبّتنا السرعة (نركّب الماغنيتو على منصة اختبار ونديره بسرعة محددة)، يصبح الخرج مقياساً مباشراً لقوة المغناطيس.
+
+لماذا نُبقي النقاط \textbf{مفتوحة}؟ حتى لا تقطع النقاط التيار وتغيّر القراءة؛ نريد قراءة التيار المتردد الصافي الذي يولده المغناطيس في الملف الابتدائي، فنصل أميتر \en{AC} في الدائرة الابتدائية مكان النقاط. إذا كانت القراءة أقل من الحد الذي يحدده الصانع فالمغناطيس ضعيف.}
+\nohead
+\no{B}{قراءة الجهد عند النقاط لا تعطي قياساً ثابتاً لقوة المغناطيس، والطريقة المعتمدة هي قياس التيار الابتدائي.}
+\no{C}{الملف الثانوي يعطي جهداً عالياً جداً وتياراً صغيراً، ولا يُقاس بأميتر لهذا الغرض.}
+\tip{قوة المغناطيس = «كم تياراً يصنع؟» $\Leftarrow$ \en{AC ammeter} على \textbf{الابتدائي}، والنقاط \textbf{مفتوحة} (\en{points open}). الخياران الآخران لا يجمعان «\en{primary} + \en{ammeter}».}
+\qsep
+
+\Q{8610}{What component of a dual magneto is shared by both ignition systems?}
+{High-tension coil.}
+{Rotating magnet.}
+{Capacitor.}{B}
+\tr{ما المكون الذي يشترك فيه نظاما الإشعال في المغناطيس المزدوج (\en{dual magneto})؟}
+\ans{B}{المغناطيس الدوار.}
+\sharh{المحرك المكبسي في الطائرة يجب أن يكون له نظاما إشعال مستقلان (للسلامة). بعض المحركات تستخدم بدلاً من ماغنيتو منفصلين «ماغنيتو مزدوجاً» في غلاف واحد، لتوفير الوزن والمكان. داخل هذا الغلاف يوجد:
+\begin{itemize}
+  \item \textbf{مغناطيس دوّار واحد} مشترك $\Leftarrow$ هذا هو الجزء المشترك الوحيد تقريباً (مع عمود الإدارة).
+  \item مجموعتا نقاط، ملفان عاليا الجهد، مكثفان، وموزعان (واحد لكل نظام).
+\end{itemize}
+بما أن الملفات والنقاط والمكثفات مستقلة، فإذا تعطل ملف أو مكثف يبقى النظام الآخر يعمل.}
+\nohead
+\no{A}{لكل نظام ملف عالي الجهد خاص به (ملفان).}
+\no{C}{لكل نظام مكثف خاص به (مكثفان).}
+\tip{مزدوج = «مغناطيس واحد، وكل شيء آخر اثنان».}
+\qsep
+
+\Q{8533}{Aircraft magneto housings are usually ventilated in order to}
+{Prevent the entrance of outside air which may contain moisture.}
+{Allow heated air from the accessory compartment to keep the internal parts of the magneto dry.}
+{Provide cooling and remove corrosive gases produced by normal arcing.}{C}
+\tr{تُهوّى أغلفة المغانط في الطائرات عادةً من أجل:}
+\ans{C}{التبريد وإزالة الغازات المسببة للتآكل الناتجة عن الشرر الطبيعي.}
+\sharh{داخل الماغنيتو يحدث شرر بشكل طبيعي: في الموزع، الجهد العالي يقفز عبر فجوة هوائية صغيرة بين ذراع الدوار وأقطاب كتلة الموزع. الشرر الكهربائي في الهواء يحوّل جزءاً من الأكسجين إلى \textbf{أوزون}، ومع النيتروجين والرطوبة تتكوّن \textbf{أحماض نيتريك}. هذه الغازات تسبب تآكل المعادن وتلف العوازل وتكوّن مسارات موصلة.
+
+لذلك توجد فتحات تهوية تسمح بدوران الهواء داخل الغلاف لتحقيق أمرين: (1) إخراج الغازات الضارة، (2) شيء من التبريد.}
+\nohead
+\no{A}{التهوية تُدخل الهواء الخارجي فعلاً ولا تمنعه؛ الخيار عكس الحقيقة.}
+\no{B}{الهدف ليس إدخال هواء حار من حجرة الملحقات للتجفيف، بل التبريد وطرد الغازات.}
+\tip{شرر $\Leftarrow$ أوزون وأحماض $\Leftarrow$ لازم «تنفّس» الماغنيتو. التهوية = \textbf{تبريد + طرد الغازات المسببة للتآكل} (\en{corrosive gases}).}
+
+\newpage
+% =====================================================================
+\section{فجوة الكفاءة \en{E-gap} والتوقيت الداخلي للمغناطيس}
+% =====================================================================
+
+\begin{concept}{المفهوم: ما هو \en{E-gap}؟ وما الفرق بين التوقيت الداخلي والخارجي؟}
+\textbf{\en{E-gap}} اختصار \en{Efficiency gap} أي «فجوة الكفاءة». هي \textbf{زاوية} (بضع درجات، غالباً 5° إلى 17° حسب الطراز) يدورها المغناطيس \textbf{بعد} الوضع المحايد في اتجاه دورانه الطبيعي. عند هذه الزاوية:
+\begin{itemize}
+  \item التيار الابتدائي في أقصى قيمة له.
+  \item «الإجهاد المغناطيسي» في أقصاه: المغناطيس يحاول أن يعكس الفيض، والتيار الابتدائي يمسكه ويمنعه.
+  \item \textbf{هنا يجب أن تبدأ النقاط بالفتح}، فينهار المجال بأسرع ما يمكن ونحصل على أقوى شرارة.
+\end{itemize}
+تشبيه: تخيّل نابضاً تضغطه بيدك. كلما ضغطته أكثر، كان قفزه أقوى عند تركه. عند \en{E-gap} يكون «النابض المغناطيسي» مضغوطاً لأقصى حد، وفتح النقاط هو «ترك اليد».
+
+\textbf{التوقيت الداخلي (\en{internal timing}):} ضبط لحظة فتح النقاط بالنسبة لوضع المغناطيس الدوار ودوّار الموزع \textbf{داخل} الماغنيتو، بحيث تُفتح النقاط تماماً عند \en{E-gap}. أفضل وقت لعمله: أثناء تجميع الماغنيتو على الطاولة. داخل الماغنيتو توجد علامات توقيت؛ تطابقها يعني أن المغناطيس عند \en{E-gap}.
+
+\textbf{التوقيت الخارجي (\en{magneto-to-engine timing}):} تركيب الماغنيتو على المحرك بحيث تحدث الشرارة عندما يكون مكبس الأسطوانة رقم 1 قبل النقطة الميتة العليا بعدد محدد من الدرجات في شوط الانضغاط.
+
+\textbf{انحراف التوقيت مع الزمن:}
+\begin{itemize}
+  \item \textbf{تآكل سطوح النقاط} $\Leftarrow$ الفجوة تزيد $\Leftarrow$ النقاط تُفتح \textbf{أبكر} $\Leftarrow$ التوقيت يصبح مبكراً.
+  \item \textbf{تآكل تابع الكامة} $\Leftarrow$ التابع «يقصر» فلا يرتفع كما كان $\Leftarrow$ الفجوة تقل $\Leftarrow$ النقاط تُفتح \textbf{متأخرة}.
+  \item في الحالة المثالية يلغي أحدهما الآخر.
+\end{itemize}
+\end{concept}
+
+\Q{8505}{The E-gap angle is usually defined as the number of degrees between the neutral position of the rotating magnet and the position}
+{Where the contact points close.}
+{Where the contact points open.}
+{Of greatest magnetic flux density.}{B}
+\tr{تُعرَّف زاوية \en{E-gap} عادة بأنها عدد الدرجات بين الوضع المحايد للمغناطيس الدوار والوضع:}
+\ans{B}{الذي تُفتح عنده نقاط التلامس.}
+\sharh{هذا هو \textbf{التعريف} نفسه: نبدأ العدّ من الوضع المحايد (حيث فيض المغناطيس في القلب = صفر)، ونستمر في اتجاه الدوران حتى اللحظة التي تُفتح فيها النقاط. الدرجات بين هاتين النقطتين هي زاوية \en{E-gap}. ولماذا هنا بالذات؟ لأنه في هذا الموضع يكون تغير الفيض (عند قطع التيار) أعظم، والتيار الابتدائي أعظم، فنحصل على أعلى جهد في الثانوي.}
+\nohead
+\no{A}{النقاط \textbf{تُغلق} تقريباً عند التطابق الكامل (\en{full register})، لا عند \en{E-gap}.}
+\no{C}{أكبر كثافة فيض تكون عند التطابق الكامل، وهذا وضع مختلف تماماً.}
+\tip{\en{E-gap} = «من المحايد حتى \textbf{الفتح}». \en{Open} = \en{E-gap}، \en{Close} = \en{Full register}.}
+\qsep
+
+\Q{8540}{Magneto breaker points must be timed to open when the}
+{Rotating magnet is positioned a few degrees before neutral.}
+{Greatest magnetic field stress exists in the magnetic circuit.}
+{Rotating magnet is in the full register position.}{B}
+\tr{يجب توقيت نقاط القاطع في الماغنيتو لتُفتح عندما:}
+\ans{B}{يكون الإجهاد المغناطيسي في الدائرة المغناطيسية في أقصاه.}
+\sharh{«الإجهاد المغناطيسي» (\en{magnetic field stress}) هو الفرق بين:
+\begin{itemize}
+  \item الفيض الذي «يريده» المغناطيس الدوار وحده في هذه الزاوية (وهو بدأ ينقلب إلى الاتجاه الجديد)،
+  \item والفيض الموجود فعلاً في القلب، لأن التيار الابتدائي «يمسك» الفيض القديم ويمنعه من الانقلاب.
+\end{itemize}
+كلما كبر هذا الفرق، كان الانقلاب أعنف وأسرع عند قطع التيار، وبالتالي كان الجهد في الثانوي أعلى. أكبر فرق يحدث عند \en{E-gap} (بعد المحايد ببضع درجات)، ولهذا تُفتح النقاط هناك.}
+\nohead
+\no{A}{\textbf{قبل} المحايد خطأ؛ الصحيح \textbf{بعد} المحايد ببضع درجات.}
+\no{C}{عند التطابق الكامل الفيض كبير لكنه مستقر، ولا يوجد إجهاد، وهذا تقريباً وضع \textbf{إغلاق} النقاط.}
+\tip{فتح النقاط عند «أقصى توتر» = مثل قطع حبل مشدود لأقصى حد، فيرتد بأقصى قوة.}
+\qsep
+
+\Q{8511}{When timing a magneto internally, the alignment of the timing marks indicates that the}
+{Breaker points are just closing.}
+{Magnets are in the neutral position.}
+{Magnets are in the E-gap position.}{C}
+\tr{عند التوقيت الداخلي للماغنيتو، يدل تطابق علامات التوقيت على أن:}
+\ans{C}{المغناطيس في وضع \en{E-gap}.}
+\sharh{الصانع يضع داخل الماغنيتو علامات (مثلاً خط على ترس التوزيع وخط على الغلاف، أو مؤشر على الكامة). صُممت هذه العلامات بحيث إنها \textbf{عندما تتطابق} يكون المغناطيس الدوار في وضع \en{E-gap} تماماً. الفني يدير المغناطيس حتى تتطابق العلامات، ثم يضبط النقاط بحيث تكون في بداية الفتح عند هذا الوضع بالضبط (يستعمل ضوء توقيت أو ورقة رقيقة جداً بين النقاط).}
+\nohead
+\no{A}{النقاط \textbf{تُفتح} عند \en{E-gap} ولا تُغلق.}
+\no{B}{الوضع المحايد قبل \en{E-gap} ببضع درجات؛ العلامات لا تشير إليه.}
+\tip{السؤال عن «علامات التوقيت الداخلي» جوابه دائماً \textbf{\en{E-gap}} (انظر أيضاً 8535).}
+\qsep
+
+\Q{8535}{Alignment of the marks provided for internal timing of a magneto indicates that the}
+{Breaker points are just beginning to close for No. 1 cylinder.}
+{Magneto is in E-gap position.}
+{No. 1 cylinder is on TDC of compression stroke.}{B}
+\tr{تطابق العلامات المخصصة للتوقيت الداخلي للماغنيتو يدل على أن:}
+\ans{B}{الماغنيتو في وضع \en{E-gap}.}
+\sharh{هو نفس السؤال 8511 بصياغة مختلفة. العلامات \textbf{الداخلية} تتعلق بالماغنيتو فقط (وضع مغناطيسه بالنسبة للنقاط)، ولا علاقة لها بمكبس المحرك. تطابقها = المغناطيس في \en{E-gap} = لحظة بداية فتح النقاط.}
+\nohead
+\no{A}{النقاط \textbf{تبدأ بالفتح} عند تطابق العلامات، لا الإغلاق.}
+\no{C}{وضع مكبس الأسطوانة 1 يخص التوقيت \textbf{الخارجي} (الماغنيتو مع المحرك)، وهو أيضاً قبل \en{TDC} بعدد درجات وليس عند \en{TDC}.}
+\tip{داخلي $\Leftarrow$ \en{E-gap}. خارجي $\Leftarrow$ المكبس رقم 1 قبل \en{TDC} في شوط الانضغاط.}
+\qsep
+
+\Q{8512}{When internally timing a magneto, the breaker points begin to open when the rotating magnet is}
+{Fully aligned with the pole shoes.}
+{A few degrees past full alignment with the pole shoes.}
+{A few degrees past the neutral position.}{C}
+\tr{عند التوقيت الداخلي، تبدأ النقاط بالفتح عندما يكون المغناطيس الدوار:}
+\ans{C}{بعد الوضع المحايد ببضع درجات.}
+\sharh{«بعد المحايد ببضع درجات» هو التعريف الحرفي لوضع \en{E-gap}. السؤال يختبر هل تعرف أن \en{E-gap} مرتبط بـ\textbf{المحايد} وليس بالتطابق الكامل.}
+\nohead
+\no{A}{التطابق الكامل = أكبر فيض، وهو تقريباً لحظة \textbf{إغلاق} النقاط.}
+\no{B}{«بعد التطابق الكامل بقليل» ليس \en{E-gap}؛ الفيض هناك ما زال كبيراً في نفس الاتجاه ولا يوجد انقلاب.}
+\tip{انتبه للكلمة المفتاحية: \en{neutral}. الجواب الصحيح يحتوي دائماً على «\en{past/beyond the neutral}».}
+\qsep
+
+\Q{8524}{When internally timing a magneto, the breaker points begin to open when}
+{The piston has just passed TDC at the end of the compression stroke.}
+{The magnet poles are a few degrees beyond the neutral position.}
+{The magnet poles are fully aligned with the pole shoes.}{B}
+\tr{عند التوقيت الداخلي للماغنيتو، تبدأ النقاط بالفتح عندما:}
+\ans{B}{تكون أقطاب المغناطيس بعد الوضع المحايد ببضع درجات.}
+\sharh{نفس فكرة السؤال 8512. الشرح الأصلي يضيف معلومة: عند الوضع المحايد لا يوجد فيض من المغناطيس في قلب الملف، وبعده ببضع درجات يكون اتجاه الفيض في القلب «في طور الانقلاب». في هذه اللحظة يكون التيار الابتدائي هو الذي يمسك الفيض، وقطعه بفتح النقاط يجعل الفيض ينقلب بسرعة هائلة $\Leftarrow$ جهد عالٍ في الثانوي.}
+\nohead
+\no{A}{الكلام عن المكبس يخص التوقيت \textbf{الخارجي} وليس الداخلي. كما أن الشرارة الطبيعية تحدث \textbf{قبل} \en{TDC} لا بعده.}
+\no{C}{التطابق الكامل وضع إغلاق النقاط تقريباً.}
+\tip{\en{Internal timing} = تكلم عن \textbf{المغناطيس} فقط، وليس عن المكبس.}
+\qsep
+
+\Q{8609}{What is the approximate position of the rotating magnet in a high-tension magneto when the points first close?}
+{Full register.}
+{Neutral.}
+{A few degrees after neutral.}{A}
+\tr{ما الوضع التقريبي للمغناطيس الدوار في الماغنيتو عالي الجهد عندما تُغلق النقاط لأول مرة؟}
+\ans{A}{وضع التطابق الكامل.}
+\sharh{دورة النقاط هي: تُفتح عند \en{E-gap} (بعد المحايد ببضع درجات) $\Leftarrow$ تبقى مفتوحة فترة قصيرة أثناء الشرارة $\Leftarrow$ \textbf{تُغلق} تقريباً عندما يصل المغناطيس إلى التطابق الكامل مع الأقطاب التالية $\Leftarrow$ تبقى مغلقة والمغناطيس يدور نحو المحايد التالي، ويتكوّن التيار الابتدائي $\Leftarrow$ تُفتح مرة أخرى عند \en{E-gap} التالي... وهكذا 4 مرات في كل دورة للمغناطيس رباعي الأقطاب.
+
+لماذا تُغلق عند التطابق الكامل؟ لأن الفيض بعد ذلك يبدأ بالنقصان، ونريد أن تكون الدائرة الابتدائية مغلقة حتى يتولد التيار الابتدائي الذي «يمسك» الفيض ويبني الإجهاد المغناطيسي.}
+\nohead
+\no{B}{عند المحايد النقاط تكون مغلقة منذ فترة، ونحن نبني التيار.}
+\no{C}{«بعد المحايد ببضع درجات» = \en{E-gap} = لحظة \textbf{الفتح}.}
+\tip{\textbf{\en{Close} $\Leftarrow$ \en{Full register}}، \textbf{\en{Open} $\Leftarrow$ \en{E-gap}}. احفظهما كزوجين.}
+\qsep
+
+\Q{8507}{Magneto breaker point opening relative to the position of the rotating magnet and distributor rotor (internal timing) can be set most accurately}
+{During the magneto-to-engine timing operation.}
+{During assembly of the magneto before installation on the engine.}
+{By setting the points roughly at the required clearance before installing the magneto and then making the fine breaker point adjustment after installation to compensate for wear in the magneto drive train.}{B}
+\tr{يمكن ضبط لحظة فتح النقاط بالنسبة لوضع المغناطيس الدوار ودوار الموزع (التوقيت الداخلي) بأعلى دقة:}
+\ans{B}{أثناء تجميع الماغنيتو قبل تركيبه على المحرك.}
+\sharh{التوقيت الداخلي علاقة بين أجزاء \textbf{داخل} الماغنيتو فقط: المغناطيس، الكامة، النقاط، ودوار الموزع. أفضل مكان لضبط هذه العلاقة هو على طاولة العمل أثناء التجميع، حيث:
+\begin{itemize}
+  \item يمكنك رؤية العلامات الداخلية بوضوح.
+  \item يمكنك إدارة المغناطيس بيدك بدقة إلى وضع \en{E-gap}.
+  \item لا تتدخل تروس المحرك وخلوصها (\en{backlash}) في القياس.
+\end{itemize}
+بعد ذلك، عند تركيبه على المحرك، نقوم بالتوقيت \textbf{الخارجي} فقط (تحريك الماغنيتو كاملاً حول محوره).}
+\nohead
+\no{A}{أثناء توقيت الماغنيتو مع المحرك نضبط الماغنيتو كوحدة كاملة، والوصول إلى النقاط والعلامات الداخلية أصعب وأقل دقة.}
+\no{C}{تغيير فجوة النقاط بعد التركيب لتعويض تآكل التروس يُفسد التوقيت الداخلي (النقاط لن تُفتح عند \en{E-gap})، وهذا يعطي شرارة ضعيفة.}
+\tip{«داخلي» $\Leftarrow$ «على الطاولة، أثناء التجميع، قبل التركيب».}
+\qsep
+
+\Q{8591}{If new breaker points are installed in a magneto on an engine, it will be necessary to time the}
+{Magneto internally and the magneto to the engine.}
+{Breaker points to the No. 1 cylinder.}
+{Magneto drive to the engine.}{A}
+\tr{إذا رُكِّبت نقاط قاطع جديدة في ماغنيتو مركّب على محرك، فمن الضروري توقيت:}
+\ans{A}{الماغنيتو داخلياً، ثم الماغنيتو مع المحرك.}
+\sharh{النقاط الجديدة لن تُفتح بالضرورة في نفس اللحظة التي كانت تُفتح فيها القديمة (سماكة مختلفة، تابع كامة جديد غير متآكل...). لذلك:
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{التوقيت الداخلي} أولاً: نضبط النقاط لتُفتح عند \en{E-gap}.
+  \item ثم \textbf{التوقيت الخارجي}: لأن لحظة فتح النقاط هي لحظة الشرارة، وأي تغيير فيها يغير توقيت الشرارة بالنسبة للمكبس، فنتأكد أن الشرارة تحدث عند العدد الصحيح من الدرجات قبل \en{TDC}.
+\end{enumerate}}
+\nohead
+\no{B}{لا يوجد إجراء اسمه توقيت النقاط إلى الأسطوانة رقم 1 بمعزل عن التوقيتين.}
+\no{C}{ترس إدارة الماغنيتو لا يتأثر بتغيير النقاط.}
+\tip{أي شيء يغيّر لحظة فتح النقاط = توقيت \textbf{داخلي + خارجي} معاً.}
+\qsep
+
+\Q{8509}{What will be the results of increasing the gap of the breaker points in a magneto?}
+{Retard the spark and increase its intensity.}
+{Advance the spark and decrease its intensity.}
+{Retard the spark and decrease its intensity.}{B}
+\tr{ما نتيجة زيادة فجوة نقاط القاطع في الماغنيتو؟}
+\ans{B}{تقديم الشرارة (تصبح مبكرة) وإضعافها.}
+\sharh{فكّر في الكامة: هي «نتوء» يدفع تابع الكامة فتنفتح النقاط. إذا جعلنا الفجوة أكبر، فهذا يعني أن النقاط تبدأ بالانفصال عند أول لمسة من نتوء الكامة، أي \textbf{أبكر} من قبل.
+\begin{itemize}
+  \item الشرارة تحدث عند فتح النقاط $\Leftarrow$ فتح أبكر = شرارة \textbf{مبكرة} (\en{advanced}).
+  \item النقاط الآن تُفتح \textbf{قبل} الوصول إلى \en{E-gap}، أي قبل أن يصل التيار الابتدائي والإجهاد المغناطيسي إلى أقصاهما $\Leftarrow$ شرارة \textbf{أضعف}. (الماغنيتو صار «خارج التوقيت داخلياً»).
+\end{itemize}}
+\nohead
+\no{A}{الفجوة الأكبر تجعل الفتح أبكر لا أتأخر، والشدة تقل لا تزيد.}
+\no{C}{الشدة تقل فعلاً، لكن الشرارة تتقدم ولا تتأخر.}
+\tip{فجوة \textbf{أكبر} $\Leftarrow$ فتح \textbf{أبكر} $\Leftarrow$ \en{Advance} + \textbf{ضعف}. (أي ابتعاد عن \en{E-gap} في أي اتجاه = ضعف الشرارة).}
+\qsep
+
+\Q{8512-2}{Magneto timing drift is caused by erosion of the breaker points and}
+{Excessive spark plug gap.}
+{Wear of the cam followers.}
+{Loss of magnetism in the rotor.}{B}
+\tr{انحراف توقيت الماغنيتو (مع الزمن) يسببه تآكل نقاط القاطع و:}
+\ans{B}{تآكل تابع الكامة.}
+\sharh{التوقيت مرتبط بلحظة فتح النقاط، ولحظة الفتح تتحدد بالفجوة بين النقطتين. شيئان فقط يغيران هذه الفجوة تلقائياً مع الاستعمال:
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{تآكل سطوح النقاط} (بسبب الشرر الصغير عند كل فتح): يتغير شكل السطح وتزداد الفجوة الفعلية $\Leftarrow$ التوقيت ينحرف \textbf{مبكراً}.
+  \item \textbf{تآكل تابع الكامة} (قطعة صغيرة من الفايبر أو مادة شبيهة تحتك بالكامة): يقصر طوله، فلا يُرفع ذراع النقاط كما كان $\Leftarrow$ الفجوة تقل $\Leftarrow$ التوقيت ينحرف \textbf{متأخراً}.
+\end{enumerate}}
+\nohead
+\no{A}{فجوة الشمعة لا تؤثر على لحظة فتح النقاط داخل الماغنيتو، بل على الجهد اللازم للشرارة.}
+\no{C}{ضعف المغناطيس يُضعف الشرارة لكنه لا يغيّر لحظة حدوثها.}
+\tip{\en{drift} = انحراف تدريجي. ما الذي «يتآكل» فيغير الفجوة؟ \textbf{النقاط} و\textbf{تابع الكامة}. النقاط $\Leftarrow$ مبكر، التابع $\Leftarrow$ متأخر.}
+\qsep
+
+\Q{8555}{When a magneto is operating, what is the probable cause for a shift in internal timing?}
+{The rotating magnet looses its magnetism.}
+{The distributor gear teeth are wearing on the rotor gear teeth.}
+{The cam follower wear and/or breaker points wear.}{C}
+\tr{أثناء عمل الماغنيتو، ما السبب المحتمل لتغيّر التوقيت الداخلي؟}
+\ans{C}{تآكل تابع الكامة و/أو تآكل النقاط.}
+\sharh{نفس فكرة السؤال السابق (\en{8512-2}). التوقيت الداخلي = لحظة فتح النقاط بالنسبة للمغناطيس. الأجزاء التي تحدد هذه اللحظة هي الكامة وتابعها والنقاط. تآكل النقاط يجعل التوقيت مبكراً، وتآكل التابع يجعله متأخراً، والمفروض في التصميم المثالي أن يلغي أحدهما أثر الآخر.}
+\nohead
+\no{A}{فقدان المغناطيسية يُضعف الشرارة، لا يغيّر توقيتها.}
+\no{B}{تآكل تروس الموزع يؤثر على محاذاة ذراع الدوار مع أقطاب الموزع، لا على لحظة فتح النقاط.}
+\tip{نفس الجواب في 8512-2 و8555: \en{cam follower + breaker points}.}
+\qsep
+
+\Q{8611}{What would be the result if a magneto breaker point mainspring did not have sufficient tension?}
+{The points will stick.}
+{The points will not open to the specified gap.}
+{The points will float or bounce.}{C}
+\tr{ماذا يحدث إذا لم يكن في النابض الرئيسي لنقاط القاطع شدّ كافٍ؟}
+\ans{C}{النقاط «تطفو» أو ترتدّ (تقفز).}
+\sharh{النقطة المتحركة مثبتة على نابض ورقي (\en{mainspring}). الكامة تدفعها لتُفتح، و\textbf{النابض هو الذي يعيدها} لتُغلق بسرعة ويضغطها على النقطة الثابتة. إذا ضعف النابض:
+\begin{itemize}
+  \item عند السرعات العالية لا تلحق النقطة المتحركة بشكل الكامة، فتبقى «سابحة» في الهواء ولا تُغلق في وقتها (\en{float}).
+  \item عندما تُغلق، تصطدم وترتد (\en{bounce}) بدل أن تبقى ملتصقة.
+\end{itemize}
+النتيجة: انقطاعات غير منتظمة في التيار الابتدائي $\Leftarrow$ تخطّي إشعال (\en{miss}) خاصة في السرعات العالية.}
+\nohead
+\no{A}{الالتصاق يحدث لأسباب أخرى (مثل اللحام بسبب الشرر)، وليس بسبب ضعف النابض.}
+\no{B}{فجوة الفتح تحددها الكامة والتابع، فالنقاط ستُفتح إلى الفجوة المطلوبة؛ المشكلة في الإغلاق.}
+\tip{نابض ضعيف = لا شيء يمسك النقطة $\Leftarrow$ \textbf{تطفو وترتد} (مثل باب بنابض مرتخٍ يرتد عند إغلاقه).}
+
+\newpage
+% =====================================================================
+\section{الدائرتان الابتدائية والثانوية، المكثف، وفجوة الأمان}
+% =====================================================================
+
+\begin{concept}{المفهوم: كيف يولد الملفان الجهد العالي؟ وما دور المكثف وفجوة الأمان؟}
+\textbf{الملف} في الماغنيتو يشبه المحوّل (\en{transformer}):
+\begin{itemize}
+  \item \textbf{الابتدائي:} عدد قليل من لفات سلك سميك، ملفوف مباشرة على قلب حديدي مرقق. طرفه الأول موصول بالأرضي (بالقلب)، وطرفه الثاني يخرج بسلك قصير (\en{pigtail}) إلى النقاط والمكثف ومفتاح الإشعال.
+  \item \textbf{الثانوي:} آلاف اللفات من سلك رفيع جداً، ملفوف \textbf{فوق} الابتدائي. طرفه الأول موصول بالملف الابتدائي (فيصل إلى الأرضي عن طريقه)، وطرفه الثاني يخرج إلى طرف الجهد العالي ثم إلى دوار الموزع.
+\end{itemize}
+
+\textbf{الجهد في الثانوي} يعتمد على: (1) عدد لفاته، و(2) سرعة انهيار المجال حول الابتدائي. ولهذا فالشرارة تحدث عند \textbf{قطع} التيار الابتدائي (فتح النقاط)، وليس عند وصله.
+
+\textbf{المكثف (\en{capacitor / condenser}):} موصول على \textbf{التوازي} مع النقاط. عندما تبدأ النقاط بالانفصال، يريد التيار أن يستمر فيقفز بينها على شكل قوس كهربائي. المكثف يقدم له طريقاً سهلاً فيدخل إليه بدلاً من القفز، فـ:
+\begin{enumerate}[label=\arabic*.]
+  \item يحمي النقاط من الاحتراق والتنقّر.
+  \item يجعل التيار يتوقف بسرعة فينهار المجال بسرعة $\Leftarrow$ جهد أعلى في الثانوي.
+\end{enumerate}
+\textbf{مكثف تالف أو سعته صغيرة} $\Leftarrow$ قوس بين النقاط $\Leftarrow$ نقاط محروقة ومتنقرة وذات حبيبات خشنة. \textbf{النقاط السليمة} لونها رمادي فضي ناعم الحبيبات مثل الصقيع (\en{fine-grained, frosty}).
+
+\textbf{فجوة الأمان (\en{safety gap}):} فجوة هوائية صغيرة في الدائرة الثانوية. إذا انفصل سلك شمعة مثلاً، فلن يجد الجهد العالي مكاناً يقفز إليه، فيستمر في الارتفاع حتى يخترق عازل الملف الثانوي ويتلفه. فجوة الأمان تعطيه «مخرج طوارئ» يقفز عبره إلى الأرضي قبل أن يصل إلى ذلك الحد.
+\end{concept}
+
+\Q{8514}{In a high-tension ignition system, the current in the magneto secondary winding is}
+{Conducted from the primary winding via the discharge of the capacitor.}
+{Induced when the primary circuit is interrupted.}
+{Induced when the primary circuit discharges via the breaker points.}{B}
+\tr{في نظام الإشعال عالي الجهد، التيار في الملف الثانوي للماغنيتو:}
+\ans{B}{يُحَثّ (يتولد بالحث) عندما تُقطع الدائرة الابتدائية.}
+\sharh{لا يوجد أي اتصال كهربائي «ينقل» التيار من الابتدائي إلى الثانوي بالتوصيل؛ النقل يتم \textbf{بالحث المغناطيسي}. عندما يسري تيار في الابتدائي يكوّن حوله مجالاً مغناطيسياً يحيط أيضاً بالثانوي (لأنه ملفوف فوقه). عندما تُفتح النقاط وينقطع التيار الابتدائي فجأة، ينهار هذا المجال بسرعة، وانهياره السريع يقطع لفات الثانوي الكثيرة، فيتولد فيها جهد عالٍ جداً يدفع تياراً ثانوياً نحو الشمعة.}
+\nohead
+\no{A}{التيار في الثانوي ليس «مُوصَلاً» (\en{conducted}) من الابتدائي ولا يأتي من تفريغ المكثف؛ إنه \textbf{محثوث} (\en{induced}).}
+\no{C}{الابتدائي لا «يفرّغ» عبر النقاط؛ الحدث المهم هو \textbf{قطع} (\en{interrupt}) التيار عند فتحها.}
+\tip{كلمتان معاً: \en{Induced} + \en{interrupted} (حَثّ عند القطع).}
+\qsep
+
+\Q{8596}{The spark occurs at the spark plug when the ignition's}
+{Secondary circuit is completed.}
+{Primary circuit is completed.}
+{Primary circuit is broken.}{C}
+\tr{تحدث الشرارة في الشمعة عندما تكون الدائرة ... في نظام الإشعال:}
+\ans{C}{الابتدائية مقطوعة (عند انكسار الدائرة الابتدائية).}
+\sharh{نفس فكرة 8514: لحظة الشرارة = لحظة \textbf{فتح} النقاط وقطع التيار الابتدائي. ما دامت النقاط مغلقة، فالتيار يسري في الابتدائي بشكل طبيعي ولا يحدث شيء في الشمعة. لحظة الانقطاع هي لحظة الانهيار السريع للمجال، وهي لحظة الجهد العالي.}
+\nohead
+\no{A}{الدائرة الثانوية «تكتمل» عندما تقفز الشرارة نفسها (الشرارة هي التي تكمل الدائرة)، فهذا نتيجة وليس سبباً.}
+\no{B}{اكتمال الدائرة الابتدائية (إغلاق النقاط) هو مرحلة بناء التيار، ولا يعطي شرارة.}
+\tip{\en{broken / interrupted / open} = شرارة. \en{completed / closed} = بناء تيار.}
+\qsep
+
+\Q{8529}{The spark is produced in a magneto ignition system when the breaker points are}
+{Fully open.}
+{Beginning to open.}
+{Fully closed.}{B}
+\tr{تتولد الشرارة في نظام إشعال الماغنيتو عندما تكون النقاط:}
+\ans{B}{في بداية الفتح.}
+\sharh{الشرارة لا تنتظر أن تُفتح النقاط بالكامل. لحظة انفصال النقطتين (أول جزء من المليمتر) هي لحظة انقطاع التيار الابتدائي، ويحدث الانهيار السريع والشرارة فوراً. عندما تصل النقاط إلى أقصى فتح تكون الشرارة قد حدثت وانتهت تقريباً.}
+\nohead
+\no{A}{عند الفتح الكامل لم يعد هناك تيار يُقطع؛ الحدث انتهى.}
+\no{C}{النقاط المغلقة = تيار يُبنى، لا شرارة.}
+\tip{«\textbf{بداية} الفتح» = لحظة القطع = الشرارة.}
+\qsep
+
+\Q{8521}{When will the voltage in the secondary winding of a magneto, installed on a normally operating engine, be at its highest value?}
+{Just prior to spark plug firing.}
+{Toward the latter part of the spark duration when the flame front reaches its maximum velocity.}
+{Immediately after the breaker points close.}{A}
+\tr{متى يكون الجهد في الملف الثانوي لماغنيتو مركّب على محرك يعمل بشكل طبيعي في أعلى قيمة له؟}
+\ans{A}{قبل اشتعال الشمعة مباشرة.}
+\sharh{بعد فتح النقاط يبدأ الجهد في الثانوي بالارتفاع بسرعة كبيرة. يستمر في الارتفاع إلى أن يصل إلى القيمة التي تكفي لكسر عزل الهواء في فجوة الشمعة (جهد الانهيار). في تلك اللحظة تقفز الشرارة، وبمجرد أن تقفز يصبح الهواء المؤيَّن في الفجوة موصلاً، فينخفض الجهد فوراً إلى قيمة أقل بكثير تكفي فقط لإبقاء الشرارة. إذن أعلى جهد = لحظة ما \textbf{قبل} الشرارة مباشرة.
+
+تشبيه: سد ماء يرتفع خلفه الماء حتى يكسره. أعلى منسوب للماء يكون قبل لحظة الكسر، بعدها ينخفض.}
+\nohead
+\no{B}{أثناء الشرارة الجهد منخفض نسبياً، وسرعة جبهة اللهب لا علاقة لها بجهد الملف.}
+\no{C}{بعد إغلاق النقاط مباشرة لا يوجد جهد عالٍ في الثانوي أصلاً؛ نحن في مرحلة بناء التيار الابتدائي.}
+\tip{الجهد يرتفع «حتى يكسر الفجوة» $\Leftarrow$ قمته \textbf{قبل} الكسر (\en{just prior}).}
+\qsep
+
+\Q{8539}{The amount of voltage generated in any magneto secondary coil is determined by the number of windings and by the}
+{Rate of buildup of the magnetic field around the primary coil.}
+{Rate of collapse of the magnetic field around the primary coil.}
+{Amount of charge released by the capacitor.}{B}
+\tr{يتحدد مقدار الجهد المتولد في الملف الثانوي لأي ماغنيتو بعدد اللفات وبـ:}
+\ans{B}{سرعة انهيار المجال المغناطيسي حول الملف الابتدائي.}
+\sharh{تذكّر القانون: الجهد = عدد اللفات × سرعة تغير الفيض. في الماغنيتو التغير المهم هو \textbf{الانهيار} المفاجئ للمجال حول الابتدائي عندما تُفتح النقاط. هذا الانهيار يحدث في جزء صغير جداً من الثانية، ولذلك يعطي جهداً هائلاً. أما \textbf{بناء} المجال (عندما تكون النقاط مغلقة) فيحدث ببطء نسبياً مع دوران المغناطيس، فلا يعطي جهداً كبيراً.}
+\nohead
+\no{A}{سرعة \textbf{البناء} بطيئة ولا تحدد الجهد العالي؛ الكلمة الصحيحة \en{collapse} (انهيار).}
+\no{C}{المكثف يساعد على تسريع الانهيار، لكن الجهد ليس «شحنة يطلقها المكثف».}
+\tip{\en{Secondary voltage} = \en{turns} × \en{rate of collapse}.}
+\qsep
+
+\Q{8523}{As an aircraft engine's speed is increased, the voltage induced in the primary coil of the magneto}
+{Remains constant.}
+{Increases.}
+{Varies with the setting of the voltage regulator.}{B}
+\tr{عند زيادة سرعة محرك الطائرة، فإن الجهد المحثوث في الملف الابتدائي للماغنيتو:}
+\ans{B}{يزداد.}
+\sharh{الماغنيتو يدور بتروس من المحرك، فكلما زادت سرعة المحرك زادت سرعة المغناطيس الدوار. سرعة أكبر = الفيض يتغير (يُقطع) بسرعة أكبر = جهد محثوث أكبر في الابتدائي. هذا تطبيق مباشر لقانون الحث.
+
+(لهذا السبب يكون الماغنيتو ضعيفاً جداً عند سرعات التدوير البطيئة أثناء بدء التشغيل، ولهذا نحتاج \en{impulse coupling} أو \en{Shower of Sparks}).}
+\nohead
+\no{A}{الجهد ليس ثابتاً؛ لا يوجد في الماغنيتو ما يثبّته.}
+\no{C}{الماغنيتو \textbf{لا يحتوي على منظم جهد} (\en{voltage regulator})؛ المنظم موجود في نظام المولد الكهربائي للطائرة.}
+\tip{مولّد = كلما دار أسرع ولّد أكثر. الماغنيتو مولّد.}
+\qsep
+
+\Q{8513}{What is the electrical location of the primary capacitor in a high-tension magneto?}
+{In parallel with the breaker points.}
+{In series with the breaker points.}
+{In series with the primary and secondary winding.}{A}
+\tr{ما الموقع الكهربائي للمكثف الابتدائي في الماغنيتو عالي الجهد؟}
+\ans{A}{على التوازي مع نقاط القاطع.}
+\sharh{انظر إلى الرسم في «الصورة الكبيرة»: من الطرف غير المؤرض للملف الابتدائي تخرج ثلاثة فروع، كل فرع ينتهي بالأرضي:
+\begin{enumerate}[label=\arabic*.]
+  \item نقاط القاطع،
+  \item المكثف،
+  \item مفتاح الإشعال (عبر \en{P-lead}).
+\end{enumerate}
+ثلاثة أشياء موصولة بين نفس النقطتين = \textbf{على التوازي}. يجب أن يكون المكثف على التوازي مع النقاط حتى يكون «طريقاً بديلاً» للتيار لحظة فتحها، فيمتصه بدل أن يقفز بين النقاط.}
+\nohead
+\no{B}{لو كان على التوالي مع النقاط، فإن فتح النقاط سيقطع المكثف أيضاً، ولن يستطيع امتصاص الشرارة.}
+\no{C}{المكثف جزء من الدائرة الابتدائية فقط، وليس موصولاً بالثانوي.}
+\tip{النقاط والمكثف والمفتاح = \textbf{ثلاثة إخوة على التوازي}.}
+\qsep
+
+\Q{8520}{In an aircraft ignition system, one of the functions of the capacitor is to}
+{Regulate the flow of current between the primary and secondary coil.}
+{Facilitate a more rapid collapse of the magnetic field in the primary coil.}
+{Stop the flow of magnetic lines of force when the points open.}{B}
+\tr{في نظام إشعال الطائرة، إحدى وظائف المكثف هي:}
+\ans{B}{تسهيل انهيار أسرع للمجال المغناطيسي في الملف الابتدائي.}
+\sharh{عندما تبدأ النقاط بالانفصال، لا تنقطع الدائرة في لحظة واحدة؛ المقاومة بينهما تزداد تدريجياً خلال جزء صغير من الثانية. التيار يحاول الاستمرار، وبدون مكثف سيقفز بين النقطتين على شكل قوس، فيبقى التيار يسري «ببطء» ويتباطأ الانهيار.
+
+مع المكثف: التيار «يرى» أمامه طريقاً سهلاً منخفض المقاومة إلى الأرضي عبر المكثف، فيدخل إليه بدل محاولة القفز بين النقاط. بهذا يتوقف التيار في النقاط بشكل نظيف وسريع، فينهار المجال المغناطيسي بسرعة أكبر $\Leftarrow$ جهد أعلى في الثانوي.
+
+الوظيفتان معاً: (1) منع احتراق النقاط، (2) تسريع الانهيار.}
+\nohead
+\no{A}{المكثف لا ينظم التيار بين الملفين؛ العلاقة بين الملفين حث مغناطيسي فقط.}
+\no{C}{المكثف جهاز كهربائي يخزن الشحنة، ولا يستطيع «إيقاف خطوط القوة المغناطيسية».}
+\tip{المكثف = \textbf{«إسفنجة» الشرارة}: يمتص التيار $\Leftarrow$ النقاط سليمة + الانهيار أسرع.}
+\qsep
+
+\Q{8526}{A defective primary capacitor in a magneto is indicated by}
+{A fine-grained frosted appearance of the breaker points.}
+{Burned and pitted breaker points.}
+{A weak spark.}{B}
+\tr{ما الذي يدل على تلف المكثف الابتدائي في الماغنيتو؟}
+\ans{B}{نقاط قاطع محترقة ومُتنقّرة.}
+\sharh{إذا تلف المكثف، لم يعد هناك من يمتص التيار عند فتح النقاط، فيقفز التيار بينها على شكل قوس كهربائي في كل مرة (آلاف المرات في الدقيقة). هذا القوس حار جداً، فيحرق سطح النقاط وينقل المعدن من نقطة إلى أخرى، فتظهر حُفر (\en{pits}) في إحداها ونتوءات في الأخرى، ويصبح لونها أسود محروقاً.}
+\nohead
+\no{A}{المظهر الرمادي الفضي الناعم الحبيبات (\en{fine-grained frosted}) هو مظهر النقاط \textbf{السليمة} العاملة بشكل طبيعي.}
+\no{C}{قد تضعف الشرارة فعلاً، لكن العلامة \textbf{المميِّزة} التي يراها الفني عند الفحص هي احتراق النقاط وتنقّرها. الشرارة الضعيفة لها أسباب كثيرة أخرى.}
+\tip{مكثف تالف $\Leftarrow$ قوس $\Leftarrow$ \en{burned + pitted}.}
+\qsep
+
+\Q{8550}{Which of the following breaker point characteristics is associated with a faulty capacitor?}
+{Crowned.}
+{Fine grained.}
+{Coarse grained.}{C}
+\tr{أي من خصائص النقاط التالية يرتبط بمكثف معطوب؟}
+\ans{C}{حبيبات خشنة.}
+\sharh{النقاط السليمة لها مظهر رمادي فضي يشبه الصقيع وحبيباته \textbf{ناعمة}. أما المكثف المعطوب فيسمح بالقوس الكهربائي بين النقاط، فيصبح سطحها \textbf{خشن الحبيبات} ومغطى بالسخام (\en{coarse-grained and sooty}). لا تخلط بين الاثنين.}
+\nohead
+\no{A}{\en{Crowned} (مُحدّب) وصف لشكل سطح النقطة، وليس علامة مرتبطة بالمكثف.}
+\no{B}{ناعمة الحبيبات = النقاط \textbf{السليمة}.}
+\tip{\en{Fine} = \textbf{\en{Fine}} (بخير). \en{Coarse} = خشن = مكثف معطوب.}
+\qsep
+
+\Q{8566}{In a high-tension ignition system, a primary capacitor of too low a capacity will cause}
+{Excessive primary voltage.}
+{Excessively high secondary voltage.}
+{The breaker contacts to burn.}{C}
+\tr{في نظام الإشعال عالي الجهد، مكثف ابتدائي سعته أقل من اللازم سيسبب:}
+\ans{C}{احتراق نقاط القاطع.}
+\sharh{سعة المكثف = كمية الشحنة التي يستطيع امتصاصها. إذا كانت السعة صغيرة، يمتلئ المكثف بسرعة ولا يستطيع امتصاص كل الاندفاعة (\en{surge}) لحظة فتح النقاط، فيقفز الباقي بين النقاط على شكل قوس $\Leftarrow$ احتراق النقاط. (وبالمناسبة، إذا كانت السعة أكبر من اللازم فالنتيجة أيضاً مشكلة في النقاط، وتضعف الشرارة).}
+\nohead
+\no{A}{سعة المكثف لا تجعل الجهد الابتدائي «مفرطاً».}
+\no{B}{مكثف ضعيف يعني انهياراً أبطأ، أي جهد ثانوي \textbf{أقل} لا أعلى.}
+\tip{أي مشكلة في المكثف (تالف / صغير) = قوس = \textbf{نقاط محروقة}.}
+\qsep
+
+\Q{8558}{What should be used to clean grease or carbon tracks from capacitors or coils that are used in magnetos?}
+{Solvent.}
+{Acetone.}
+{Naphtha.}{B}
+\tr{ما الذي يُستخدم لتنظيف الشحم أو مسارات الكربون عن المكثفات أو الملفات المستخدمة في المغانط؟}
+\ans{B}{الأسيتون.}
+\sharh{مسارات الكربون (\en{carbon tracks}) خطوط رفيعة موصلة تتكون على سطح العازل وتسمح للجهد العالي بالتسرب. يجب إزالتها مع الشحم دون إتلاف عازل المكثف أو الملف. يُستخدم \textbf{قماش لا يترك وبراً} (\en{lint-free}) مبلل بالأسيتون، لأن الأسيتون يذيب الشحم بفعالية ويتبخر بسرعة كبيرة دون أن يترك أي بقايا.}
+\nohead
+\no{A}{«مذيب» كلمة عامة؛ بعض المذيبات تترك طبقة زيتية أو تتلف العوازل.}
+\no{C}{النفثا تترك بقايا وقد تضر بعض المواد العازلة، وليست المادة الموصى بها هنا.}
+\tip{مكثفات وملفات الماغنيتو $\Leftarrow$ \textbf{أسيتون} على قماش لا يترك وبراً.}
+\qsep
+
+\Q{8612}{The secondary coil of a magneto is grounded through the}
+{Ignition switch.}
+{Primary coil.}
+{Grounded side of the breaker points.}{B}
+\tr{الملف الثانوي في الماغنيتو يتصل بالأرضي عن طريق:}
+\ans{B}{الملف الابتدائي.}
+\sharh{تركيب الملف: الابتدائي ملفوف على القلب الحديدي، وطرفه الأول مؤرض بالقلب. الثانوي ملفوف \textbf{فوق} الابتدائي، وطرفه الأول موصول بالملف الابتدائي، وطرفه الثاني يخرج إلى طرف الجهد العالي ثم إلى الموزع. إذن لكي يصل الثانوي إلى الأرضي، يمر عبر الملف الابتدائي ثم إلى القلب المؤرض.}
+\nohead
+\no{A}{مفتاح الإشعال جزء من الدائرة الابتدائية (يؤرّض الابتدائي لإيقاف الماغنيتو)، ولا يؤرض الثانوي.}
+\no{C}{النقاط موصولة بالابتدائي فقط، والثانوي لا يمر عبرها.}
+\tip{الثانوي «يركب على ظهر» الابتدائي $\Leftarrow$ يؤرَّض عن طريقه.}
+\qsep
+
+\Q{8562}{The electrical circuit from the spark plug back to the magneto is completed by grounding through the}
+{Engine structure.}
+{P-lead.}
+{Cockpit switch.}{A}
+\tr{تكتمل الدائرة الكهربائية من الشمعة عائدة إلى الماغنيتو عن طريق التأريض عبر:}
+\ans{A}{هيكل المحرك.}
+\sharh{التيار الثانوي يسير: الملف الثانوي $\Leftarrow$ دوار الموزع $\Leftarrow$ سلك الجهد العالي $\Leftarrow$ القطب الأوسط للشمعة $\Leftarrow$ يقفز عبر الفجوة إلى القطب الأرضي $\Leftarrow$ جسم الشمعة المعدني المربوط في رأس الأسطوانة $\Leftarrow$ \textbf{هيكل المحرك المعدني} $\Leftarrow$ قاعدة تثبيت الماغنيتو $\Leftarrow$ أرضي الماغنيتو $\Leftarrow$ الابتدائي $\Leftarrow$ الثانوي. فهيكل المحرك هو «سلك الرجوع».}
+\nohead
+\no{B}{\en{P-lead} سلك في الدائرة \textbf{الابتدائية} يصل إلى مفتاح الإشعال.}
+\no{C}{مفتاح القمرة يتحكم بالتأريض الابتدائي لإيقاف الماغنيتو، ولا يمر به تيار الشمعة.}
+\tip{الشرارة تقفز إلى جسم الشمعة $\Leftarrow$ الجسم مربوط بالمحرك $\Leftarrow$ \textbf{المحرك} هو طريق العودة.}
+\qsep
+
+\Q{8510}{What is the purpose of a safety gap in some magnetos?}
+{To discharge the secondary coil's voltage if an open occurs in the secondary circuit.}
+{To ground the magneto when the ignition switch is off.}
+{To prevent flashover in the distributor.}{A}
+\tr{ما الغرض من فجوة الأمان في بعض المغانط؟}
+\ans{A}{تفريغ جهد الملف الثانوي إذا حدث انقطاع (دائرة مفتوحة) في الدائرة الثانوية.}
+\sharh{في الوضع الطبيعي، الجهد في الثانوي يرتفع حتى يكسر فجوة الشمعة (حوالي 10 إلى 20 ألف فولت) ثم يتفرغ. لكن تخيّل أن سلك الشمعة غير موصول (مثلاً نسيه الفني بعد الصيانة). الآن لا يوجد مكان يتفرغ فيه الجهد، فيستمر في الارتفاع إلى قيم أعلى بكثير، حتى يخترق العازل بين لفات الملف الثانوي نفسه ويحرقه، فيتلف الملف نهائياً.
+
+فجوة الأمان: فجوة هوائية بين طرف الجهد العالي والأرضي، مسافتها أكبر من فجوة الشمعة بحيث لا تعمل في الحالة الطبيعية، لكنها أصغر من الحد الذي يتلف عنده العازل. فإذا انقطعت الدائرة الثانوية، يقفز الجهد عبر فجوة الأمان بأمان إلى الأرضي.}
+\nohead
+\no{B}{تأريض الماغنيتو عند الإطفاء وظيفة مفتاح الإشعال و\en{P-lead}، في الدائرة الابتدائية.}
+\no{C}{فجوة الأمان لا تمنع القفز العرضي داخل الموزع (\en{flashover})؛ ذلك يمنعه العزل الجيد والتهوية والنظافة.}
+\tip{\en{Safety gap} = «صمام أمان» للجهد العالي إذا لم يجد شمعة.}
+\qsep
+
+\Q{8525}{The purpose of a safety gap in a magneto is to}
+{Prevent burning out the primary winding.}
+{Protect the high-voltage winding from damage.}
+{Prevent burning of contact points.}{B}
+\tr{الغرض من فجوة الأمان في الماغنيتو هو:}
+\ans{B}{حماية الملف عالي الجهد (الثانوي) من التلف.}
+\sharh{نفس الفكرة في 8510. فجوة الأمان موجودة في الدائرة \textbf{الثانوية}، والشيء الذي تحميه هو عازل الملف \textbf{الثانوي} (\en{high-voltage winding}). إذا كان هناك انقطاع في الدائرة الثانوية (سلك شمعة مفصول)، يقفز الجهد عبر فجوة الأمان قبل أن يرتفع بما يكفي لإتلاف عازل الملف الثانوي.}
+\nohead
+\no{A}{الملف الابتدائي جهده منخفض ولا يحتاج إلى فجوة أمان.}
+\no{C}{حماية النقاط من الاحتراق وظيفة \textbf{المكثف}.}
+\tip{\en{Safety gap} يحمي \en{Secondary} (حرف \en{S} مع \en{S}). المكثف يحمي النقاط.}
+
+\newpage
+% =====================================================================
+\section{مفتاح الإشعال، سلك \en{P-lead}، وفحوصات المحرك على الأرض}
+% =====================================================================
+
+\begin{concept}{المفهوم: المفتاح «المعكوس» وفحص المغانط (\en{mag check})}
+\textbf{1) مفتاح الماغنيتو موصول على التوازي مع النقاط.} عندما يكون المفتاح \textbf{مغلقاً} (= وضع \en{OFF})، يصبح للتيار الابتدائي طريق دائم إلى الأرضي، فلا تستطيع النقاط قطعه عند فتحها، فلا انهيار ولا شرارة. لذلك:
+\begin{center}
+\textbf{لإيقاف الماغنيتو يجب «تأريض» دائرته الابتدائية، وليس فتحها.}
+\end{center}
+\textbf{2) نظام إشعال البطارية (مثل السيارة) عكس ذلك:} مصدر الطاقة هو البطارية، فلإيقافه نفتح الدائرة (نقطع البطارية). عند \en{OFF} تكون الدائرة الابتدائية \textbf{مفتوحة}.
+
+\textbf{3) سلك \en{P-lead} مقطوع = ماغنيتو «حار»:} المفتاح لم يعد يستطيع تأريضه، فيبقى يعمل في كل أوضاع المفتاح، والمحرك لا يتوقف عند وضع \en{OFF}. خطر جداً على من يحرك المروحة يدوياً.
+
+\textbf{4) فحص المغانط أثناء التشغيل الأرضي (\en{run-up}):} نثبت سرعة المحرك (مثلاً 1,700 \en{RPM}) ثم ننقل المفتاح من \en{BOTH} إلى \en{L} ثم نعود إلى \en{BOTH} ثم إلى \en{R}:
+\begin{itemize}
+  \item \textbf{انخفاض بسيط في السرعة (\en{RPM drop})} = طبيعي، لأن الاحتراق بشمعة واحدة أبطأ من الاحتراق بشمعتين.
+  \item \textbf{لا انخفاض أبداً} = مشبوه (قد يكون الماغنيتو الآخر لا يتأرض = \en{P-lead} مقطوع).
+  \item \textbf{انخفاض سريع وكبير} = مشكلة في \textbf{الشمعات} (متسخة أو معطوبة).
+  \item \textbf{انخفاض بطيء تدريجي} = مشكلة في \textbf{التوقيت} أو ضبط \textbf{الصمامات}.
+\end{itemize}
+\textbf{5) فحص مفتاح الإشعال (\en{ignition switch check}):} في أبطأ سرعة ممكنة (\en{idle})، نضع المفتاح لحظياً على \en{OFF}: يجب أن يبدأ المحرك بالتوقف، ثم نعيده فوراً إلى \en{BOTH}.
+\end{concept}
+
+\Q{8528}{A magneto ignition switch is connected}
+{In series with the breaker points.}
+{Parallel to the breaker points.}
+{In series with the primary capacitor and parallel to the breaker points.}{B}
+\tr{يوصَل مفتاح إشعال الماغنيتو:}
+\ans{B}{على التوازي مع نقاط القاطع.}
+\sharh{المفتاح هو الفرع الثالث من «الإخوة الثلاثة» الموصولين على التوازي (النقاط، المكثف، المفتاح). يجب أن يكون على التوازي حتى يستطيع، عندما يُغلق (\en{OFF})، أن يعطي التيار الابتدائي طريقاً إلى الأرضي «يتجاوز» النقاط (\en{bypass}). بهذا عندما تُفتح النقاط يستمر التيار بالسريان عبر المفتاح، فلا يحدث انقطاع ولا شرارة.
+
+لو كان على التوالي، لكان الإيقاف بفتحه (مثل البطارية)، لكن الماغنيتو يولد الكهرباء بنفسه، ولا يمكن إيقافه بهذه الطريقة بأمان.}
+\nohead
+\no{A}{على التوالي = يعمل مثل مفتاح عادي؛ هذا ليس تصميم الماغنيتو.}
+\no{C}{المفتاح ليس على التوالي مع المكثف؛ المكثف والمفتاح كلاهما فرع مستقل على التوازي.}
+\tip{مفتاح الماغنيتو = «\textbf{تحويلة}» حول النقاط (\en{parallel}).}
+\qsep
+
+\Q{8570}{When the ignition switch of a single (reciprocating) engine aircraft is turned to the OFF position,}
+{The primary circuits of both magnetos are grounded.}
+{The secondary circuits of both magnetos are opened.}
+{All circuits are automatically opened.}{A}
+\tr{عندما يُدار مفتاح الإشعال في طائرة ذات محرك مكبسي واحد إلى وضع \en{OFF}:}
+\ans{A}{تُؤرَّض الدائرتان الابتدائيتان للمغناطيسين كليهما.}
+\sharh{الشرح الأصلي يوضح «المنطق المعكوس»:
+\begin{itemize}
+  \item \textbf{المفتاح مفتوح (= \en{ON}):} التيار الابتدائي يمر عبر النقاط فقط، والنقاط تقطعه في الوقت المناسب، فيتولد جهد عالٍ في الثانوي.
+  \item \textbf{المفتاح مغلق (= \en{OFF}):} الملف الابتدائي موصول بالأرضي مباشرة. التيار المحثوث يذهب إلى الأرضي ولا يُقطع أبداً $\Leftarrow$ لا جهد عالٍ في الثانوي.
+\end{itemize}
+وفي وضع \en{OFF} يحدث هذا للمغناطيسين معاً.}
+\nohead
+\no{B}{المفتاح لا يلمس الدوائر الثانوية أبداً.}
+\no{C}{لا شيء «يُفتح»؛ العكس، المفتاح \textbf{يُغلق} إلى الأرضي.}
+\tip{\en{OFF} في الماغنيتو = \en{Grounded} (مؤرَّض). تذكّر: «\en{OFF = Grounded = Closed}».}
+\qsep
+
+\Q{8582}{In order to turn a magneto off, the primary circuit must be}
+{Grounded.}
+{Opened.}
+{Shorted.}{A}
+\tr{لإيقاف الماغنيتو يجب أن تكون الدائرة الابتدائية:}
+\ans{A}{مؤرَّضة.}
+\sharh{التيار يسري في الدائرة الابتدائية كلما دار المغناطيس، أي ما دام المحرك يدور، ولا يمكن منعه. الشيء الوحيد الذي نستطيع التحكم به هو «هل تقطعه النقاط أم لا؟». إذا أرّضنا الدائرة الابتدائية بالمفتاح، فإن التيار يجد طريقاً دائماً إلى الأرضي ولا تقطعه النقاط أبداً، فلا يتولد جهد عالٍ في الثانوي. الماغنيتو يكون في وضع \en{OFF} عندما تكون دائرته الابتدائية مؤرضة.}
+\nohead
+\no{B}{\textbf{فتح} الدائرة هو ما تفعله النقاط بالضبط لتوليد الشرارة! فتحها يعني تشغيله لا إيقافه. (الفتح يوقف نظام \textbf{البطارية} فقط).}
+\no{C}{«\en{Shorted}» قريب في المعنى، لكن المصطلح الدقيق المستخدم في الامتحان هو \en{Grounded}.}
+\tip{الماغنيتو \textbf{يُؤرَّض} ليتوقف. البطارية \textbf{تُفتح} لتتوقف. (قارن مع 8522).}
+\qsep
+
+\Q{8522}{When the switch is off in a battery ignition system, the primary circuit is}
+{Grounded.}
+{Opened.}
+{Shorted.}{B}
+\tr{عندما يكون المفتاح على \en{OFF} في نظام إشعال يعمل بالبطارية، تكون الدائرة الابتدائية:}
+\ans{B}{مفتوحة.}
+\sharh{في نظام إشعال البطارية (مثل السيارات القديمة)، مصدر التيار الابتدائي هو \textbf{البطارية}، وليس مغناطيساً دواراً. المفتاح موصول على \textbf{التوالي} مع البطارية والملف والنقاط، مثل مفتاح المصباح في البيت. عندما نضعه على \en{OFF} تُفتح الدائرة، فلا يصل تيار البطارية إلى الملف الابتدائي ولا يحدث شيء.
+
+هذا السؤال «فخ» مقصود: إذا حفظت أن «\en{OFF} = مؤرض» دون أن تنتبه لكلمة \en{battery} ستخطئ.}
+\nohead
+\no{A}{التأريض هو طريقة إيقاف \textbf{الماغنيتو}، لا نظام البطارية. تأريض دائرة البطارية يسبب تياراً كبيراً واستنزافاً للبطارية.}
+\no{C}{التقصير (\en{short}) مع البطارية خطير ويستنزفها ويحرق الأسلاك.}
+\tip{اقرأ السؤال: \en{battery} $\Leftarrow$ \en{Opened}. \en{magneto} $\Leftarrow$ \en{Grounded}.}
+\qsep
+
+\Q{8581}{When does battery current flow through the primary circuit of a battery ignition coil?}
+{Only when the breaker points are open.}
+{At all times when the ignition switch is on.}
+{When the breaker points are closed and the ignition switch is on.}{C}
+\tr{متى يسري تيار البطارية في الدائرة الابتدائية لملف الإشعال في نظام البطارية؟}
+\ans{C}{عندما تكون النقاط مغلقة ومفتاح الإشعال على \en{ON}.}
+\sharh{في نظام البطارية، الدائرة الابتدائية هي: البطارية $\Leftarrow$ المفتاح $\Leftarrow$ الملف الابتدائي $\Leftarrow$ النقاط $\Leftarrow$ الأرضي. كل هذه الأجزاء على \textbf{التوالي}. لكي يسري التيار يجب أن تكون الدائرة كلها مغلقة، أي يجب أن يكون المفتاح مغلقاً (\en{ON}) \textbf{و} النقاط مغلقة معاً. عندما تُفتح النقاط ينقطع التيار، فينهار المجال وتحدث الشرارة.}
+\nohead
+\no{A}{النقاط المفتوحة تقطع الدائرة، فلا يمر تيار.}
+\no{B}{حتى لو كان المفتاح \en{ON}، النقاط تفتح الدائرة جزءاً من الوقت، فلا يسري التيار «في كل الأوقات».}
+\tip{دائرة على التوالي = كل المفاتيح يجب أن تكون مغلقة: \textbf{المفتاح \en{ON} + النقاط مغلقة}.}
+\qsep
+
+\Q{8579}{Which of the following statements regarding magneto switch circuits is NOT true?}
+{In the BOTH position, the right and left magneto circuits are grounded.}
+{In the OFF position, neither the right nor left magneto circuits are open.}
+{In the RIGHT position, the right magneto circuit is open and the left magneto circuit is grounded.}{A}
+\tr{أي العبارات التالية حول دوائر مفتاح الماغنيتو \textbf{غير} صحيحة؟}
+\ans{A}{«في وضع \en{BOTH} تكون دائرتا الماغنيتو الأيمن والأيسر مؤرضتين» — هذه هي العبارة الخاطئة.}
+\sharh{انتبه: السؤال يطلب العبارة \textbf{الخاطئة} (\en{NOT true}). راجع جدول المفتاح في «الصورة الكبيرة»:
+\begin{itemize}
+  \item \en{BOTH}: المغناطيسان \textbf{غير مؤرضين} (دائرتا التأريض مفتوحتان)، فكلاهما يعمل. العبارة A تقول «مؤرضان» $\Leftarrow$ \textbf{خطأ}، فهي الجواب.
+  \item \en{OFF}: كلاهما مؤرض، أي لا يوجد أي منهما «مفتوح» $\Leftarrow$ العبارة B \textbf{صحيحة}.
+  \item \en{RIGHT}: الأيمن مفتوح (يعمل) والأيسر مؤرض (متوقف) $\Leftarrow$ العبارة C \textbf{صحيحة}.
+\end{itemize}}
+\nohead
+\no{B}{هذه العبارة صحيحة (في \en{OFF} كلاهما مؤرض)، والسؤال يطلب الخاطئة.}
+\no{C}{هذه العبارة صحيحة أيضاً.}
+\tip{«مفتوح» في لغة الماغنيتو = \textbf{يعمل}. «مؤرض» = \textbf{متوقف}. \en{BOTH} = كلاهما يعمل = كلاهما \textbf{مفتوح}.}
+\qsep
+
+\Q{8534}{Failure of an engine to cease firing after turning the magneto switch off is an indication of}
+{An open high tension lead.}
+{An open P-lead to ground.}
+{A grounded magneto switch.}{B}
+\tr{استمرار المحرك في الإشعال بعد إدارة مفتاح الماغنيتو إلى \en{OFF} يدل على:}
+\ans{B}{انقطاع في سلك \en{P-lead} إلى الأرضي.}
+\sharh{لإيقاف الماغنيتو، يجب أن يصل «أمر التأريض» من المفتاح إلى الدائرة الابتدائية عبر سلك \en{P-lead}. إذا كان هذا السلك مقطوعاً (\en{open}) أو مفصولاً، فإن المفتاح يغلق دائرة لا تصل إلى أي شيء، والماغنيتو لا يعلم أن المفتاح على \en{OFF}، فيستمر في إعطاء الشرر والمحرك يستمر في الدوران.}
+\nohead
+\no{A}{سلك الجهد العالي المقطوع يجعل شمعة واحدة لا تعمل، ولا علاقة له بإيقاف المحرك.}
+\no{C}{المفتاح المؤرض (قصر إلى الأرضي) يجعل الماغنيتو \textbf{متوقفاً دائماً}، أي المشكلة العكسية: المحرك لا يشتغل.}
+\tip{لا يتوقف $\Leftarrow$ لا يتأرض $\Leftarrow$ \textbf{\en{P-lead} مقطوع (\en{open})}.}
+\qsep
+
+\Q{8568}{If an aircraft ignition switch is turned off and the engine continues to run normally, the trouble is probably caused by}
+{An open ground lead in the magneto.}
+{Arcing magneto breaker points.}
+{Primary lead grounding.}{A}
+\tr{إذا أُطفئ مفتاح الإشعال واستمر المحرك يعمل بشكل طبيعي، فالمشكلة على الأرجح بسبب:}
+\ans{A}{انقطاع في سلك التأريض في الماغنيتو.}
+\sharh{نفس فكرة 8534. «سلك التأريض» (\en{ground lead}) هنا هو نفسه \en{P-lead}. الشرح الأصلي يلاحظ أن الانقطاع لا يجب أن يكون داخل الماغنيتو بالضبط كما يقول السؤال، بل في أي مكان على طول دائرة \en{P-lead} بين الماغنيتو والمفتاح، لكن هذا هو أقرب خيار.}
+\nohead
+\no{B}{النقاط التي تُحدث قوساً تُضعف الإشعال (مكثف تالف)، ولا تمنع الإيقاف.}
+\no{C}{تأريض السلك الابتدائي يعني إيقاف الماغنيتو، أي العكس.}
+\tip{أي سؤال «أطفأت ولم يتوقف» $\Leftarrow$ ابحث عن \textbf{\en{open}} + \textbf{\en{ground / P-lead}}.}
+\qsep
+
+\Q{8599}{If the ground wire of a magneto is disconnected at the ignition switch, the result will be the}
+{Affected magneto will be isolated and the engine will run on the opposite magneto.}
+{Engine will stop running.}
+{Engine will not stop running when the ignition switch is turned off.}{C}
+\tr{إذا انفصل سلك التأريض لماغنيتو عند مفتاح الإشعال، فالنتيجة:}
+\ans{C}{المحرك لن يتوقف عن الدوران عند إدارة المفتاح إلى \en{OFF}.}
+\sharh{انفصال السلك عند المفتاح = نفس انقطاع \en{P-lead}. الماغنيتو المعني يصبح «حاراً» (\en{hot})، أي يعمل دائماً بغض النظر عن وضع المفتاح. أثناء الطيران لن تلاحظ شيئاً (المحرك يعمل طبيعياً)، لكن عند الإيقاف بالمفتاح لن يتوقف المحرك. وهذا يجعل تحريك المروحة يدوياً خطيراً جداً.}
+\nohead
+\no{A}{الماغنيتو لن «ينعزل» ويتوقف؛ العكس، سيبقى يعمل دائماً.}
+\no{B}{المحرك لا يتوقف؛ انفصال سلك التأريض يُبقي الماغنيتو يعمل.}
+\tip{\en{Ground wire} مفصول = ماغنيتو \en{\textbf{HOT}} = لا يتوقف.}
+\qsep
+
+\Q{8613}{In the aircraft magneto system, if the P-lead is disconnected, the magneto will be}
+{On regardless of ignition switch position.}
+{Grounded regardless of ignition switch position.}
+{Open regardless of ignition switch position.}{A}
+\tr{في نظام ماغنيتو الطائرة، إذا فُصل سلك \en{P-lead}، فإن الماغنيتو سيكون:}
+\ans{A}{في وضع التشغيل (\en{ON}) مهما كان وضع المفتاح.}
+\sharh{بدون \en{P-lead} لا يوجد أي اتصال بين المفتاح والماغنيتو، والمفتاح لا يستطيع تأريضه. الماغنيتو الذي لا يمكن تأريضه = ماغنيتو \textbf{يعمل} دائماً = «حار» (\en{hot}). لذلك تعامَل كل مروحة لطائرة مكبسية وكأنها قد تشتغل في أي لحظة.}
+\nohead
+\no{B}{التأريض يحتاج إلى سلك يصل إلى الأرضي؛ وسلك \en{P-lead} مفصول، فلا تأريض.}
+\no{C}{كلمة «\en{open}» هنا لا تصف حالة الماغنيتو بشكل صحيح؛ المقصود أنه يعمل (\en{ON / hot}).}
+\tip{\en{P-lead} مفصول $\Leftarrow$ \en{ON} دائماً. هذا رابع سؤال بنفس الفكرة (8534، 8568، 8599، 8613).}
+\qsep
+
+\Q{8536}{When using a timing light to time a magneto to an aircraft engine, the magneto switch should be placed in the}
+{BOTH position.}
+{OFF position.}
+{LEFT or RIGHT position (either one).}{A}
+\tr{عند استعمال ضوء التوقيت لتوقيت الماغنيتو مع محرك الطائرة، يجب وضع مفتاح الماغنيتو على:}
+\ans{A}{وضع \en{BOTH}.}
+\sharh{ضوء التوقيت (\en{timing light}) جهاز يوصَل عبر نقاط الماغنيتو، ويضيء (أو يصدر صوتاً) عندما تُفتح النقاط، ليعرف الفني لحظة الفتح بدقة. يعمل بكشف تغير المقاومة بين النقاط: مغلقة = مقاومة صفر، مفتوحة = مقاومة عالية.
+
+إذا كان الماغنيتو مؤرضاً بالمفتاح، فإن المفتاح يكون طريقاً موازياً للنقاط إلى الأرضي، فلن يرى الضوء أي تغير عند فتح النقاط (التيار يمر عبر المفتاح). لذلك يجب أن يكون المفتاح في وضع تكون فيه دوائر التأريض \textbf{مفتوحة} للمغناطيسين، وهو وضع \en{BOTH}.}
+\nohead
+\no{B}{في \en{OFF} المغناطيسان مؤرضان، فلن يكشف الضوء فتح النقاط.}
+\no{C}{في \en{L} أو \en{R} أحد المغناطيسين مؤرض، فلن نستطيع توقيته بالضوء.}
+\tip{ضوء التوقيت يحتاج النقاط «وحدها» بلا تحويلة $\Leftarrow$ \en{BOTH} (لا تأريض لأي منهما).}
+\qsep
+
+\Q{8608}{At what RPM is a reciprocating engine ignition switch check made?}
+{1,500 RPM.}
+{The slowest possible RPM.}
+{Full throttle RPM.}{B}
+\tr{عند أي سرعة دوران يُجرى فحص مفتاح الإشعال في المحرك المكبسي؟}
+\ans{B}{عند أبطأ سرعة ممكنة.}
+\sharh{الهدف من الفحص: التأكد من أن المفتاح يؤرض المغانط فعلاً (أي أن \en{P-lead} سليم). الطريقة: يكون المحرك في سرعة الخمول الأدنى، ثم نضع المفتاح لحظياً على \en{OFF}؛ إذا بدأ المحرك يتوقف فالمفتاح يعمل، فنعيده بسرعة إلى \en{BOTH} قبل أن يتوقف.
+
+لماذا أبطأ سرعة؟ لأنه عند قطع الإشعال، يستمر الوقود في الدخول إلى الأسطوانات ويخرج دون احتراق إلى العادم. عندما نعيد الإشعال، يشتعل هذا الوقود المتجمع في العادم مرة واحدة على شكل انفجار خلفي (\en{backfire}) قد يتلف نظام العادم. في السرعة البطيئة تكون كمية الوقود قليلة، فيقل الخطر.}
+\nohead
+\no{A}{1,500 \en{RPM} سرعة مناسبة لفحص المغانط (\en{mag check})، وليست لفحص المفتاح؛ لا تخلط بينهما.}
+\no{C}{السرعة الكاملة أخطر شيء: كمية وقود كبيرة غير محترقة $\Leftarrow$ انفجار خلفي قوي.}
+\tip{فحص \textbf{المفتاح} = \textbf{أبطأ} سرعة (خطر \en{backfire}).}
+\qsep
+
+\Q{8583}{When performing a magneto ground check on an engine, correct operation is indicated by}
+{A slight increase in RPM.}
+{No drop in RPM.}
+{A slight drop in RPM.}{C}
+\tr{عند إجراء فحص تأريض المغانط على المحرك، يُستدل على العمل الصحيح بـ:}
+\ans{C}{انخفاض بسيط في سرعة الدوران.}
+\sharh{كل أسطوانة فيها شمعتان، واحدة من كل ماغنيتو. عندما يعمل الاثنان (\en{BOTH})، يبدأ الاحتراق من نقطتين، فيحترق الخليط بسرعة وبشكل كامل. عندما ننقل المفتاح إلى \en{L} أو \en{R}، تعمل شمعة واحدة فقط في كل أسطوانة، فيحترق الخليط أبطأ وتقل الكفاءة قليلاً، فتنخفض السرعة \textbf{قليلاً} (مثلاً 50 إلى 125 \en{RPM} حسب الصانع). هذا الانخفاض البسيط دليل أن الماغنيتو الآخر تأرّض فعلاً، وأن الماغنيتو العامل سليم.}
+\nohead
+\no{A}{لا يمكن أن تزيد السرعة عند تقليل عدد الشمعات العاملة.}
+\no{B}{عدم الانخفاض مشبوه: قد يعني أن الماغنيتو الذي يُفترض أنه تأرض لم يتأرض فعلاً (\en{P-lead} مقطوع).}
+\tip{شمعتان أفضل من شمعة $\Leftarrow$ عند ترك شمعة واحدة \textbf{انخفاض بسيط} = طبيعي.}
+\qsep
+
+\Q{8590}{Ignition check during engine runup indicates excessive RPM drop during operation on the right magneto. The major portion of the RPM loss occurs rapidly after switching to the right magneto position (fast drop). The most likely cause is}
+{Faulty or fouled spark plugs.}
+{Incorrect ignition timing on both magnetos.}
+{One or more dead cylinders.}{A}
+\tr{أظهر فحص الإشعال أثناء التشغيل الأرضي انخفاضاً زائداً في السرعة عند العمل على الماغنيتو الأيمن، ومعظم الانخفاض يحدث بسرعة بعد التحويل إلى الأيمن (انخفاض سريع). السبب الأرجح:}
+\ans{A}{شمعات معطوبة أو متّسخة.}
+\sharh{عندما ننتقل إلى الماغنيتو الأيمن، تعمل فقط الشمعات الموصولة به. إذا كانت إحداها متسخة أو معطوبة، فإن تلك الأسطوانة \textbf{تتوقف فوراً} عن الاحتراق (لأن شمعتها الأخرى من الماغنيتو الأيسر أصبحت مطفأة). فقدان أسطوانة كاملة بشكل فوري يعطي انخفاضاً \textbf{كبيراً وسريعاً} في السرعة.
+
+القاعدة: \textbf{انخفاض سريع = شمعات}، \textbf{انخفاض بطيء = توقيت أو صمامات}.}
+\nohead
+\no{B}{التوقيت الخاطئ يعطي انخفاضاً \textbf{بطيئاً} تدريجياً، وإذا كان الخطأ في المغناطيسين لظهر في الجهتين.}
+\no{C}{الأسطوانة الميتة تماماً (بسبب صمامات مثلاً) تؤثر في كل الأوضاع بما فيها \en{BOTH}، ولا تظهر فقط على ماغنيتو واحد.}
+\tip{\textbf{سريع = شمعة} (\en{Fast = Fouled})، \textbf{بطيء = توقيت/صمامات} (\en{Slow = Setting}).}
+\qsep
+
+\Q{8598}{Ignition check during engine runup indicates a slow drop in RPM. This is usually caused by}
+{Defective spark plugs.}
+{A defective high-tension lead.}
+{Incorrect ignition timing or valve adjustment.}{C}
+\tr{أظهر فحص الإشعال أثناء التشغيل الأرضي انخفاضاً بطيئاً في السرعة. هذا يسببه عادة:}
+\ans{C}{توقيت إشعال غير صحيح أو ضبط خاطئ للصمامات.}
+\sharh{عندما يكون التوقيت متأخراً أو الصمامات غير مضبوطة، تبقى كل الأسطوانات تعمل، لكن بكفاءة أقل. عند التحويل إلى ماغنيتو واحد، تقل الكفاءة أكثر ويسخن المحرك تدريجياً، فتنخفض السرعة \textbf{ببطء} وبشكل تدريجي بدلاً من الهبوط المفاجئ. أما الشمعات والأسلاك المعطوبة فتُسقط أسطوانة كاملة فوراً $\Leftarrow$ انخفاض سريع.}
+\nohead
+\no{A}{الشمعات المعطوبة تعطي انخفاضاً \textbf{سريعاً}.}
+\no{B}{سلك الجهد العالي المعطوب مثل الشمعة: يُسقط أسطوانة فوراً $\Leftarrow$ انخفاض سريع.}
+\tip{\en{Slow drop} $\Leftarrow$ \en{Timing / Valves}.}
+\qsep
+
+\Q{8567}{Which of the following, obtained during magneto check at 1,700 RPM, indicates a short (grounded) circuit between the right magneto primary and the ignition switch?}
+{BOTH—1,700 RPM, R—1,625 RPM, L—1,700 RPM, OFF—1,625 RPM.}
+{BOTH—1,700 RPM, R—0 RPM, L—1,700 RPM, OFF—0 RPM.}
+{BOTH—1,700 RPM, R—0 RPM, L—1,675 RPM, OFF—0 RPM.}{B}
+\tr{أيٌّ من القراءات التالية، المأخوذة أثناء فحص المغانط عند 1,700 \en{RPM}، يدل على وجود قصر (تأريض) بين الابتدائي للماغنيتو الأيمن ومفتاح الإشعال؟}
+\ans{B}{\en{BOTH}: 1,700 — \en{R}: 0 — \en{L}: 1,700 — \en{OFF}: 0.}
+\sharh{المشكلة: الماغنيتو الأيمن مؤرض بشكل دائم (بسبب القصر)، أي أنه \textbf{متوقف دائماً}. الآن نحلل كل وضع:
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{الوضع} & \textbf{الأيسر} & \textbf{الأيمن (معطوب)} & \textbf{السرعة}\\\hline
+\en{BOTH} & يعمل & متوقف دائماً & 1,700 (الأيسر وحده)\\\hline
+\en{R} & يؤرّضه المفتاح & متوقف دائماً & \textbf{0} (لا شيء يعمل)\\\hline
+\en{L} & يعمل & متوقف دائماً & \textbf{1,700} (نفس \en{BOTH})\\\hline
+\en{OFF} & مؤرض & متوقف & 0\\\hline
+\end{tabular}
+\end{center}
+لاحظ: في \en{L} السرعة \textbf{لا تنخفض أبداً} عن \en{BOTH}، لأن الوضعين متطابقان فعلياً (في الحالتين الأيسر وحده يعمل). هذه هي العلامة المميزة.}
+\nohead
+\no{A}{في \en{OFF} السرعة 1,625، أي أن المحرك لا يتوقف: هذا يدل على \en{P-lead} \textbf{مقطوع} لا مؤرض.}
+\no{C}{في \en{L} انخفضت السرعة إلى 1,675، وهذا يعني أن الأيمن كان يساهم في \en{BOTH} أي أنه يعمل. هذا لا يتوافق مع ماغنيتو مؤرض بشكل دائم. (لو كان الأيمن يعمل، لما أعطى \en{R} صفراً أيضاً).}
+\tip{ماغنيتو \textbf{مؤرض دائماً} $\Leftarrow$ وضعه هو = \textbf{صفر}، ووضع الآخر = \textbf{نفس \en{BOTH}} بلا أي انخفاض.}
+
+\newpage
+% =====================================================================
+\section{الموزّع، حزمة الأسلاك، والتدريع}
+% =====================================================================
+
+\begin{concept}{المفهوم: كيف يصل الجهد العالي إلى الشمعة الصحيحة؟}
+\textbf{الموزع (\en{distributor})} جزءان:
+\begin{itemize}
+  \item \textbf{الدوار (\en{rotor}):} ذراع يدور ويستلم الجهد العالي من الملف، ويشير في كل لحظة إلى طرف واحد.
+  \item \textbf{الكتلة (\en{block}):} قطعة عازلة فيها أطراف (أقطاب) بعدد الأسطوانات، تُوصل بها أسلاك الشمعات.
+\end{itemize}
+\textbf{السرعة:} في المحرك رباعي الأشواط، كل أسطوانة تشتعل مرة واحدة كل \textbf{دورتين} للعمود المرفقي (720°). الموزع يجب أن يمر على كل الأسطوانات مرة واحدة خلال هاتين الدورتين، أي يدور \textbf{دورة واحدة لكل دورتين} من العمود $\Leftarrow$ سرعته \textbf{نصف} سرعة العمود المرفقي.
+
+\textbf{الأرقام على كتلة الموزع} تمثل \textbf{ترتيب الشرارة} (الطرف 1 يأخذ أول شرارة، والطرف 2 الثانية، ...). وتوصل الأسلاك حسب \textbf{ترتيب الإشعال} للمحرك، لا حسب رقم الأسطوانة. مثلاً في محرك ترتيب إشعاله 1-3-2-4: الطرف 1 $\Leftarrow$ أسطوانة 1، الطرف 2 $\Leftarrow$ أسطوانة 3، الطرف 3 $\Leftarrow$ أسطوانة 2...
+
+\textbf{القفز العرضي (\en{flashover}):} تسرب الجهد العالي على \textbf{سطح} عازل الموزع إلى الأرضي (أو إلى طرف آخر). يحرق الزيت والأوساخ فيحوّلها إلى \textbf{مسار كربوني موصل} يجعل التسرب يتكرر.
+
+\textbf{التدريع (\en{shielding}):} كل شرارة تُطلق موجات كهرومغناطيسية عالية التردد (مثل محطة إرسال صغيرة) تسبب تشويشاً وطقطقة في راديو الطائرة وأجهزة الملاحة. لذلك تُغلف الأسلاك بضفيرة معدنية مؤرضة تلتقط هذه الموجات وتصرفها إلى الأرضي. إذا لم يكفِ التدريع نضيف \textbf{مرشحاً} (\en{filter}) بين الماغنيتو والمفتاح.
+
+\textbf{فحص التسرب في العوازل:} الجهد العالي لا يُكشف تسربه بجهاز عادي (أوميتر بطارية صغيرة)، بل بجهاز يطبق جهداً مستمراً عالياً: \en{high-tension lead / harness tester}.
+\end{concept}
+
+\Q{8603}{What are two parts of a distributor in an aircraft engine ignition system? 1. Coil. 2. Block. 3. Stator. 4. Rotor. 5. Transformer.}
+{2 and 4.}
+{3 and 4.}
+{2 and 5.}{A}
+\tr{ما الجزءان المكوِّنان للموزع في نظام إشعال محرك الطائرة؟ 1. ملف. 2. كتلة. 3. جزء ثابت (\en{stator}). 4. دوار. 5. محول.}
+\ans{A}{2 و4: الكتلة والدوار.}
+\sharh{\textbf{الكتلة} (\en{block}) هي «لوحة التوصيل» التي تُربط بها كل أسلاك الشمعات، و\textbf{الدوار} (\en{rotor}) هو «الإصبع» الذي يختار في كل لحظة السلك الذي سيستلم الجهد العالي القادم من الملف. الملف والمحول جزءان من الماغنيتو، ليسا من الموزع. و\en{stator} مصطلح للمحركات والمولدات الكهربائية.}
+\nohead
+\no{B}{\en{Stator} ليس جزءاً من الموزع.}
+\no{C}{المحول (\en{transformer}) ليس جزءاً من الموزع؛ الملف نفسه يعمل كمحوّل.}
+\tip{موزع = \en{\textbf{B}lock} + \en{\textbf{R}otor}.}
+\qsep
+
+\Q{8605}{What is the relationship between distributor and crankshaft speed of aircraft reciprocating engines?}
+{The distributor turns at one-half crankshaft speed.}
+{The distributor turns at one and one-half crankshaft speed.}
+{The crankshaft turns at one-half distributor speed.}{A}
+\tr{ما العلاقة بين سرعة الموزع وسرعة العمود المرفقي في المحركات المكبسية للطائرات؟}
+\ans{A}{الموزع يدور بنصف سرعة العمود المرفقي.}
+\sharh{في المحرك رباعي الأشواط (سحب، ضغط، قدرة، عادم) تحتاج كل أسطوانة إلى \textbf{دورتين} كاملتين للعمود المرفقي لتكمل دورتها، وتشتعل مرة واحدة فقط خلالهما. الموزع يجب أن يرسل شرارة إلى كل أسطوانة مرة واحدة خلال هاتين الدورتين، أي أن الدوار يكمل دورة واحدة بينما العمود يكمل دورتين $\Leftarrow$ \textbf{نصف السرعة}. (وكذلك عمود الكامات يدور بنصف سرعة العمود المرفقي للسبب نفسه).}
+\nohead
+\no{B}{1.5 ضعف أسرع من اللازم؛ الموزع سيرسل الشرارات أكثر من مرة لكل أسطوانة.}
+\no{C}{هذا عكس العلاقة: العمود المرفقي هو الأسرع (ضعف سرعة الموزع).}
+\tip{كل أسطوانة تشتعل مرة كل دورتين $\Leftarrow$ الموزع \textbf{½}.}
+\qsep
+
+\Q{8544}{A certain nine-cylinder radial engine used a non-compensated single-unit, dual-type magneto with a four-pole rotating magnet and separately mounted distributors. Which of the following will have the lowest RPM at any given engine speed?}
+{Breaker cam.}
+{Engine crankshaft.}
+{Distributors.}{C}
+\tr{محرك نجمي ذو تسع أسطوانات يستخدم ماغنيتو مزدوجاً بوحدة واحدة غير معوَّض، مع مغناطيس دوار رباعي الأقطاب وموزعات مركّبة بشكل منفصل. أي مما يلي سيكون أقل سرعة دوران عند أي سرعة للمحرك؟}
+\ans{C}{الموزعات.}
+\sharh{لا تخف من طول السؤال. نحسب سرعة كل جزء بالنسبة للعمود المرفقي:
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{العمود المرفقي:} هو المرجع = 1.
+  \item \textbf{الموزعات:} يجب أن تمر على 9 أسطوانات خلال دورتين للعمود $\Leftarrow$ \textbf{½} سرعة العمود (دائماً، مهما كان عدد الأسطوانات).
+  \item \textbf{كامة القاطع (والمغناطيس):} نحتاج 9 شرارات كل دورتين للعمود = 4.5 شرارة لكل دورة للعمود. المغناطيس رباعي الأقطاب والكامة رباعية النتوءات تعطي 4 شرارات لكل دورة لها. إذن سرعتها = $4.5 \div 4 = 1\frac{1}{8}$ ضعف سرعة العمود.
+\end{enumerate}
+الترتيب: الكامة ($1\frac{1}{8}$) $>$ العمود (1) $>$ الموزعات (½). الأبطأ = \textbf{الموزعات}.
+
+القاعدة العامة: سرعة الماغنيتو = عدد الأسطوانات ÷ (2 × عدد الأقطاب).}
+\nohead
+\no{A}{الكامة هي الأسرع ($1\frac{1}{8}$).}
+\no{B}{العمود المرفقي (1) أسرع من الموزعات (½).}
+\tip{الموزع \textbf{دائماً} نصف سرعة العمود $\Leftarrow$ هو الأبطأ في أي سؤال من هذا النوع.}
+\qsep
+
+\Q{8574}{The numbers appearing on the ignition distributor block indicate the}
+{Sparking order of the distributor.}
+{Relation between distributor terminal numbers and cylinder numbers.}
+{Firing order of the engine.}{A}
+\tr{الأرقام الظاهرة على كتلة موزع الإشعال تدل على:}
+\ans{A}{ترتيب الشرارة في الموزع.}
+\sharh{الأرقام على الكتلة تقول: «هذا الطرف يأخذ الشرارة الأولى، وهذا الثانية، وهذا الثالثة...» حسب اتجاه دوران الدوار. هذا هو \textbf{ترتيب الشرارة} للموزع. هي \textbf{ليست} أرقام الأسطوانات. عند تركيب الأسلاك، نطابق ترتيب الشرارة مع ترتيب الإشعال للمحرك: الطرف 1 لأول أسطوانة في ترتيب الإشعال، الطرف 2 للثانية في ترتيب الإشعال، وهكذا.}
+\nohead
+\no{B}{الأرقام لا تطابق أرقام الأسطوانات (الطرف 2 لا يذهب بالضرورة إلى الأسطوانة 2).}
+\no{C}{ترتيب الإشعال خاصية للمحرك، وليس مكتوباً على الكتلة. نحن نطابق الكتلة معه.}
+\tip{أرقام الكتلة = \en{\textbf{Sparking order}} (ترتيب الموزع نفسه)، تُطابَق مع \en{firing order} (ترتيب المحرك).}
+\qsep
+
+\Q{8604}{What is a result of “flashover” in a distributor?}
+{Intense voltage at the spark plug.}
+{Reversal of current flow.}
+{Conductive carbon trail.}{C}
+\tr{ما نتيجة «القفز العرضي» (\en{flashover}) في الموزع؟}
+\ans{C}{أثر كربوني موصل.}
+\sharh{\en{Flashover} = الجهد العالي، بدلاً من أن يذهب إلى الطرف الصحيح، يتسرب على \textbf{سطح} العازل في كتلة الموزع إلى الأرضي (أو إلى طرف آخر). أثناء مروره على السطح، يحرق أي زيت أو رطوبة أو أوساخ موجودة، فيحولها إلى \textbf{كربون}. الكربون موصل للكهرباء، فيتشكل «خط» كربوني رفيع يصبح طريقاً سهلاً لتسرب النبضات التالية، وتتكرر المشكلة وتسوء (قد تشعل الشمعة الخطأ في الوقت الخطأ).}
+\nohead
+\no{A}{التسرب يعني أن الجهد \textbf{لا يصل} إلى الشمعة بشكل كامل، فيضعف لا يشتد.}
+\no{B}{القفز العرضي لا يعكس اتجاه التيار.}
+\tip{\en{Flashover} $\Leftarrow$ حرق الأوساخ $\Leftarrow$ \en{\textbf{carbon trail}} (أثر كربوني).}
+\qsep
+
+\Q{8547}{What likely effect would a cracked distributor rotor have on a magneto?}
+{Ground the secondary circuit through the crack.}
+{Fire two cylinders simultaneously.}
+{Ground the primary circuit through the crack.}{A}
+\tr{ما التأثير المحتمل لدوّار موزع مشقوق على الماغنيتو؟}
+\ans{A}{تأريض الدائرة الثانوية عبر الشق.}
+\sharh{الدوار يحمل الجهد \textbf{العالي} (الثانوي). إذا كان فيه شق، تتجمع داخل الشق مع الوقت ذرات الكربون والزيت والرطوبة، فيتكوّن مسار موصل. الجهد العالي «يحب» الطريق الأسهل، فيتسرب عبر الشق إلى الأرضي (إلى عمود الدوار المعدني مثلاً) بدلاً من أن يرتفع بما يكفي ليقفز عبر فجوة الشمعة. النتيجة: الشمعات لا تشتعل بشكل صحيح.}
+\nohead
+\no{B}{الشق لا يوزع الشرارة على أسطوانتين بنفس الوقت؛ هو يسرّبها إلى الأرضي.}
+\no{C}{الدوار جزء من الدائرة الثانوية، فلا علاقة له بالدائرة الابتدائية.}
+\tip{الدوار = جهد عالٍ = \textbf{ثانوي}. شق فيه = تسرّب الثانوي للأرضي.}
+\qsep
+
+\Q{8551}{How are most radial engine spark plug wires connected to the distributor block?}
+{By use of cable-piercing screws.}
+{By use of self-locking cable ferrules.}
+{By use of terminal sleeves and retaining nuts.}{A}
+\tr{كيف توصَل أسلاك الشمعات في معظم المحركات النجمية بكتلة الموزع؟}
+\ans{A}{باستخدام براغٍ تخترق السلك.}
+\sharh{في المحركات النجمية القديمة، كتلة الموزع فيها فتحات (تجاويف) يُدخل فيها سلك الجهد العالي، ثم يُشد برغي مدبب الرأس يخترق العازل ويلامس الموصل في داخله، فيثبّت السلك ويوصله كهربائياً في نفس الوقت. هذا ليس الحال في الماغنيتو المستخدم في المحركات الحديثة الأفقية المتقابلة، التي تستخدم أطرافاً وصواميل.}
+\nohead
+\no{B}{الحلقات ذاتية القفل ليست الطريقة المعتادة في المحركات النجمية.}
+\no{C}{الأطراف والصواميل هي الطريقة في الأنظمة الحديثة، لا في معظم المحركات النجمية.}
+\tip{نجمي (\en{radial}) قديم $\Leftarrow$ \en{\textbf{piercing screws}} (براغي تخترق).}
+\qsep
+
+\Q{8578}{If a spark plug lead becomes grounded, the}
+{Magneto will not be affected.}
+{Distributor rotor finger will discharge to the next closest electrode within the distributor.}
+{Capacitor will break down.}{A}
+\tr{إذا تأرّض سلك شمعة، فإن:}
+\ans{A}{الماغنيتو لن يتأثر.}
+\sharh{سلك مؤرض = الجهد العالي يجد طريقاً مباشراً وسهلاً إلى الأرضي. فيتفرغ فوراً عند جهد منخفض (لا يحتاج أن يرتفع)، والشمعة لا تشتعل. ولكن الماغنيتو نفسه لا يتضرر، لأن الجهد لم يرتفع إلى قيمة خطيرة. (قارن مع السلك \textbf{المقطوع/المفصول} الذي يجعل الجهد يرتفع جداً، وهنا تعمل فجوة الأمان).}
+\nohead
+\no{B}{هذا يحدث تقريباً عندما يكون السلك \textbf{مفصولاً} (دائرة مفتوحة)، لا مؤرضاً؛ في المؤرض يجد الجهد طريقه بسهولة.}
+\no{C}{المكثف في الدائرة الابتدائية ولا يتأثر بتأريض سلك ثانوي.}
+\tip{\textbf{مؤرض} = طريق سهل = لا ضرر على الماغنيتو. \textbf{مفتوح} = لا طريق = جهد خطير = فجوة الأمان.}
+\qsep
+
+\Q{8565}{Sharp bends should be avoided in ignition leads primarily because}
+{Weak points may develop in the insulation through which high tension current can leak.}
+{Ignition lead wire conductor material is brittle and may break.}
+{Ignition lead shielding effectiveness will be reduced.}{A}
+\tr{يجب تجنب الانحناءات الحادة في أسلاك الإشعال، والسبب الرئيسي:}
+\ans{A}{قد تتكوّن نقاط ضعف في العازل يتسرب منها تيار الجهد العالي.}
+\sharh{سلك الإشعال يحمل حوالي 20,000 فولت، ولا يمنع هذا الجهد من الهروب إلى الضفيرة المعدنية المؤرضة المحيطة به إلا طبقة العازل. عندما ينحني السلك بحدة أو يُلوى، تنضغط طبقة العازل من جهة وتنشد من الجهة الأخرى، فيرقّ ويتشقق مع الوقت والحرارة. في هذه النقطة الضعيفة يخترق الجهد العالي العازل ويتسرب إلى الأرضي.}
+\nohead
+\no{B}{الموصل في السلك مرن (أسلاك مجدولة)، والمشكلة الأساسية في العازل.}
+\no{C}{التدريع يبقى فعالاً في التقاط الموجات؛ الخطر في العازل.}
+\tip{الانحناء الحاد = \textbf{إجهاد العازل} $\Leftarrow$ \en{leak}.}
+\qsep
+
+\Q{8538}{What test instrument could be used to test an ignition harness for suspected leakage?}
+{A high tension lead tester.}
+{A high voltage DC voltmeter.}
+{A high amperage DC ammeter.}{A}
+\tr{ما جهاز الاختبار الذي يمكن استعماله لفحص حزمة أسلاك الإشعال عند الاشتباه بوجود تسرب؟}
+\ans{A}{جهاز فحص أسلاك الجهد العالي (\en{high tension lead tester}).}
+\sharh{التسرب في عزل سلك الإشعال لا يظهر إلا عند جهد عالٍ، كما يحدث فعلاً أثناء العمل. الأوميتر العادي (بطارية صغيرة) قد يُظهر أن العزل سليم بينما هو ينهار عند 15,000 فولت. لذلك نستخدم جهازاً خاصاً يطبق \textbf{جهداً مستمراً عالياً} بين الموصل والضفيرة، ويُظهر بمؤشر (مثل ضوء أو عداد تيار) ما إذا كان هناك تيار يتسرب عبر العازل.}
+\nohead
+\no{B}{الفولتميتر يقيس جهداً موجوداً، ولا يطبق جهداً لاختبار العزل.}
+\no{C}{الأميتر عالي التيار لا يناسب كشف تيارات تسرب صغيرة جداً.}
+\tip{لفحص التسرب في أي شيء «عالي الجهد» $\Leftarrow$ جهاز «\en{high tension ... tester}» (انظر أيضاً 8575).}
+\qsep
+
+\Q{8575}{When testing a magneto distributor block for electrical leakage, which of the following pieces of test equipment should be used?}
+{A high-tension harness tester.}
+{A continuity tester.}
+{A high-range ammeter.}{A}
+\tr{عند فحص كتلة موزع الماغنيتو بحثاً عن تسرب كهربائي، أي جهاز يجب أن يُستخدم؟}
+\ans{A}{جهاز فحص حزمة الجهد العالي.}
+\sharh{كتلة الموزع عازل يحمل الجهد العالي، مثل الأسلاك تماماً. التسرب فيها (مسارات كربونية، شقوق دقيقة) لا يظهر إلا عند تطبيق جهد عالٍ. لذلك يُستخدم نفس الجهاز الذي يُستخدم للأسلاك: \en{high-tension harness tester}.}
+\nohead
+\no{B}{فاحص الاستمرارية يعمل بجهد منخفض جداً، ويخبرك فقط إن كان المسار موصولاً أم لا؛ لا يكشف تسرباً يحدث عند الجهد العالي.}
+\no{C}{الأميتر عالي المدى لا يكشف تيارات تسرب صغيرة.}
+\tip{نفس جواب 8538: «جهد عالٍ يُفحص بجهد عالٍ».}
+\qsep
+
+\Q{8508}{Why are high-tension ignition cables frequently routed from the distributors to the spark plugs in flexible metallic conduits?}
+{To eliminate high altitude flashover.}
+{To reduce the formation of corona and nitric oxide on the cable insulation.}
+{To reduce the effect of the high-frequency electromagnetic waves emanated during operation.}{C}
+\tr{لماذا تُمدّ أسلاك الإشعال عالية الجهد من الموزعات إلى الشمعات غالباً داخل أنابيب معدنية مرنة؟}
+\ans{C}{لتقليل تأثير الموجات الكهرومغناطيسية عالية التردد المنبعثة أثناء التشغيل.}
+\sharh{كل شرارة هي تفريغ كهربائي سريع جداً، وأي تيار يتغير بسرعة يُطلق موجات كهرومغناطيسية عالية التردد، تماماً مثل هوائي إرسال الراديو. هذه الموجات يلتقطها راديو الطائرة وأجهزة الملاحة على شكل تشويش (طقطقة). الأنبوب المعدني المرن (أو الضفيرة) حول السلك، والمؤرض بالمحرك، يلتقط هذه الموجات ويصرفها إلى الأرضي قبل أن تنتشر. يسمى هذا \textbf{التدريع} (\en{shielding}).}
+\nohead
+\no{A}{القفز العرضي في الارتفاعات العالية مشكلة تُعالج بأنظمة الجهد المنخفض (\en{low-tension}) لا بالتدريع.}
+\no{B}{الأنبوب المعدني لا يمنع تكوّن الهالة (\en{corona}) وأكاسيد النيتروجين.}
+\tip{أي سؤال عن «غلاف معدني» حول الأسلاك $\Leftarrow$ الجواب له علاقة بـ\textbf{الراديو/الموجات}.}
+\qsep
+
+\Q{8530}{Shielding is used on spark plug and ignition wires to}
+{Protect the wires from short circuits as a result of chaffing or rubbing.}
+{Prevent outside electromagnetic emissions from disrupting the operation of the ignition system.}
+{Prevent interference with radio reception.}{C}
+\tr{يُستخدم التدريع على أسلاك الشمعات والإشعال من أجل:}
+\ans{C}{منع التداخل مع الاستقبال اللاسلكي (الراديو).}
+\sharh{التدريع يحمي \textbf{الراديو من الإشعال}، وليس العكس. الأسلاك داخل الضفيرة المعدنية تطلق طاقة كهرومغناطيسية مع كل شرارة، والضفيرة تعترضها وتصرفها إلى الأرضي، فلا تصل إلى أجهزة الراديو.}
+\nohead
+\no{A}{الحماية من الاحتكاك ليست الهدف من التدريع (بل التدريع نفسه قد يحتك).}
+\no{B}{هذا عكس الاتجاه: الإشعال هو مصدر التشويش، وليس الضحية. الماغنيتو لا يتأثر عملياً بالموجات الخارجية.}
+\tip{\textbf{الإشعال يشوّش، والراديو يتأذى}. التدريع يحمي الراديو.}
+\qsep
+
+\Q{8601}{How does high-tension ignition shielding tend to reduce radio interference?}
+{Prevents ignition flashover at high altitudes.}
+{Reduces voltage drop in the transmission of high-tension current.}
+{Receives and grounds high-frequency waves coming from the magneto and high-tension ignition leads.}{C}
+\tr{كيف يعمل تدريع الإشعال عالي الجهد على تقليل التشويش على الراديو؟}
+\ans{C}{يستقبل الموجات عالية التردد الصادرة من الماغنيتو وأسلاك الجهد العالي ويصرفها إلى الأرضي.}
+\sharh{الضفيرة المعدنية حول السلك موصولة بالمحرك (مؤرضة). كل مرة تقفز فيها شرارة في الشمعة، تشع طاقة ذات تردد راديوي من السلك. الضفيرة تحيط بالسلك من كل الجهات، فتعترض هذه الطاقة وتحملها إلى الأرضي. بهذا لا تصل إلى أجهزة الاتصال والملاحة في الطائرة. الكلمتان المهمتان: \textbf{تستقبل} (\en{receives}) و\textbf{تؤرّض} (\en{grounds}).}
+\nohead
+\no{A}{التدريع لا يمنع القفز العرضي في الارتفاعات العالية.}
+\no{B}{التدريع لا يقلل هبوط الجهد في السلك.}
+\tip{التدريع = \en{\textbf{catch \& ground}} (يلتقط ويؤرّض).}
+\qsep
+
+\Q{8554}{If it is found that a shielded ignition system does not adequately reduce ignition noise, it may be necessary to install}
+{A second layer of shielding.}
+{A filter between the magneto and magneto switch.}
+{Bonding wires from the shielding to ground.}{B}
+\tr{إذا وُجد أن نظام الإشعال المدرّع لا يقلل ضوضاء الإشعال بشكل كافٍ، فقد يكون من الضروري تركيب:}
+\ans{B}{مرشح (\en{filter}) بين الماغنيتو ومفتاح الماغنيتو.}
+\sharh{سلك \en{P-lead} يمتد من الماغنيتو إلى القمرة، وهو موصول بالدائرة الابتدائية التي تتعرض لتغيرات مفاجئة عند كل فتح للنقاط. لذلك قد يعمل هو أيضاً كهوائي ينقل التشويش إلى داخل القمرة قريباً من أجهزة الراديو. الحل: مرشح يتكون من:
+\begin{itemize}
+  \item \textbf{ملف} (\en{coil}) على التوالي: يعيق مرور النبضات عالية التردد.
+  \item \textbf{مكثف} إلى الأرضي: يصرف هذه النبضات إلى الأرضي.
+\end{itemize}
+فيمر التيار العادي (لعمل المفتاح) ويُمنع التشويش عالي التردد.}
+\nohead
+\no{A}{طبقة تدريع ثانية ليست الحل المعتمد.}
+\no{C}{أسلاك الربط إلى الأرضي جزء من التدريع الأصلي أصلاً.}
+\tip{الضوضاء لم تنتهِ بالتدريع $\Leftarrow$ \en{\textbf{filter}} على سلك المفتاح.}
+
+\newpage
+% =====================================================================
+\section{توقيت الإشعال على المحرك، الإشعال المزدوج، أنظمة المساعدة في البدء، وأنواع الأنظمة}
+% =====================================================================
+
+\begin{concept}{المفهوم: متى نشعل؟ ولماذا نؤخر الشرارة عند البدء؟}
+\textbf{1) توقيت الإشعال الطبيعي:} الاحتراق يحتاج وقتاً، لذلك نشعل الخليط \textbf{قبل} أن يصل المكبس إلى النقطة الميتة العليا (\en{TDC}) في نهاية شوط الانضغاط، بحوالي 20° إلى 25° من دوران العمود المرفقي. فيصل الضغط إلى أقصاه بعد \en{TDC} بقليل، تماماً عندما يبدأ المكبس بالنزول.
+
+\textbf{2) مشكلتان عند بدء التشغيل:}
+\begin{itemize}
+  \item المحرك يدور ببطء شديد (بالمدوِّر أو يدوياً)، فالماغنيتو يدور ببطء فيعطي شرارة ضعيفة جداً (تذكر: الجهد يزيد مع السرعة).
+  \item لو حدثت الشرارة مبكرة (20° قبل \en{TDC}) والمحرك بطيء، فإن الضغط سيرتفع والمكبس ما زال صاعداً، فيُدفع المكبس إلى الخلف ويدور المحرك بالعكس = \textbf{ارتداد} (\en{kickback})، وقد يكسر المدوِّر أو يؤذي من يدير المروحة.
+\end{itemize}
+\textbf{الحل:} شرارة \textbf{قوية} و\textbf{متأخرة} (عند \en{TDC} أو بعده). هناك نظامان:
+\begin{itemize}
+  \item \textbf{وصلة الدفع (\en{impulse coupling}):} داخلها نابض. أثناء التدوير البطيء، يمسك ذراع المغناطيس ويمنعه من الدوران بينما يستمر المحرك، فينضغط النابض. عند وضع متأخر يُطلق الذراع، فيدور المغناطيس بسرعة كبيرة لحظياً $\Leftarrow$ شرارة قوية ومتأخرة. بعد تشغيل المحرك، تبعد القوة الطاردة المركزية الأذرع فتتوقف الوصلة عن العمل.
+  \item \textbf{وابل الشرارات (\en{Shower of Sparks}):} يستخدم البطارية ووحدة اهتزاز (\en{vibrator}) تعطي تياراً مستمراً متقطعاً، مع مجموعة ثانية من النقاط «المتأخرة» (\en{retard points}) في الماغنيتو الأيسر. يعطي سلسلة متتالية من الشرارات في الوضع المتأخر.
+\end{itemize}
+
+\textbf{3) الإشعال المزدوج:} كل أسطوانة فيها شمعتان من ماغنيتو مختلفين: احتياط في حال تعطل أحدهما + احتراق أسرع وأكمل (لهبان يلتقيان في الوسط) + قدرة أعلى.
+
+\textbf{4) الإشعال المتدرج (\en{staggered}):} الشمعتان لا تشتعلان معاً. الشمعة بجانب \textbf{صمام العادم} تشتعل أولاً، لأن الخليط هناك مخفف بغازات العادم المتبقية فيحترق ببطء.
+
+\textbf{5) جهد عالٍ \en{high-tension} مقابل جهد منخفض \en{low-tension}:} في الارتفاعات العالية الهواء رقيق وعازل أضعف، فيقفز الجهد العالي داخل الموزع. نظام \en{low-tension} يبقي الجهد منخفضاً في الماغنيتو والموزع والأسلاك، ويرفعه بمحول صغير (ملف ابتدائي + ثانوي) بجانب \textbf{كل شمعة}.
+\end{concept}
+
+\Q{8594}{In a four-stroke cycle aircraft engine, when does the ignition event take place?}
+{Before the piston reaches TDC on compression stroke.}
+{After the piston reaches TDC on power stroke.}
+{After the piston reaches TDC on compression stroke.}{A}
+\tr{في محرك الطائرة رباعي الأشواط، متى يحدث الإشعال؟}
+\ans{A}{قبل أن يصل المكبس إلى النقطة الميتة العليا في شوط الانضغاط.}
+\sharh{الخليط لا ينفجر لحظياً؛ يحتاج إلى وقت قصير ليحترق ويصل ضغطه إلى أقصاه. لو أشعلناه عند \en{TDC} بالضبط، فسيكون المكبس قد نزل كثيراً قبل أن يصل الضغط إلى قمته، فيضيع جزء من الطاقة. لذلك نبدأ الإشعال مبكراً، حوالي \textbf{20°} من دوران العمود \textbf{قبل} \en{TDC} في نهاية شوط \textbf{الانضغاط}، فيصل الضغط الأقصى بعد \en{TDC} بقليل، عندما يكون المكبس في أفضل وضع لاستلام الدفعة.}
+\nohead
+\no{B}{بعد \en{TDC} في شوط القدرة متأخر جداً؛ تضيع القدرة ويسخن العادم.}
+\no{C}{بعد \en{TDC} في الانضغاط متأخر أيضاً للتشغيل العادي (يُستخدم فقط عند بدء التشغيل بالشرارة المتأخرة).}
+\tip{الإشعال \textbf{قبل} \en{TDC} \textbf{انضغاط} (≈ 20° \en{BTC}).}
+\qsep
+
+\Q{8595}{When installing a magneto on an engine, the}
+{Piston in the No. 1 cylinder must be a prescribed number of degrees before top center on the compression stroke.}
+{Magneto breaker points must be just closing.}
+{Piston in the No. 1 cylinder must be a prescribed number of degrees after top center on the intake stroke.}{A}
+\tr{عند تركيب الماغنيتو على المحرك:}
+\ans{A}{يجب أن يكون مكبس الأسطوانة رقم 1 قبل المركز الأعلى بعدد محدد من الدرجات في شوط الانضغاط.}
+\sharh{هذا هو \textbf{التوقيت الخارجي}. الخطوات باختصار:
+\begin{enumerate}[label=\arabic*.]
+  \item ندير المحرك حتى تكون الأسطوانة 1 في شوط \textbf{الانضغاط} (الصمامان مغلقان).
+  \item نتابع حتى يصل المكبس إلى عدد الدرجات المحدد \textbf{قبل} \en{TDC} (مثلاً 20° \en{BTC}) حسب كتيب الصانع، باستخدام مؤشر توقيت على المروحة أو علامات على المحرك.
+  \item نضع الماغنيتو بحيث تكون نقاطه في \textbf{بداية الفتح} للأسطوانة 1 (وهو في \en{E-gap})، ونركبه.
+\end{enumerate}
+لماذا الانضغاط وليس العادم؟ لأن المكبس يصل إلى \en{TDC} مرتين في الدورة الكاملة (نهاية الانضغاط ونهاية العادم)، والشرارة المفيدة فقط في نهاية الانضغاط.}
+\nohead
+\no{B}{النقاط يجب أن تكون في بداية \textbf{الفتح} (لحظة الشرارة)، لا الإغلاق.}
+\no{C}{بعد \en{TDC} في شوط السحب لا معنى له للإشعال.}
+\tip{تركيب الماغنيتو = \en{No. 1} + \en{\textbf{BTC}} + \en{\textbf{compression}}.}
+\qsep
+
+\Q{8600}{Which of the following are advantages of dual ignition in aircraft engines? 1. Gives a more complete and quick combustion of the fuel. 2. Provides a backup magneto system. 3. Increases the output power of the engine. 4. Permits the use of lower grade fuels. 5. Increases the intensity of the spark at the spark plugs.}
+{2, 3, 4.}
+{2, 3, 5.}
+{1, 2, 3.}{C}
+\tr{أي مما يلي من مزايا الإشعال المزدوج في محركات الطائرات؟ 1. احتراق أكمل وأسرع للوقود. 2. يوفر نظام ماغنيتو احتياطياً. 3. يزيد القدرة الناتجة. 4. يسمح باستخدام وقود أقل درجة. 5. يزيد شدة الشرارة في الشمعات.}
+\ans{C}{1، 2، 3.}
+\sharh{مع شمعتين في كل أسطوانة:
+\begin{itemize}
+  \item \textbf{(1) صحيح:} يبدأ اللهب من نقطتين، فيقطع كل لهب نصف المسافة فقط، فيحترق الخليط أسرع وبشكل أكمل.
+  \item \textbf{(2) صحيح:} إذا تعطل ماغنيتو أثناء الطيران، يبقى المحرك يعمل على الآخر. (هذا سبب أمان مهم جداً).
+  \item \textbf{(3) صحيح:} الاحتراق الأسرع والأكمل يعطي قدرة أعلى.
+  \item \textbf{(4) خطأ:} درجة الوقود (\en{octane}) يحددها الصانع ولا يغيرها عدد الشمعات.
+  \item \textbf{(5) خطأ:} شدة الشرارة في كل شمعة يحددها الماغنيتو الخاص بها؛ وجود شمعة ثانية لا يقوي الأولى.
+\end{itemize}}
+\nohead
+\no{A}{يحتوي على 4 (خطأ) وينقصه 1.}
+\no{B}{يحتوي على 5 (خطأ) وينقصه 1.}
+\tip{مزايا الإشعال المزدوج: \textbf{أسرع، احتياط، أقوى} (1، 2، 3).}
+\qsep
+
+\Q{8532}{The purpose of staggered ignition is to compensate for}
+{Short ignition harness.}
+{Rich fuel/air mixture around exhaust valve.}
+{Diluted fuel/air mixture around exhaust valve.}{C}
+\tr{الغرض من الإشعال المتدرج (\en{staggered ignition}) هو التعويض عن:}
+\ans{C}{الخليط المخفَّف حول صمام العادم.}
+\sharh{بعد شوط العادم تبقى في الأسطوانة كمية من غازات العادم المحترقة، وتتركز قرب صمام العادم. هذه الغازات لا تحترق مرة أخرى، فتخفف (\en{dilute}) الخليط الجديد في تلك المنطقة، فيحترق هناك \textbf{ببطء}. لو أشعلنا الشمعتين معاً، سيصل اللهب من جهة السحب إلى المنتصف قبل اللهب من جهة العادم، ويكون الاحتراق غير متوازن.
+
+الحل: نشعل الشمعة القريبة من صمام العادم \textbf{أبكر} ببضع درجات، فيلتقي اللهبان في \textbf{وسط} رأس المكبس.}
+\nohead
+\no{A}{طول الحزمة لا علاقة له بتوقيت الشرارة.}
+\no{B}{الخليط حول صمام العادم \textbf{مخفف} (فقير بالوقود نسبياً)، وليس غنياً.}
+\tip{\en{Staggered} = «متدرج». جهة العادم «مخففة وبطيئة» $\Leftarrow$ نعطيها سبقاً (\en{advance}).}
+\qsep
+
+\Q{8572}{If staggered ignition timing is used, the}
+{Spark plug nearest the exhaust valve will fire first.}
+{Spark will be automatically advanced as engine speed increases.}
+{Spark plug nearest the intake valve will fire first.}{A}
+\tr{إذا استُخدم توقيت الإشعال المتدرج، فإن:}
+\ans{A}{الشمعة الأقرب إلى صمام العادم ستشتعل أولاً.}
+\sharh{نفس فكرة 8532. الشرارتان في الأسطوانة لا تحدثان في نفس اللحظة. شمعة جهة العادم تشتعل \textbf{أولاً} دائماً، لأن الخليط هناك متمدد ومخفف بالغازات المتبقية ويحترق أبطأ، فنعطيه سبقاً في التوقيت حتى يلتقي لهبه مع لهب الشمعة الأخرى قرب مركز رأس المكبس.}
+\nohead
+\no{B}{التقديم التلقائي مع زيادة السرعة ليس معنى «المتدرج»؛ الإشعال المتدرج فرق ثابت بين شمعتين.}
+\no{C}{العكس هو الصحيح: جهة العادم أولاً.}
+\tip{\textbf{العادم أولاً} (\en{Exhaust first}).}
+\qsep
+
+\Q{8531}{What is the purpose of using an impulse coupling with a magneto?}
+{To absorb impulse vibrations between the magneto and the engine.}
+{To compensate for backlash in the magneto and the engine gears.}
+{To produce a momentary high rotational speed of the magneto.}{C}
+\tr{ما الغرض من استخدام وصلة الدفع (\en{impulse coupling}) مع الماغنيتو؟}
+\ans{C}{إنتاج سرعة دوران عالية لحظية للماغنيتو.}
+\sharh{عند البدء يدور المحرك ببطء، فيعطي الماغنيتو شرارة ضعيفة. وصلة الدفع تقع بين المحرك والماغنيتو، وفيها نابض قوي:
+\begin{enumerate}[label=\arabic*.]
+  \item عند السرعة البطيئة، تُمسك أذرع (\en{flyweights/pawls}) جزء الماغنيتو وتوقفه، بينما يستمر المحرك بالدوران فيلفّ النابض ويشحنه.
+  \item عند الوضع المتأخر (قرب \en{TDC})، يُطلَق الماغنيتو، فيدفعه النابض ليدور بسرعة كبيرة \textbf{لحظياً} $\Leftarrow$ شرارة \textbf{قوية} (لأن السرعة عالية) و\textbf{متأخرة} (لأنها حدثت بعد الوقت الطبيعي) $\Leftarrow$ تشغيل سهل بلا ارتداد.
+  \item بعد تشغيل المحرك وازدياد سرعته، تبعد القوة الطاردة المركزية الأذرع فتتعطل الوصلة، ويعمل الماغنيتو بالتوقيت الطبيعي المتقدم.
+\end{enumerate}}
+\nohead
+\no{A}{الوصلة ليست ممتص اهتزازات.}
+\no{B}{ليست لتعويض خلوص التروس (\en{backlash}).}
+\tip{\en{Impulse} = «دفعة». دفعة نابض $\Leftarrow$ سرعة عالية لحظية $\Leftarrow$ شرارة \textbf{حارة ومتأخرة}.}
+\qsep
+
+\Q{8515}{When a “Shower of Sparks” ignition system is activated at an engine start, a spark plug fires}
+{As soon as the advance breaker points open.}
+{Only while both the retard and advance breaker points are closed.}
+{Only while both the retard and advance breaker points are open.}{C}
+\tr{عند تفعيل نظام «وابل الشرارات» لبدء تشغيل المحرك، تشتعل الشمعة:}
+\ans{C}{فقط عندما تكون نقاط التأخير (\en{retard}) ونقاط التقديم (\en{advance}) مفتوحتين معاً.}
+\sharh{في الماغنيتو الأيسر مجموعتان من النقاط \textbf{على التوازي}:
+\begin{itemize}
+  \item \textbf{نقاط التشغيل/التقديم (\en{run / advance}):} تُفتح في الوقت الطبيعي (المبكر).
+  \item \textbf{نقاط التأخير (\en{retard}):} تُفتح لاحقاً، عند الوضع المتأخر المناسب للبدء.
+\end{itemize}
+عند وضع المفتاح على \en{START}، يرسل جهاز الاهتزاز (\en{vibrator}) تياراً مستمراً متقطعاً من البطارية إلى الملف الابتدائي. والآن:
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{المجموعتان مغلقتان:} التيار يذهب إلى الأرضي عبر النقاط، ولا يحدث شيء.
+  \item \textbf{نقاط التقديم تُفتح:} التيار ما زال يجد طريقاً إلى الأرضي عبر نقاط التأخير (لأنهما على التوازي)، فلا يحدث شيء.
+  \item \textbf{نقاط التأخير تُفتح أيضاً:} الآن الطريق الوحيد للتيار هو عبر الملف الابتدائي. والتيار متقطع (بسبب جهاز الاهتزاز)، فكل انقطاع يحث جهداً عالياً في الثانوي $\Leftarrow$ \textbf{سلسلة متواصلة من الشرارات} طالما المجموعتان مفتوحتان.
+\end{enumerate}
+وبما أن هذا يحدث فقط بعد فتح نقاط التأخير، فالشرارات \textbf{متأخرة} ومناسبة للتشغيل.}
+\nohead
+\no{A}{عند فتح نقاط التقديم وحدها تبقى نقاط التأخير مغلقة وتؤرض التيار، فلا شرارة.}
+\no{B}{عندما تكون المجموعتان مغلقتين يذهب التيار كله إلى الأرضي، فلا شرارة.}
+\tip{مفتاحان على التوازي: الضوء (الشرارة) لا يعمل إلا إذا \textbf{فُتح الاثنان}.}
+\qsep
+
+\Q{8541}{In reference to a “Shower of Sparks” ignition system, (1) the retard breaker points are designed to keep the affected ignition system operating if the advance breaker points should fail during normal engine operation (after start). (2) the timed opening of the retard breaker points is designed to prevent engine “kickback” during start. Regarding the above statements,}
+{Only No. 1 is true.}
+{Only No. 2 is true.}
+{Both No. 1 and No. 2 are true.}{B}
+\tr{بخصوص نظام «وابل الشرارات»: (1) صُممت نقاط التأخير لإبقاء نظام الإشعال يعمل إذا تعطلت نقاط التقديم أثناء التشغيل الطبيعي (بعد البدء). (2) توقيت فتح نقاط التأخير مصمم لمنع «ارتداد» المحرك أثناء البدء. بخصوص العبارتين:}
+\ans{B}{العبارة 2 فقط صحيحة.}
+\sharh{\textbf{العبارة (1) خاطئة:} نقاط التأخير تُستخدم \textbf{فقط} عند البدء لإعطاء شرارة متأخرة. بعد تشغيل المحرك وترك المفتاح من وضع \en{START}، تخرج نقاط التأخير من الدائرة تماماً، فلا تعمل كاحتياط لنقاط التقديم.
+
+\textbf{العبارة (2) صحيحة:} نقاط التأخير موقّتة لتُفتح بعد أن يتجاوز المكبس المركز الأعلى ويبدأ بالنزول. إذا اشتعل الخليط في هذه اللحظة، فإن الضغط يدفع المكبس إلى الأسفل في الاتجاه الصحيح، فلا يرتد المحرك إلى الخلف.}
+\nohead
+\no{A}{العبارة 1 خاطئة (نقاط التأخير ليست احتياطاً).}
+\no{C}{العبارة 1 خاطئة.}
+\tip{نقاط \en{retard} = \textbf{للبدء فقط} + \textbf{ضد الارتداد}.}
+\qsep
+
+\Q{8537}{What is the difference between a low-tension and a high-tension engine ignition system?}
+{A low-tension system produces relatively low voltage at the spark plug as compared to a high-tension system.}
+{A high-tension system is designed for high-altitude aircraft, while a low-tension system is for low-to medium-altitude aircraft.}
+{A low-tension system uses a transformer coil near the spark plugs to boost voltage, while the high-tension system voltage is constant from the magneto to the spark plugs.}{C}
+\tr{ما الفرق بين نظام الإشعال منخفض الجهد ونظام الإشعال عالي الجهد؟}
+\ans{C}{النظام منخفض الجهد يستخدم ملف محوّل قرب الشمعات لرفع الجهد، بينما في النظام عالي الجهد يكون الجهد ثابتاً (عالياً) من الماغنيتو حتى الشمعات.}
+\sharh{\textbf{النظام عالي الجهد:} الجهد العالي يتولد داخل الماغنيتو، ثم يمر عبر الموزع وعبر أسلاك طويلة إلى الشمعات. المشكلة: في الارتفاعات العالية الهواء رقيق وعازل ضعيف، فيقفز الجهد العالي داخل الموزع (\en{flashover})، ويتسرب من الأسلاك الطويلة.
+
+\textbf{النظام منخفض الجهد:} الماغنيتو يولد جهداً \textbf{منخفضاً} فقط، والموزع يوزع جهداً منخفضاً، والأسلاك تحمل جهداً منخفضاً. ثم بجانب كل شمعة (على رأس الأسطوانة) يوجد محول صغير (ملف ابتدائي + ثانوي) يرفع الجهد إلى القيمة العالية في آخر لحظة، عبر سلك قصير جداً. هكذا لا يوجد جهد عالٍ في الماغنيتو ولا في الموزع.
+
+الجهد عند الشمعة \textbf{عالٍ في النظامين} (لأن الشمعة تحتاجه).}
+\nohead
+\no{A}{الجهد عند الشمعة عالٍ في كلا النظامين؛ الفرق \textbf{أين} يُرفع الجهد.}
+\no{B}{العكس تقريباً: النظام منخفض الجهد هو الذي صُمم لحل مشاكل الارتفاعات العالية.}
+\tip{\en{Low-tension} = جهد منخفض \textbf{في الطريق}، ومحول \textbf{عند كل شمعة}.}
+\qsep
+
+\Q{8543}{In a low-tension ignition system, each spark plug requires an individual}
+{Capacitor.}
+{Breaker assembly.}
+{Secondary coil.}{C}
+\tr{في نظام الإشعال منخفض الجهد، تحتاج كل شمعة إلى ... خاص بها:}
+\ans{C}{ملف ثانوي.}
+\sharh{بما أن الجهد يُرفع بجانب كل شمعة، فإن كل شمعة لها محول خاص بها (ملف ابتدائي + ملف \textbf{ثانوي}). أما المكثف ومجموعة النقاط فموجودة في الماغنيتو، ويكفي واحد منهما لكل ماغنيتو كما في النظام العادي.}
+\nohead
+\no{A}{المكثف في الماغنيتو، وليس لكل شمعة.}
+\no{B}{مجموعة النقاط في الماغنيتو، وليست لكل شمعة.}
+\tip{كل شمعة = محول = \textbf{ملف ثانوي}.}
+\qsep
+
+\Q{8527}{How many secondary coils are required in a low-tension ignition system on an 18-cylinder engine?}
+{36.}
+{18.}
+{9.}{A}
+\tr{كم ملفاً ثانوياً يلزم في نظام إشعال منخفض الجهد لمحرك ذي 18 أسطوانة؟}
+\ans{A}{36.}
+\sharh{حسبة بسيطة:
+\begin{itemize}
+  \item كل أسطوانة فيها \textbf{شمعتان} (إشعال مزدوج): $18 \times 2 = 36$ شمعة.
+  \item في النظام منخفض الجهد كل شمعة لها ملف ثانوي خاص بها: 36 شمعة $\Leftarrow$ \textbf{36 ملفاً ثانوياً}.
+\end{itemize}}
+\nohead
+\no{B}{18 تتجاهل أن في كل أسطوانة شمعتين.}
+\no{C}{9 لا علاقة له بالحسبة.}
+\tip{عدد الملفات الثانوية = عدد \textbf{الشمعات} = الأسطوانات × 2.}
+
+\newpage
+% =====================================================================
+\section{شمعات الإشعال (\en{Spark Plugs})}
+% =====================================================================
+
+\begin{concept}{المفهوم: المدى الحراري، الاتساخ، والفحص}
+\textbf{أجزاء الشمعة:} قطب أوسط (\en{center electrode})، قطب أرضي (\en{ground electrode})، عازل خزفي حول القطب الأوسط (طرفه داخل الأسطوانة يسمى \en{nose core insulator})، وجسم معدني (\en{shell}) مسنّن يُربط في رأس الأسطوانة.
+
+\textbf{المدى الحراري (\en{heat range}):} مقدار قدرة الشمعة على نقل الحرارة من طرف العازل (داخل الأسطوانة) إلى رأس الأسطوانة. الحرارة تسير: طرف العازل $\Leftarrow$ على طول العازل $\Leftarrow$ الجسم المعدني $\Leftarrow$ رأس الأسطوانة.
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+ & \textbf{شمعة حارة (\en{Hot})} & \textbf{شمعة باردة (\en{Cold})}\\\hline
+طول طرف العازل & طويل (طريق الحرارة طويل) & قصير (طريق الحرارة قصير)\\\hline
+نقل الحرارة & بطيء، تحتفظ بالحرارة & سريع، تتخلص من الحرارة\\\hline
+تُستخدم في & محركات \textbf{باردة}، انضغاط منخفض & محركات \textbf{حارة}، انضغاط عالٍ\\\hline
+لو استُخدمت خطأً & نقطة ساخنة $\Leftarrow$ \textbf{اشتعال مبكر} & لا تحرق الترسبات $\Leftarrow$ \textbf{اتساخ}\\\hline
+\end{tabular}
+\end{center}
+\textbf{القاعدة المعاكسة التي تحير الطلاب:} المحرك \textbf{الحار} يحتاج شمعة \textbf{باردة}، والمحرك \textbf{البارد} يحتاج شمعة \textbf{حارة}. فكّر بالتوازن: نعطي المحرك الحار شمعة تبرّد نفسها بسرعة، ونعطي المحرك البارد شمعة تحتفظ بحرارتها لتحرق الترسبات.
+
+\textbf{الاتساخ (\en{fouling}):} ترسبات موصلة (كربون، رصاص، زيت) على العازل تجعل الكهرباء تتسرب إلى الأرضي على سطح العازل \textbf{دون} أن تقفز عبر الفجوة.
+\begin{itemize}
+  \item \textbf{سخام أسود جاف كثيف} = خليط غني (وقود كثير وهواء قليل).
+  \item \textbf{ترسبات رصاص} = تحدث عند \textbf{انخفاض} حرارة الأسطوانة (الرصاص لا يتبخر فلا يخرج مع العادم).
+\end{itemize}
+\textbf{الطول المسنن (\en{reach}):} طول الجزء المسنن، من مقعد الحشية إلى نهاية الأسنان.
+\end{concept}
+
+\Q{8571}{A spark plug's heat range is the result of}
+{The area of the plug exposed to the cooling airstream.}
+{Its ability to transfer heat from the firing end of the spark plug to the cylinder head.}
+{The heat intensity of the spark.}{B}
+\tr{المدى الحراري للشمعة هو نتيجة:}
+\ans{B}{قدرتها على نقل الحرارة من طرف الإشعال إلى رأس الأسطوانة.}
+\sharh{طرف الشمعة داخل غرفة الاحتراق يتعرض لحرارة اللهب في كل دورة. هذه الحرارة يجب أن تخرج من الشمعة، وطريقها الوحيد هو: طرف العازل $\Leftarrow$ العازل $\Leftarrow$ الجسم المعدني $\Leftarrow$ رأس الأسطوانة (الذي تبرده الزعانف والهواء).
+\begin{itemize}
+  \item \textbf{شمعة حارة:} طريق الحرارة طويل $\Leftarrow$ تحتفظ بالحرارة.
+  \item \textbf{شمعة باردة:} طريق الحرارة قصير $\Leftarrow$ تنقل حرارتها بسرعة.
+\end{itemize}
+إذن المدى الحراري = «كم هي سريعة في التخلص من حرارتها».}
+\nohead
+\no{A}{الشمعة لا تُبرَّد بالهواء مباشرة؛ تبريدها عن طريق رأس الأسطوانة.}
+\no{C}{شدة الشرارة يحددها الماغنيتو، ولا علاقة لها بالمدى الحراري.}
+\tip{\en{Heat range} = \en{heat \textbf{transfer}} إلى \en{cylinder head}.}
+\qsep
+
+\Q{8589}{Spark plug heat range is determined by}
+{The reach of the spark plug.}
+{Its ability to transfer heat to the cylinder head.}
+{The number of ground electrodes.}{B}
+\tr{يتحدد المدى الحراري للشمعة بـ:}
+\ans{B}{قدرتها على نقل الحرارة إلى رأس الأسطوانة.}
+\sharh{نفس السؤال 8571 بصيغة أخرى. الشمعة الباردة تنقل الحرارة بأسهل شكل، والشمعة الحارة لها عازل طويل في الطرف ولا تنقل الحرارة بنفس السهولة.}
+\nohead
+\no{A}{\en{Reach} هو طول الجزء المسنن، ويجب أن يناسب سماكة رأس الأسطوانة؛ لا يحدد المدى الحراري.}
+\no{C}{عدد الأقطاب الأرضية لا يحدد المدى الحراري.}
+\tip{نفس جواب 8571.}
+\qsep
+
+\Q{8580}{Which of the following statements most accurately describes spark plug heat range?}
+{The length of the threaded portion of the shell usually denotes the spark plug heat range.}
+{A hot plug is designed so that the insulator tip is reasonably short to hasten the rate of heat transfer from the tip through the spark plug shell to the cylinder head.}
+{A cold plug is designed so that the insulator tip is reasonably short to hasten the rate of heat transfer from the tip through the spark plug shell to the cylinder head.}{C}
+\tr{أي العبارات التالية تصف المدى الحراري للشمعة بأدق شكل؟}
+\ans{C}{الشمعة الباردة مصممة بطرف عازل قصير نسبياً لتسريع انتقال الحرارة من الطرف عبر جسم الشمعة إلى رأس الأسطوانة.}
+\sharh{طرف عازل \textbf{قصير} $\Leftarrow$ الحرارة تقطع مسافة قصيرة لتصل إلى الجسم المعدني $\Leftarrow$ تنتقل بسرعة $\Leftarrow$ الطرف يبقى بارداً نسبياً = \textbf{شمعة باردة}. تُستخدم في المحركات عالية الانضغاط التي تكون حرارة أسطواناتها عالية.
+
+لاحظ أن الخيارين B وC متطابقان تماماً إلا في كلمة واحدة: \en{hot} أو \en{cold}. هذا نمط شائع في الامتحان؛ ابحث عن الكلمة المختلفة.}
+\nohead
+\no{A}{طول الجزء المسنن هو \en{reach} وليس المدى الحراري.}
+\no{B}{الطرف القصير يصف الشمعة \textbf{الباردة} لا الحارة؛ الحارة طرفها طويل.}
+\tip{\textbf{قصير = بارد}. \textbf{طويل = حار}. (مثل الطريق: الطريق الطويل يحبس الحرارة).}
+\qsep
+
+\Q{8577}{Hot spark plugs are generally used in aircraft powerplants}
+{With comparatively high compression or high operating temperatures.}
+{With comparatively low operating temperatures.}
+{Which produce high power per cubic inch displacement.}{B}
+\tr{تُستخدم الشمعات الحارة عادة في محركات الطائرات:}
+\ans{B}{ذات درجات حرارة التشغيل المنخفضة نسبياً.}
+\sharh{المحرك الذي يعمل «بارداً» لا يوفر حرارة كافية لحرق ترسبات الاحتراق (الكربون والرصاص) عن طرف الشمعة، فتتسخ الشمعة. الحل: شمعة \textbf{حارة} (طرف عازلها طويل) تحتفظ بحرارتها، فيبقى طرفها ساخناً بما يكفي لحرق الترسبات أولاً بأول.}
+\nohead
+\no{A}{المحركات عالية الانضغاط والحرارة تحتاج شمعات \textbf{باردة}؛ الشمعة الحارة فيها تسبب اشتعالاً مبكراً.}
+\no{C}{القدرة العالية لكل إنش مكعب تعني حرارة عالية $\Leftarrow$ شمعة باردة.}
+\tip{\textbf{محرك بارد $\Leftarrow$ شمعة حارة}، والعكس.}
+\qsep
+
+\Q{8592}{Using a cold spark plug in a high-compression aircraft engine would probably result in}
+{Normal operation.}
+{A fouled plug.}
+{Detonation.}{A}
+\tr{استخدام شمعة باردة في محرك طائرة عالي الانضغاط يؤدي على الأرجح إلى:}
+\ans{A}{تشغيل طبيعي.}
+\sharh{هذا هو الاختيار \textbf{الصحيح} أصلاً. المحرك عالي الانضغاط حار، ويحتاج شمعة باردة تنقل معظم حرارتها إلى رأس الأسطوانة بسرعة، فلا تتحول إلى نقطة ساخنة داخل الأسطوانة. النتيجة: تشغيل طبيعي.
+
+السؤال يحاول أن يخيفك بكلمة «باردة» لتظن أنها ستتسخ.}
+\nohead
+\no{B}{الاتساخ يحدث عندما نضع شمعة \textbf{باردة} في محرك \textbf{بارد}.}
+\no{C}{التفجر يرتبط بنوع الوقود والحرارة والضغط؛ الشمعة الباردة تساعد على \textbf{منع} النقاط الساخنة لا العكس.}
+\tip{انضغاط عالٍ + شمعة باردة = \textbf{التركيبة الصحيحة} = طبيعي.}
+\qsep
+
+\Q{8587}{What will be the result of using too hot a spark plug?}
+{Fouling of plug.}
+{Preignition.}
+{Burned capacitor.}{B}
+\tr{ما نتيجة استخدام شمعة أكثر حرارة من اللازم؟}
+\ans{B}{اشتعال مبكر.}
+\sharh{الشمعة الحارة جداً بالنسبة للمحرك لا تتخلص من حرارتها بالسرعة الكافية، فيبقى طرفها متوهجاً (مثل جمرة) داخل الأسطوانة. عندما يدخل الخليط الجديد ويُضغط، يلامس هذه النقطة المتوهجة فيشتعل \textbf{قبل} أن تأتي الشرارة في وقتها. هذا هو \textbf{الاشتعال المبكر} (\en{preignition})، وهو ضار جداً (قد يثقب المكبس).}
+\nohead
+\no{A}{الاتساخ نتيجة الشمعة \textbf{الباردة جداً}.}
+\no{C}{المكثف في الماغنيتو ولا علاقة له بالمدى الحراري للشمعة.}
+\tip{حارة جداً = \textbf{جمرة} داخل الأسطوانة $\Leftarrow$ \en{Preignition}. باردة جداً $\Leftarrow$ \en{Fouling}.}
+\qsep
+
+\Q{8573}{The term “reach,” as applied to spark plug design and/or type, indicates the}
+{Linear distance from the shell gasket seat to the end of the threads on the shell skirt.}
+{Length of center electrode exposed to the flame of combustion.}
+{Length of the shielded barrel.}{A}
+\tr{مصطلح «\en{reach}» عند الحديث عن تصميم الشمعة أو نوعها يدل على:}
+\ans{A}{المسافة الخطية من مقعد الحشية في الجسم إلى نهاية الأسنان على طرف الجسم.}
+\sharh{\en{Reach} = طول الجزء المسنن من الشمعة الذي يُربط في رأس الأسطوانة. يقاس من المكان الذي تجلس عليه الحشية النحاسية حتى نهاية الأسنان. يجب أن يطابق سماكة جدار رأس الأسطوانة:
+\begin{itemize}
+  \item \textbf{أطول من اللازم:} الأسنان تبرز داخل غرفة الاحتراق، فتتراكم عليها الترسبات ويصعب فكها، وقد تسخن وتسبب اشتعالاً مبكراً.
+  \item \textbf{أقصر من اللازم:} تبقى أسنان رأس الأسطوانة مكشوفة فيتراكم عليها الكربون، والشرارة تكون «مختبئة» داخل الفتحة.
+\end{itemize}}
+\nohead
+\no{B}{طول القطب المعرض للهب ليس هو \en{reach}.}
+\no{C}{طول البرميل المدرع (حيث يدخل السلك) ليس هو \en{reach}.}
+\tip{\en{Reach} = «كم \textbf{تصل} الشمعة إلى داخل الرأس» = طول \textbf{الأسنان}.}
+\qsep
+
+\Q{8585}{A spark plug is fouled when}
+{Its spark grounds by jumping electrodes.}
+{It causes preignition.}
+{Its spark grounds without jumping electrodes.}{C}
+\tr{تُعتبر الشمعة متّسخة (\en{fouled}) عندما:}
+\ans{C}{تتأرض شرارتها دون أن تقفز بين القطبين.}
+\sharh{في الوضع الطبيعي: الجهد العالي يرتفع حتى «يقفز» عبر الفجوة بين القطب الأوسط والقطب الأرضي (= شرارة). عندما تتراكم ترسبات موصلة (كربون، رصاص، زيت) على سطح العازل، يجد الجهد العالي طريقاً أسهل: \textbf{يزحف} على سطح الترسبات إلى الجسم المعدني (الأرضي) دون أن يرتفع بما يكفي ليقفز عبر الفجوة. لا شرارة = لا احتراق في تلك الشمعة. هذا هو تعريف الشمعة المتسخة.}
+\nohead
+\no{A}{القفز بين القطبين هو العمل \textbf{الطبيعي} للشمعة.}
+\no{B}{الاشتعال المبكر يسببه شمعة حارة جداً، وليس تعريف الاتساخ.}
+\tip{\en{Fouled} = «تتأرض \textbf{بدون قفز}» (\en{without jumping}).}
+\qsep
+
+\Q{8588}{Upon inspection of the spark plugs in an aircraft engine, the plugs were found caked with a heavy black soot. This indicates}
+{Worn oil seal rings.}
+{A rich mixture.}
+{A lean mixture.}{B}
+\tr{عند فحص شمعات محرك طائرة وُجدت مغطاة بطبقة كثيفة من السخام الأسود. هذا يدل على:}
+\ans{B}{خليط غني (بالوقود).}
+\sharh{السخام الأسود = كربون. الكربون يأتي من الوقود الذي لم يحترق احتراقاً كاملاً. ولماذا لا يحترق كاملاً؟ لأن الأكسجين (الهواء) غير كافٍ لكل الوقود الموجود $\Leftarrow$ \textbf{خليط غني}. الكربون الزائد يترسب على الشمعة على شكل سخام أسود جاف.}
+\nohead
+\no{A}{حلقات الزيت المتآكلة تسبب ترسبات \textbf{زيتية} مبللة لامعة، لا سخاماً جافاً.}
+\no{C}{الخليط الفقير يحترق بحرارة عالية ولا يترك سخاماً؛ قد يترك الشمعة بيضاء أو رمادية فاتحة.}
+\tip{\textbf{أسود = غني} (مثل دخان السيارة الأسود عندما يكون الوقود زائداً).}
+\qsep
+
+\Q{8593}{Spark plug fouling caused by lead deposits occurs most often}
+{During cruise with rich mixture.}
+{When cylinder head temperatures are relatively low.}
+{When cylinder head temperatures are high.}{B}
+\tr{اتساخ الشمعة بسبب ترسبات الرصاص يحدث غالباً:}
+\ans{B}{عندما تكون درجات حرارة رؤوس الأسطوانات منخفضة نسبياً.}
+\sharh{وقود الطائرات المكبسية (\en{AvGas}) يحتوي على رصاص رباعي الإيثيل لرفع الأوكتان، ومعه مواد «كاسحة» تحوّل الرصاص إلى مركّب يتبخر عند الحرارة العالية ويخرج مع العادم. إذا كانت حرارة الأسطوانة \textbf{منخفضة}، لا يتبخر هذا المركب، فيترسب على الشمعة على شكل طبقة رمادية/صفراء تسبب الاتساخ. يحدث هذا عادة في الخمول الطويل على الأرض، أو عند النزول بقدرة منخفضة.}
+\nohead
+\no{A}{الخليط الغني يسبب ترسبات \textbf{كربونية}؛ وفي الطيران الطبيعي تكون الحرارة كافية لتبخير الرصاص.}
+\no{C}{الحرارة العالية \textbf{تبخّر} الرصاص فتمنع ترسبه.}
+\tip{الرصاص يحتاج \textbf{حرارة} ليطير $\Leftarrow$ إذا كانت الحرارة \textbf{منخفضة} يبقى ويترسب.}
+\qsep
+
+\Q{8586}{Which of the following would be cause for rejection of a spark plug?}
+{Carbon fouling of the electrode and insulator.}
+{Insulator tip cracked.}
+{Lead fouling of the electrode and insulator.}{B}
+\tr{أي مما يلي يُعد سبباً لرفض (استبعاد) الشمعة؟}
+\ans{B}{تشقق طرف العازل.}
+\sharh{العازل الخزفي لا يمكن إصلاحه. إذا تشقق، فإن الجهد العالي سيتسرب عبر الشق، وقد تسقط قطعة من الخزف داخل الأسطوانة وتسبب أضراراً كبيرة (تخدش جدار الأسطوانة أو تثقب المكبس أو تسبب اشتعالاً مبكراً). لذلك الشمعة ذات العازل المشقوق \textbf{تُرفض} فوراً.
+
+أما الاتساخ بالكربون أو الرصاص فيمكن \textbf{تنظيفه} (بالنفخ بحبيبات خاصة أو بأداة إزالة الرصاص) ثم يعاد استخدام الشمعة.}
+\nohead
+\no{A}{الاتساخ الكربوني يُنظف.}
+\no{C}{الاتساخ بالرصاص يُنظف.}
+\tip{\textbf{يُنظَّف} = اتساخ. \textbf{يُرفض} = كسر/شق (\en{cracked}).}
+\qsep
+
+\Q{8563}{Spark plugs are considered worn out when the}
+{Electrodes have worn away to about one-half of their original dimensions.}
+{Center electrode edges have become rounded.}
+{Electrodes have worn away to about two-thirds of their original dimensions.}{A}
+\tr{تُعتبر الشمعات مستهلكة عندما:}
+\ans{A}{تتآكل الأقطاب إلى حوالي نصف أبعادها الأصلية.}
+\sharh{كل شرارة تنقل ذرات صغيرة من معدن الأقطاب، فتتآكل تدريجياً وتكبر الفجوة. عندما تصل الأقطاب إلى حوالي \textbf{نصف} حجمها الأصلي، تُعتبر الشمعة منتهية العمر وتُستبدل.}
+\nohead
+\no{B}{تدوير حواف القطب الأوسط علامة تآكل مبكرة، وليست حد الاستبدال.}
+\no{C}{ثلثا الحجم الأصلي يعني أن التآكل لم يصل إلى الحد بعد (بقي ثلثا الحجم).}
+\tip{\textbf{النصف} = نهاية العمر.}
+\qsep
+
+\Q{8584}{Defective spark plugs will cause the engine to run rough at}
+{High speeds only.}
+{Low speeds only.}
+{All speeds.}{C}
+\tr{الشمعات المعطوبة تجعل المحرك يعمل بخشونة عند:}
+\ans{C}{جميع السرعات.}
+\sharh{الشمعة المعطوبة تفشل في إعطاء شرارة بشكل متقطع (\en{intermittent missing})، وهذا لا يتعلق بالسرعة؛ هي معطوبة في كل الأحوال. فيظهر عدم انتظام الدوران (اهتزاز وارتجاف) في كل السرعات.}
+\nohead
+\no{A}{العطل لا يقتصر على السرعة العالية.}
+\no{B}{العطل لا يقتصر على السرعة المنخفضة.}
+\tip{الشمعة معطوبة = معطوبة \textbf{دائماً} = كل السرعات.}
+\qsep
+
+\Q{8545}{What will be the effect if the spark plugs are gapped too wide?}
+{Insulation failure.}
+{Hard starting.}
+{Lead damage.}{B}
+\tr{ما تأثير ضبط فجوة الشمعات أوسع من اللازم؟}
+\ans{B}{صعوبة في بدء التشغيل.}
+\sharh{الفجوة الأوسع تحتاج إلى جهد أعلى حتى تقفز الشرارة عبرها. والماغنيتو عند بدء التشغيل يدور ببطء شديد، فيعطي جهداً منخفضاً لا يكفي لكسر الفجوة الواسعة. (لكي يعطي الجهد المطلوب يجب أن يدور أسرع). النتيجة: المحرك صعب التشغيل. وهذا يحدث أيضاً عندما تتسع الفجوة تدريجياً بسبب تآكل الأقطاب.}
+\nohead
+\no{A}{الفجوة الواسعة قد تُجهد العزل على المدى الطويل، لكن الأثر الأساسي والمباشر هو صعوبة التشغيل.}
+\no{C}{لا يُتلف السلك.}
+\tip{فجوة واسعة = تحتاج جهداً أعلى = الماغنيتو البطيء عند البدء لا يستطيع $\Leftarrow$ \en{Hard starting}.}
+\qsep
+
+\Q{8564}{Which of the following could cause damage to the nose ceramic or to the electrode of an aircraft spark plug?}
+{Plug installed without a copper gasket.}
+{Improper gapping procedure.}
+{Excessive magneto voltage.}{B}
+\tr{أي مما يلي قد يسبب ضرراً للخزف في مقدمة الشمعة أو لأقطابها؟}
+\ans{B}{طريقة خاطئة في ضبط الفجوة.}
+\sharh{عند ضبط الفجوة يجب استخدام \textbf{أداة الضبط الصحيحة}، ونحرّك \textbf{القطب الأرضي فقط}. لا نضغط أبداً على القطب الأوسط، لأنه محاط بالعازل الخزفي، وأي قوة جانبية عليه تنقلها مباشرة إلى الخزف فيتشقق (والشق قد لا يُرى بالعين).}
+\nohead
+\no{A}{تركيبها بدون حشية نحاسية يسبب تسرباً وسوء نقل للحرارة وقد يتلف الأسنان، لكن ليس هذا ما يُتلف الخزف في المقدمة عادة.}
+\no{C}{جهد الماغنيتو المرتفع لا يكسر الخزف.}
+\tip{عند الضبط: «حرّك الأرضي، لا تلمس الأوسط».}
+\qsep
+
+\Q{8576}{(1) The platinum and iridium ground electrodes used on fine wire spark plugs are extremely brittle and can be broken if they are improperly handled or adjusted. (2) When gapping massive-electrode spark plugs, a wire gauge should be inserted between the center and ground electrodes while moving the ground electrode in order to avoid setting the gap too close. Regarding the above statements,}
+{Only No. 1 is true.}
+{Only No. 2 is true.}
+{Both No. 1 and No. 2 are true.}{A}
+\tr{(1) الأقطاب الأرضية من البلاتين والإيريديوم المستخدمة في الشمعات ذات الأسلاك الرفيعة هشة جداً، وقد تنكسر إذا تم التعامل معها أو ضبطها بشكل غير صحيح. (2) عند ضبط فجوة الشمعات ذات الأقطاب الضخمة، يجب إدخال مقياس سلكي بين القطب الأوسط والأرضي أثناء تحريك القطب الأرضي لتجنب جعل الفجوة ضيقة جداً. بخصوص العبارتين:}
+\ans{A}{العبارة 1 فقط صحيحة.}
+\sharh{يوجد نوعان من الشمعات:
+\begin{itemize}
+  \item \textbf{ذات الأسلاك الرفيعة (\en{fine-wire}):} أقطابها أسلاك رفيعة من البلاتين أو الإيريديوم. ضبطها سهل، لكن هذه المعادن \textbf{هشة} (خاصة الإيريديوم) وتنكسر بسهولة إذا عُوملت بخشونة. $\Leftarrow$ \textbf{العبارة 1 صحيحة}.
+  \item \textbf{ذات الأقطاب الضخمة (\en{massive-electrode}):} أقطاب أرضية سميكة (2 أو 4). إذا وضعت المقياس السلكي بين القطبين ثم ضغطت القطب الأرضي عليه، فإن الضغط سينتقل عبر المقياس إلى القطب \textbf{الأوسط}، ومنه إلى العازل الخزفي فيتشقق. الطريقة الصحيحة: حرّك القطب الأرضي (بالأداة المخصصة) والمقياس \textbf{خارج} الفجوة، ثم أخرج الأداة وقِس. $\Leftarrow$ \textbf{العبارة 2 خاطئة}.
+\end{itemize}}
+\nohead
+\no{B}{العبارة 2 خاطئة (المقياس بين القطبين أثناء الضبط يكسر العازل).}
+\no{C}{العبارة 2 خاطئة.}
+\tip{\textbf{لا تضع شيئاً بين القطبين أثناء الضغط} (نفس فكرة 8564: لا قوة على القطب الأوسط).}
+\qsep
+
+\Q{8546}{When removing a shielded spark plug, which of the following is most likely to be damaged?}
+{Center electrode.}
+{Shell section.}
+{Core insulator.}{C}
+\tr{عند فك شمعة مدرّعة، أي مما يلي هو الأكثر عرضة للتلف؟}
+\ans{C}{العازل الداخلي (\en{core insulator}).}
+\sharh{الشمعة المدرعة تُفك بمفتاح قمعي عميق (\en{deep socket}). إذا لم يكن المفتاح مستقيماً تماماً على محور الشمعة وطُبقت قوة جانبية، فإن الشمعة تنحني قليلاً، والعازل الخزفي في الداخل هو الجزء الهش الذي ينكسر. وكذلك عند سحب سلك الإشعال المدرع من الشمعة بزاوية مائلة، قد يضغط على العازل ويكسره.}
+\nohead
+\no{A}{القطب الأوسط داخل الأسطوانة ومحمي، ولا يتأثر عادة بعملية الفك.}
+\no{B}{الجسم المعدني (\en{shell}) قوي ولا يتلف بسهولة.}
+\tip{الجزء \textbf{الخزفي} هو الأضعف دائماً $\Leftarrow$ \en{core insulator}.}
+\qsep
+
+\Q{8553}{Capacitance afterfiring of a spark plug is caused by}
+{The stored energy in the ignition shielded lead unloading after normal timed ignition.}
+{Excessive center electrode erosion.}
+{Constant polarity firing.}{A}
+\tr{الإشعال اللاحق بالسعة (\en{capacitance afterfiring}) في الشمعة يسببه:}
+\ans{A}{الطاقة المخزنة في سلك الإشعال المدرّع تُفرَّغ بعد الإشعال الطبيعي في وقته.}
+\sharh{السلك المدرع يتكون من: موصل في الوسط، ثم عازل، ثم ضفيرة معدنية مؤرضة من الخارج. «موصلان بينهما عازل» هو بالضبط تعريف \textbf{المكثف}! إذن السلك المدرع يتصرف كمكثف طويل.
+
+عندما يرتفع الجهد لعمل الشرارة، يُشحن هذا «المكثف» أيضاً بطاقة. وعندما تقفز الشرارة وتبدأ بالخمود، يفرّغ السلك الطاقة المخزنة فيه عبر الفجوة، فتستمر الشرارة وقتاً أطول من اللازم. هذا هو الإشعال اللاحق. ضرره: يزيد تآكل الأقطاب بشكل كبير ويقصّر عمر الشمعة.}
+\nohead
+\no{B}{تآكل القطب الأوسط \textbf{نتيجة} للإشعال اللاحق وليس سبباً له.}
+\no{C}{القطبية الثابتة تسبب تآكلاً غير متساوٍ للأقطاب، وليست سبب الإشعال اللاحق.}
+\tip{سلك مدرع = \textbf{مكثف} يخزن طاقة $\Leftarrow$ يفرغها بعد الشرارة $\Leftarrow$ \en{afterfiring}.}
+\qsep
+
+\Q{8518}{Capacitance afterfiring in most modern spark plugs is reduced by the use of}
+{Fine wire electrodes.}
+{A built-in resistor in each plug.}
+{Aluminum oxide insulation.}{B}
+\tr{يُقلَّل الإشعال اللاحق بالسعة في معظم الشمعات الحديثة باستخدام:}
+\ans{B}{مقاومة مدمجة في كل شمعة.}
+\sharh{بعد أن عرفنا السبب في 8553 (السلك المدرع يتصرف كمكثف يفرغ طاقته بعد الشرارة)، الحل هو وضع \textbf{مقاومة} داخل الشمعة على التوالي مع القطب الأوسط. هذه المقاومة تسمح بمرور الشرارة الأساسية، لكنها توقف تدفق التيار عندما ينخفض الجهد إلى قيمة معينة، فتُخمد الشرارة المتبقية. النتيجة: شرارة أقصر مدة، وعمر أطول للأقطاب.}
+\nohead
+\no{A}{الأقطاب الرفيعة تحسّن الأداء وتقلل الاتساخ، لكنها لا توقف التفريغ اللاحق.}
+\no{C}{أكسيد الألومنيوم مادة العازل الخزفي في الشمعات عموماً، لا علاج للإشعال اللاحق.}
+\tip{سبب المشكلة = \textbf{مكثف}، والعلاج = \textbf{مقاومة} (\en{resistor}).}
+\qsep
+
+\Q{8552}{Thermocouples are usually inserted or installed on the}
+{Front cylinder of the engine.}
+{Rear cylinder of the engine.}
+{Hottest cylinder of the engine.}{C}
+\tr{المزدوجات الحرارية (\en{thermocouples}) تُركّب عادة على:}
+\ans{C}{أسخن أسطوانة في المحرك.}
+\sharh{مقياس حرارة رأس الأسطوانة (\en{CHT}) يستخدم مزدوجاً حرارياً واحداً عادة، وهو إما حشية (\en{gasket}) توضع تحت الشمعة بدل الحشية النحاسية، أو مسبار يُدخل في فتحة في زعانف رأس الأسطوانة. نضعه على \textbf{أسخن أسطوانة}، التي يحددها الصانع بالاختبارات، لأن الطيار يجب أن يعرف أسوأ حالة: إذا كانت أسخن أسطوانة ضمن الحدود فالباقي كذلك.
+
+(سبب وجود هذا السؤال في فصل الإشعال: الحشية الحرارية توضع تحت \textbf{الشمعة}).}
+\nohead
+\no{A}{الأسطوانة الأمامية ليست بالضرورة الأسخن (غالباً تأخذ هواء تبريد أكثر).}
+\no{B}{الأسطوانة الخلفية ليست بالضرورة الأسخن في كل محرك؛ القاعدة «الأسخن» أياً كان موقعها.}
+\tip{نقيس \textbf{أسوأ حالة} $\Leftarrow$ \en{hottest cylinder}.}
+
+\newpage
+% =====================================================================
+\section{نظام الإشعال في المحركات التوربينية}
+% =====================================================================
+
+\begin{concept}{المفهوم: لماذا يختلف الإشعال في المحرك النفاث؟}
+\textbf{الفرق الأساسي:} في المحرك المكبسي تحتاج كل أسطوانة إلى شرارة في كل دورة، لذلك يعمل الإشعال طوال الوقت. أما في المحرك التوربيني فالاحتراق \textbf{مستمر} مثل لهب الموقد؛ نحتاج الشرارة فقط لإشعاله في البداية، ثم يبقى اللهب مشتعلاً بنفسه. لذلك:
+\begin{itemize}
+  \item الإشعال يعمل \textbf{أثناء التشغيل فقط} ثم يُطفأ (وأحياناً يُشغَّل احتياطياً عند الإقلاع والهبوط والمطر الغزير والجليد).
+  \item لهذا السبب يدوم المُشعِل (\en{igniter}) وقتاً طويلاً رغم شدة شرارته.
+\end{itemize}
+\textbf{لماذا طاقة عالية؟} لأن المحرك قد ينطفئ (\en{flameout}) في ارتفاع عالٍ حيث الهواء رقيق وبارد جداً (−50° مئوية) والوقود البارد صعب التبخر، والهواء يندفع بسرعة كبيرة في غرفة الاحتراق. نحتاج شرارة \textbf{حارة جداً} (طاقة كبيرة) لإعادة الإشعال في هذه الظروف.
+
+\textbf{النظام: التفريغ بالمكثف (\en{capacitor discharge}):}
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{وحدة الإثارة (\en{exciter}):} تأخذ كهرباء الطائرة وترفعها، وتشحن مكثف تخزين (\en{storage capacitor}).
+  \item عندما يصل جهد المكثف إلى قيمة معينة، يتأين الغاز في \textbf{أنبوب التفريغ} (\en{discharge tube}) فيصبح موصلاً.
+  \item يمر جزء من الشحنة في الابتدائي لـ\textbf{محول القدح} (\en{triggering transformer})، فيتولد في ثانويه \textbf{جهد عالٍ جداً} يقفز عبر فجوة المُشعِل ويؤيّنها.
+  \item الآن الفجوة موصلة، فيفرغ مكثف التخزين كل طاقته الكبيرة عبرها دفعة واحدة $\Leftarrow$ شرارة ضخمة وحارة.
+\end{enumerate}
+\textbf{النظام النموذجي:} وحدة إثارة واحدة (مزدوجة) + مُشعِلان (على جانبين متقابلين من المحرك) + سلكا جهد عالٍ.
+
+\textbf{خطر الموت:} المكثف يخزن طاقة قاتلة ويبقى مشحوناً بعد إطفاء النظام. يجب الانتظار قبل الفك وتفريغ الشحنة. وبعض الوحدات تحتوي على مواد مشعة.
+\end{concept}
+
+\Q{8569}{Which statement is correct regarding the ignition system of a turbine engine?}
+{The system is normally de-energized as soon as the engine starts.}
+{It is energized during the starting and warmup periods only.}
+{The system generally includes a polar inductor-type magneto.}{A}
+\tr{أي عبارة صحيحة بخصوص نظام الإشعال في المحرك التوربيني؟}
+\ans{A}{يُفصل النظام عادة بمجرد أن يبدأ المحرك بالعمل.}
+\sharh{الاحتراق في المحرك التوربيني مستمر: الوقود يُرش باستمرار في غرفة الاحتراق، واللهب يشعل الوقود الجديد دون حاجة لشرارة. لذلك يعمل نظام الإشعال \textbf{فقط} خلال دورة بدء التشغيل، ثم يُفصل عادة عندما يعمل المحرك ذاتياً.}
+\nohead
+\no{B}{لا يوجد «فترة تسخين» يعمل فيها الإشعال؛ يُفصل بمجرد التشغيل.}
+\no{C}{المحرك التوربيني لا يستخدم ماغنيتو؛ يستخدم نظام تفريغ بالمكثف يأخذ طاقته من كهرباء الطائرة.}
+\tip{التوربين = «موقد غاز»: نحتاج الولاعة فقط عند الإشعال.}
+\qsep
+
+\Q{8548}{How does the ignition system of a gas turbine engine differ from that of a reciprocating engine?}
+{One igniter plug is used in each combustion chamber.}
+{Magneto-to-engine timing is not critical.}
+{A high-energy spark is required for ignition.}{C}
+\tr{كيف يختلف نظام إشعال المحرك التوربيني الغازي عن نظام المحرك المكبسي؟}
+\ans{C}{يلزم شرارة عالية الطاقة للإشعال.}
+\sharh{نظام إشعال التوربين يعمل للتشغيل فقط، لكنه يجب أن يعطي تفريغاً عالي الطاقة عند المُشعِل. الشرارة الحارة جداً ضرورية لإعادة إشعال المحرك إذا انطفأ في الارتفاعات العالية، حيث الهواء بارد ورقيق والوقود صعب الاشتعال.}
+\nohead
+\no{A}{المحرك التوربيني لا يحتوي مُشعِلاً في كل غرفة احتراق؛ عادة مُشعِلان فقط، واللهب ينتقل بين الغرف عبر أنابيب الربط (\en{crossover / interconnector tubes}).}
+\no{B}{لا يوجد ماغنيتو في التوربين أصلاً حتى نتكلم عن توقيته.}
+\tip{التوربين = \textbf{طاقة عالية} (\en{High energy}).}
+\qsep
+
+\Q{8606}{Why do turbine engine ignition systems require high energy?}
+{To ignite the fuel under conditions of high altitude and high temperatures.}
+{Because the applied voltage is much greater.}
+{To ignite the fuel under conditions of high altitude and low temperatures.}{C}
+\tr{لماذا تحتاج أنظمة إشعال المحركات التوربينية إلى طاقة عالية؟}
+\ans{C}{لإشعال الوقود في ظروف الارتفاعات العالية ودرجات الحرارة المنخفضة.}
+\sharh{في الارتفاعات العالية الحرارة منخفضة جداً (قد تصل إلى −55° مئوية)، والهواء رقيق، والوقود البارد لا يتبخر جيداً. هذه أصعب ظروف للإشعال. المُشعِل يجب أن يستطيع إشعال الخليط \textbf{بثبات} في هذه الظروف، ولذلك يحتاج طاقة أعلى بكثير من شمعة المحرك المكبسي.}
+\nohead
+\no{A}{الحرارة في الارتفاعات العالية \textbf{منخفضة} لا عالية. الحرارة العالية تسهّل الإشعال أصلاً.}
+\no{B}{الجهد المطبق ليس هو السبب؛ السبب ظروف الإشعال الصعبة.}
+\tip{\textbf{عالٍ وبارد} (\en{high altitude + low temperature}). الخياران A وC يختلفان في كلمة واحدة: \en{high/low}.}
+\qsep
+
+\Q{8542}{The capacitor-type ignition system is used almost universally on turbine engines primarily because of its high voltage and}
+{Low amperage.}
+{Long life.}
+{High-heat intensity.}{C}
+\tr{يُستخدم نظام الإشعال من نوع المكثف في كل المحركات التوربينية تقريباً، والسبب الرئيسي هو جهده العالي و:}
+\ans{C}{شدة حرارته العالية.}
+\sharh{المكثف يخزن طاقة على مدى فترة، ثم يفرّغها دفعة واحدة في جزء صغير جداً من الثانية. تفريغ طاقة كبيرة في زمن قصير جداً يعني تياراً هائلاً وشرارة \textbf{حارة جداً} (شدة حرارة عالية). هذا بالضبط ما نحتاجه لإشعال الوقود في ظروف صعبة.}
+\nohead
+\no{A}{التيار في لحظة التفريغ \textbf{عالٍ} جداً، لا منخفض.}
+\no{B}{طول عمر المُشعِل يأتي من عمله المتقطع، وليس السبب الأساسي لاختيار نظام المكثف.}
+\tip{مكثف = يجمع ثم «يطلق دفعة واحدة» $\Leftarrow$ \en{\textbf{High heat}}.}
+\qsep
+
+\Q{8597}{The type of ignition system used on most turbine aircraft engines is}
+{High resistance.}
+{Low tension.}
+{Capacitor discharge.}{C}
+\tr{نوع نظام الإشعال المستخدم في معظم محركات الطائرات التوربينية هو:}
+\ans{C}{التفريغ بالمكثف.}
+\sharh{نظام التفريغ بالمكثف عالي الطاقة هو النظام القياسي في المحركات النفاثة، لأنه يعطي الشرارة الحارة جداً المطلوبة (انظر 8542).}
+\nohead
+\no{A}{«مقاومة عالية» ليس اسماً لنوع نظام إشعال.}
+\no{B}{\en{Low tension} نظام قديم لبعض المحركات المكبسية (ضد مشاكل الارتفاع)، وليس النظام التوربيني.}
+\tip{توربين = \en{\textbf{Capacitor Discharge}} (\en{CD}).}
+\qsep
+
+\Q{8549}{In a turbine engine DC capacitor discharge ignition system, where are the high-voltage pulses formed?}
+{At the breaker.}
+{At the triggering transformer.}
+{At the rectifier.}{B}
+\tr{في نظام الإشعال بتفريغ المكثف بالتيار المستمر في المحرك التوربيني، أين تتشكل نبضات الجهد العالي؟}
+\ans{B}{في محول القدح (\en{triggering transformer}).}
+\sharh{تسلسل الأحداث (راجع الصندوق في بداية الفصل):
+\begin{enumerate}[label=\arabic*.]
+  \item مكثف التخزين يُشحن إلى جهد معين.
+  \item عند الوصول إلى هذا الجهد يتأين الغاز في أنبوب التفريغ، فيمر جزء من الشحنة في \textbf{الملف الابتدائي لمحول القدح}.
+  \item هذا يحث جهداً \textbf{عالياً جداً} في الملف الثانوي لمحول القدح، الموصول بالمُشعِل.
+  \item هذا الجهد العالي يقفز عبر فجوة المُشعِل (شرارة القدح) ويؤين الهواء فيها.
+  \item الفجوة المؤينة أصبحت موصلة، فيفرغ مكثف التخزين باقي طاقته الكبيرة عبرها.
+\end{enumerate}
+إذن مكان صنع نبضة الجهد العالي = \textbf{محول القدح}. (كلمة \en{trigger} تعني «الزناد» الذي يُطلق الحدث).}
+\nohead
+\no{A}{القاطع (\en{breaker}) في نظام \en{DC} يقطع التيار لتوليد تيار متغير لشحن المكثف، ولا يصنع النبضة العالية للمُشعِل.}
+\no{C}{المقوِّم (\en{rectifier}) يحوّل التيار المتردد إلى مستمر لشحن المكثف؛ لا يصنع جهداً عالياً.}
+\tip{\en{Trigger} = الزناد $\Leftarrow$ الذي يطلق الشرارة الأولى بجهد عالٍ.}
+\qsep
+
+\Q{8607}{Which of the following are included in a typical turbine engine ignition system? 1. Two igniter plugs. 2. Two transformers. 3. One exciter unit. 4. Two intermediate ignition leads. 5. Two low tension igniter leads. 6. Two high tension igniter leads.}
+{2, 3, 4.}
+{1, 4, 5.}
+{1, 3, 6.}{C}
+\tr{أي مما يلي يتضمنه نظام إشعال توربيني نموذجي؟ 1. مُشعِلان. 2. محولان. 3. وحدة إثارة واحدة. 4. سلكا إشعال وسيطان. 5. سلكا مُشعِل منخفضا الجهد. 6. سلكا مُشعِل عاليا الجهد.}
+\ans{C}{1، 3، 6.}
+\sharh{النظام النموذجي يغذي مُشعِلين في غرفتي احتراق على جانبين متقابلين من المحرك. يحتاج إلى:
+\begin{itemize}
+  \item \textbf{(1) مُشعِلان} (واحد في كل جانب، للاحتياط).
+  \item \textbf{(3) وحدة إثارة واحدة} (لكنها مزدوجة من الداخل، تغذي المُشعِلين).
+  \item \textbf{(6) سلكان عاليا الجهد} يحملان الطاقة من وحدة الإثارة إلى المُشعِلين.
+\end{itemize}}
+\nohead
+\no{A}{لا يوجد محولان منفصلان ولا أسلاك «وسيطة» في النظام النموذجي، وينقصه المُشعِلان.}
+\no{B}{الأسلاك إلى المُشعِلات \textbf{عالية} الجهد لا منخفضة، ولا يوجد أسلاك وسيطة.}
+\tip{\textbf{2 مُشعِل + 1 مُثير + 2 سلك عالٍ} $\Leftarrow$ (1، 3، 6).}
+\qsep
+
+\Q{8556}{Why are turbine engine igniters less susceptible to fouling than reciprocating engine spark plugs?}
+{The high-intensity spark cleans the igniter.}
+{The frequency of the spark is less for igniters.}
+{Turbine igniters operate at cooler temperatures.}{A}
+\tr{لماذا تكون مُشعِلات المحرك التوربيني أقل عرضة للاتساخ من شمعات المحرك المكبسي؟}
+\ans{A}{لأن الشرارة الشديدة تنظف المُشعِل.}
+\sharh{الشرارة عالية الطاقة حارة جداً، وعندما تقفز عبر الفجوة فإنها تحرق وتزيل أي ترسبات أو ملوثات موجودة في الفجوة. فالمُشعِل «ينظف نفسه بنفسه» مع كل شرارة.}
+\nohead
+\no{B}{قلة تكرار الشرارة لا تمنع الاتساخ؛ بالعكس، المُشعِل يبقى في غرفة الاحتراق طوال الوقت وهو مطفأ.}
+\no{C}{الحرارة المنخفضة تزيد الاتساخ عادة (تذكر الشمعة الباردة)؛ ليست سبب النظافة.}
+\tip{شرارة قوية = \textbf{تحرق الأوساخ} = تنظيف ذاتي.}
+\qsep
+
+\Q{8557}{The constrained-gap igniter plug used in some gas turbine engines operates at a cooler temperature because}
+{It projects into the combustion chamber.}
+{The applied voltage is less.}
+{The construction is such that the spark occurs beyond the face of the combustion chamber liner.}{C}
+\tr{المُشعِل ذو الفجوة المقيدة (\en{constrained-gap}) المستخدم في بعض المحركات التوربينية يعمل بحرارة أقل لأن:}
+\ans{C}{تصميمه يجعل الشرارة تحدث بعد سطح بطانة غرفة الاحتراق (أي أبعد منه).}
+\sharh{المُشعِل ذو الفجوة المقيدة \textbf{لا يبرز} داخل بطانة غرفة الاحتراق؛ طرفه يكون عند مستوى سطح البطانة أو خلفه، بعيداً عن اللهب المباشر، فيبقى أبرد. ومع ذلك فإن الشرارة لا تبقى قريبة من سطح المُشعِل، بل تقوس (\en{arcs}) وتمتد إلى ما بعد سطح البطانة، إلى داخل منطقة الخليط، فتشعله بفعالية.}
+\nohead
+\no{A}{العكس: هو \textbf{لا يبرز} داخل غرفة الاحتراق، ولهذا هو أبرد.}
+\no{B}{الجهد المطبق ليس سبب انخفاض حرارته.}
+\tip{\en{Constrained} = «محصور» خلف البطانة $\Leftarrow$ بعيد عن اللهب = أبرد، والشرارة «تمتد للخارج».}
+\qsep
+
+\Q{8561}{Igniter plugs used in turbine engines are subjected to high intensity spark discharges and yet they have a long service life because they}
+{Operate at much lower temperatures.}
+{Are not placed directly into the combustion chamber.}
+{Do not require continuous operation.}{C}
+\tr{مُشعِلات المحركات التوربينية تتعرض لتفريغات شرارة عالية الشدة، ومع ذلك عمرها طويل لأنها:}
+\ans{C}{لا تحتاج إلى العمل بشكل مستمر.}
+\sharh{شمعة المحرك المكبسي تعمل آلاف المرات في الدقيقة طوال كل رحلة. أما المُشعِل التوربيني فيعمل فقط لبضع ثوانٍ أو دقائق عند التشغيل، ثم يُطفأ. لذلك رغم أن كل شرارة منه أقوى بكثير، فإن العدد الكلي للشرارات خلال عمره قليل جداً، فيدوم طويلاً.}
+\nohead
+\no{A}{المُشعِلات تعمل في بيئة حارة جداً (غرفة الاحتراق).}
+\no{B}{المُشعِلات توضع فعلاً في غرفة الاحتراق (أو على حافتها).}
+\tip{يعيش طويلاً لأنه \textbf{يعمل قليلاً} (\en{not continuous}).}
+\qsep
+
+\Q{8559}{Generally, when removing a turbine engine igniter plug, in order to eliminate the possibility of the technician receiving a lethal shock, the ignition switch is turned off and}
+{Disconnected from the power supply circuit.}
+{The igniter lead is disconnected from the plug and the center electrode grounded to the engine after disconnecting the transformer-exciter input lead and waiting the prescribed time.}
+{The transformer-exciter input lead is disconnected and the center electrode grounded to the engine after disconnecting the igniter lead from the plug and waiting the prescribed time.}{B}
+\tr{عموماً، عند فك مُشعِل محرك توربيني، ولمنع احتمال تعرض الفني لصدمة قاتلة، يُطفأ مفتاح الإشعال ثم:}
+\ans{B}{يُفصل سلك المُشعِل عن المُشعِل ويُؤرَّض القطب الأوسط بالمحرك، وذلك \textbf{بعد} فصل سلك الدخل لوحدة الإثارة والانتظار المدة المحددة.}
+\sharh{الخطر: مكثف التخزين في وحدة الإثارة يحتفظ بشحنة قاتلة حتى بعد إطفاء النظام. الترتيب الصحيح مهم جداً:
+\begin{enumerate}[label=\arabic*.]
+  \item أطفئ مفتاح الإشعال.
+  \item \textbf{افصل سلك الدخل} لوحدة الإثارة (\en{input lead}) $\Leftarrow$ قطع مصدر الطاقة.
+  \item \textbf{انتظر} المدة التي يحددها الصانع (عادة 1 إلى 5 دقائق) حتى يفرغ المكثف شحنته عبر مقاومات التفريغ الداخلية.
+  \item \textbf{افصل سلك المُشعِل} عن المُشعِل.
+  \item \textbf{أرّض القطب الأوسط} للمُشعِل بالمحرك، لتفريغ أي شحنة متبقية.
+  \item الآن فك المُشعِل بأمان.
+\end{enumerate}
+الخياران B وC يحتويان نفس الخطوات تقريباً، لكن بترتيب مختلف. في B نقطع الطاقة \textbf{أولاً} وننتظر، ثم نلمس سلك المُشعِل. في C نلمس سلك المُشعِل (الذي قد يحمل شحنة قاتلة) \textbf{قبل} قطع الطاقة والانتظار $\Leftarrow$ خطير.}
+\nohead
+\no{A}{فصل المفتاح عن دائرة الطاقة فقط لا يفرّغ المكثف المشحون.}
+\no{C}{الترتيب خاطئ: يفصل سلك المُشعِل قبل قطع الدخل والانتظار، فيتعرض الفني للشحنة.}
+\tip{\textbf{اقطع المصدر $\Leftarrow$ انتظر $\Leftarrow$ افصل السلك $\Leftarrow$ أرّض القطب}. (الدخل أولاً، والمُشعِل أخيراً).}
+\qsep
+
+\Q{8560}{Great caution should be exercised in handling damaged hermetically sealed turbine engine igniter transformer units because}
+{Compounds in the unit may become a fire or explosion hazard when exposed to the air.}
+{Some contain radioactive material.}
+{Some contain toxic chemicals.}{B}
+\tr{يجب الحذر الشديد عند التعامل مع وحدات محولات المُشعِل المحكمة الإغلاق التالفة في المحركات التوربينية لأن:}
+\ans{B}{بعضها يحتوي على مواد مشعة.}
+\sharh{بعض وحدات الإثارة تحتوي على كمية صغيرة من مادة مشعة (مثل \textbf{السيزيوم} المشع) داخل أنبوب التفريغ، لتساعد على تأيين الغاز بشكل ثابت ومنتظم. ما دامت الوحدة مغلقة بإحكام فهي آمنة، لكن إذا تلف الغلاف المحكم فيجب التعامل معها بحذر شديد والتخلص منها حسب تعليمات المواد المشعة.}
+\nohead
+\no{A}{لا تحتوي الوحدة على مواد تشتعل أو تنفجر بمجرد تعرضها للهواء.}
+\no{C}{الخطر المذكور في المصادر هو الإشعاع وليس المواد الكيميائية السامة.}
+\tip{\en{Hermetically sealed} + \en{damaged} $\Leftarrow$ \textbf{إشعاع} (سيزيوم).}
+
+\newpage
+% =====================================================================
+\section{أنظمة بدء التشغيل (\en{Starting Systems})}
+% =====================================================================
+
+\begin{concept}{المفهوم: المُدوِّر الكهربائي، المُدوِّر-المولّد، والمُدوِّر الهوائي}
+\textbf{1) المُدوِّر الكهربائي (\en{electric starter}):} محرك كهربائي \textbf{ملفوف على التوالي} (\en{series wound}) لأن هذا النوع يعطي أكبر عزم عند السرعة صفر، وهو ما نحتاجه لتدوير محرك ثقيل من السكون.
+\begin{itemize}
+  \item عند البدء (السرعة صفر) لا يوجد ما يعيق التيار إلا مقاومة الأسلاك الصغيرة $\Leftarrow$ \textbf{تيار هائل}، وجهد البطارية ينخفض بشكل ملحوظ.
+  \item عندما يبدأ بالدوران يولد المحرك الكهربائي جهداً عكسياً (\en{counter EMF}) يعاكس جهد البطارية $\Leftarrow$ التيار \textbf{يقل} كلما زادت السرعة.
+\end{itemize}
+
+\textbf{2) المُدوِّر-المولّد (\en{starter-generator}):} في المحركات التوربينية الصغيرة. آلة واحدة: مُدوِّر عند التشغيل، ثم مولد بعده. فيها:
+\begin{itemize}
+  \item \textbf{مرحّل المُدوِّر (\en{starter relay}):} يوصل تيار البطارية الكبير إلى ملفات التدوير.
+  \item \textbf{مرحّل التيار المنخفض (\en{undercurrent relay}):} ملفه على التوالي مع ملفات المُدوِّر. ما دام التيار كبيراً (المحرك يتسارع)، يبقى مغلقاً ويُبقي مرحّل المُدوِّر ومرحّل الإشعال يعملان. عندما يشتغل المحرك ويقل حمل المُدوِّر، ينخفض التيار فيُفتح هذا المرحّل، فيتوقف المُدوِّر والإشعال \textbf{تلقائياً}.
+  \item \textbf{مفتاح الإيقاف (\en{start/stop}):} لإيقاف التسلسل يدوياً، مثلاً في التشغيل المعلّق (\en{hung start}): المحرك اشتعل لكن سرعته لا ترتفع، فيبقى التيار عالياً ولا يفتح مرحّل التيار المنخفض.
+\end{itemize}
+
+\textbf{3) المُدوِّر الهوائي (\en{air turbine / pneumatic starter}):} توربين صغير يدور بسرعة عالية جداً (60,000 إلى 80,000 دورة/دقيقة) بالهواء المضغوط (من وحدة أرضية أو \en{APU} أو محرك آخر)، ثم تُخفض سرعته بتروس وتنقل إلى المحرك عبر قابض.
+\begin{itemize}
+  \item \textbf{ميزته الرئيسية:} نسبة قدرة إلى وزن عالية (وزنه حوالي $\frac{1}{5}$ من مُدوِّر كهربائي بنفس العزم).
+  \item \textbf{قابض بمخالب وسن منشاري (\en{sprag clutch / pawl \& ratchet}):} عند التشغيل يربط المُدوِّر بالمحرك؛ عندما يصبح المحرك أسرع، تبعد القوة الطاردة المركزية المخالب فينفصل.
+  \item \textbf{التزييت:} له زيت خاص داخله. الفحص الدوري: \textbf{مستوى الزيت} و\textbf{سدادة التصريف المغناطيسية} (كاشف البُرادة).
+  \item \textbf{حمايات من السرعة الزائدة:} مفتاح أثقال طاردة (\en{flyweight cutout}) يغلق صمام الهواء؛ نقطة قص (\en{shear section}) في العمود تنكسر إذا لم ينفصل القابض؛ وفي المُدوِّر المباشر تصميم فوهة «تخنق» الهواء.
+\end{itemize}
+\end{concept}
+
+\Q{8623}{When using an electric starter motor, current usage}
+{Is highest at the start of motor rotation.}
+{Remains relatively constant throughout the starting cycle.}
+{Is highest just before starter cutoff (at highest RPM).}{A}
+\tr{عند استخدام محرك بدء كهربائي، استهلاك التيار:}
+\ans{A}{يكون أعلى ما يمكن عند بداية دوران المحرك.}
+\sharh{المحرك الكهربائي الملفوف على التوالي، عند السرعة صفر، لا يعيق التيار فيه شيء سوى مقاومة الأسلاك الصغيرة جداً، فيسحب تياراً ضخماً (مئات الأمبيرات). عندما يبدأ بالدوران، تتحرك ملفاته في المجال المغناطيسي فيتولد فيها جهد يعاكس جهد البطارية (\en{counter electromotive force}). هذا الجهد العكسي يزداد مع السرعة، فيطرح من جهد البطارية، فيقل التيار تدريجياً. إذن \textbf{أعلى تيار = لحظة البدء}.}
+\nohead
+\no{B}{التيار ليس ثابتاً؛ يقل مع زيادة السرعة.}
+\no{C}{عند السرعة العالية يكون الجهد العكسي أكبر، فالتيار \textbf{أقل} ما يمكن.}
+\tip{مثل دفع سيارة متوقفة: \textbf{أصعب لحظة هي البداية}.}
+\qsep
+
+\Q{8624}{When using an electric starter motor, the current flow through it}
+{Is highest just before starter cutoff (at highest RPM).}
+{Remains relatively constant throughout the starting cycle.}
+{Is highest at the start of motor rotation.}{C}
+\tr{عند استخدام محرك بدء كهربائي، التيار المار فيه:}
+\ans{C}{يكون أعلى ما يمكن عند بداية دوران المحرك.}
+\sharh{نفس السؤال 8623 مع ترتيب مختلف للخيارات (انتبه: الحرف تغيّر من A إلى C!). عند إغلاق مفتاح التشغيل يكون التيار في أعلى قيمة، وينخفض جهد البطارية بشكل كبير. ومع بدء الدوران وتولد الجهد العكسي، يقل التيار.}
+\nohead
+\no{A}{عند أعلى سرعة يكون التيار في أدنى قيمة.}
+\no{B}{التيار ليس ثابتاً.}
+\tip{احفظ \textbf{المعنى} لا الحرف: «\en{highest at the start}».}
+\qsep
+
+\Q{8619}{The purpose of an under current relay in a starter-generator system is to}
+{Provide a backup for the starter relay.}
+{Disconnect power from the starter-generator and ignition when sufficient engine speed is reached.}
+{Keep current flow to the starter-generator under the circuit capacity maximum.}{B}
+\tr{الغرض من مرحّل التيار المنخفض في نظام المُدوِّر-المولّد هو:}
+\ans{B}{فصل الطاقة عن المُدوِّر-المولّد والإشعال عند الوصول إلى سرعة كافية للمحرك.}
+\sharh{التسلسل كما يشرحه المصدر:
+\begin{enumerate}[label=\arabic*.]
+  \item الطيار يغلق مفتاح التشغيل لحظياً $\Leftarrow$ يمر تيار يغلق \textbf{مرحّل المُدوِّر}.
+  \item يمر تيار كبير في ملفات التدوير (على التوالي) للمُدوِّر-المولّد، فيبدأ تدوير المحرك.
+  \item هذا التيار الكبير يمر في ملف \textbf{مرحّل التيار المنخفض} فيبقيه مغلقاً، وهو بدوره يغذي ملف مرحّل المُدوِّر وملف مرحّل الإشعال. (لذلك يستطيع الطيار ترك مفتاح التشغيل، والتسلسل يستمر).
+  \item عندما يشتغل المحرك ويبدأ بالدوران بنفسه، يقل الحمل على المُدوِّر، فيقل التيار في ملفاته.
+  \item عند قيمة منخفضة معينة، لا يعود التيار كافياً لإبقاء مرحّل التيار المنخفض مغلقاً، فيُفتح $\Leftarrow$ يُفتح مرحّل المُدوِّر ومرحّل الإشعال $\Leftarrow$ يتوقف التدوير وتتوقف وحدات الإثارة.
+\end{enumerate}}
+\nohead
+\no{A}{ليس احتياطاً لمرحّل المُدوِّر؛ هو الذي «يُبقيه» مغلقاً ثم «يفصله» في الوقت المناسب.}
+\no{C}{لا يعمل كمحدد للتيار؛ هو يكشف \textbf{انخفاض} التيار ليفصل النظام.}
+\tip{\en{Undercurrent} = «تيار تحت الحد» $\Leftarrow$ معناه أن المحرك اشتغل $\Leftarrow$ \textbf{افصل كل شيء}.}
+\qsep
+
+\Q{8620}{In a typical starter-generator system, under which of the following starting circumstances may it be necessary to use the start stop switch?}
+{Hung start.}
+{Hot start.}
+{Contacts stick open.}{A}
+\tr{في نظام المُدوِّر-المولّد النموذجي، في أي من ظروف التشغيل التالية قد يكون من الضروري استخدام مفتاح إيقاف التشغيل؟}
+\ans{A}{التشغيل المعلّق (\en{hung start}).}
+\sharh{في الوضع الطبيعي، مرحّل التيار المنخفض يوقف التسلسل تلقائياً عندما يشتغل المحرك وينخفض التيار. لكن في \textbf{التشغيل المعلّق}: يحدث الإشعال (المحرك اشتعل)، لكن سرعته «تعلق» عند قيمة منخفضة ولا ترتفع إلى السرعة التي يستطيع عندها أن يكمل بنفسه. المُدوِّر ما زال يتحمل حملاً كبيراً، فيبقى التيار عالياً، ولا يفتح مرحّل التيار المنخفض، فلن يتوقف التسلسل تلقائياً أبداً.
+
+هنا يجب على الطيار أن يضع المفتاح على \en{STOP}، فيعمل \textbf{مرحّل الإيقاف} (الموصول على التوالي مع نقاط مرحّل التيار المنخفض) ويقطع الدائرة عن ملف مرحّل المُدوِّر وملف مرحّل الإشعال.}
+\nohead
+\no{B}{في التشغيل الحار (\en{hot start}) الحل الرئيسي هو قطع الوقود فوراً، والسرعة عادة ترتفع فيفتح مرحّل التيار المنخفض تلقائياً.}
+\no{C}{إذا كانت النقاط عالقة مفتوحة فالمُدوِّر لن يعمل أصلاً، فلا يوجد ما نوقفه.}
+\tip{\en{Hung} = «معلّق»: التيار عالٍ للأبد $\Leftarrow$ الإيقاف التلقائي لن يحدث $\Leftarrow$ \textbf{أوقفه يدوياً}.}
+\qsep
+
+% ---------------- Figure 5 ----------------
+\subsection{أسئلة الشكل 5 (\en{Figure 5})}
+\begin{concept}{تنبيه مهم قبل أسئلة الشكل 5}
+هذه الأسئلة تعتمد على رسم دائرة كهربائية في كتاب \en{Powerplant Test Guide} (الشكل 5) لنظام مُدوِّر-مولّد في محرك توربيني. \textbf{افتح الشكل في الكتاب وأنت تقرأ}، وتتبع كل سلك بإصبعك. ما تحتاج فهمه من الشرح الأصلي:
+\begin{itemize}
+  \item \textbf{السلك 4:} يصل القضيب الموزع (\en{bus bar}) المغذّى بالطاقة إلى \textbf{نقاط} مرحّل المُدوِّر (الطاقة الكبيرة جاهزة تنتظر إغلاق المرحّل).
+  \item \textbf{السلك 8:} يغذي \textbf{ملف} مرحّل المُدوِّر من مفتاح التشغيل (لبدء التسلسل).
+  \item \textbf{السلك 10:} يغذي \textbf{ملف مرحّل الإشعال} أثناء التشغيل الطبيعي.
+  \item \textbf{السلكان 14 و15:} في مسار \textbf{مفتاح فحص وحدات الإثارة} (\en{test switch}) فقط.
+  \item \textbf{مفتاح فحص الإثارة:} يعمل بشرط أن يكون \textbf{المفتاح الرئيسي للمحرك} و\textbf{مفتاح الإشعال} على \en{ON}.
+  \item \textbf{مقبس الطاقة الخارجية:} فيه مفتاح يُفتح تلقائياً عند إدخال القابس، فيقطع التيار عن ملف مرحّل البطارية $\Leftarrow$ البطارية تنفصل.
+\end{itemize}
+\textbf{طريقة حل أسئلة «يعمل في الفحص ولا يعمل في التشغيل» أو العكس:} للمُشعِلات طريقان للحصول على الطاقة: طريق التشغيل (عبر مرحّل الإشعال) وطريق الفحص (عبر مفتاح الفحص). العطل الذي يُبطل طريقاً واحداً فقط يجب أن يكون في جزء خاص بذلك الطريق وحده. أما العطل في جزء \textbf{مشترك} بين الطريقين فيُبطل الاثنين معاً.
+\end{concept}
+
+\Q{8614}{(Refer to Figure 5.) With power applied to the bus bar, what wire supplies standby power to the starter relay contact?}
+{4.}
+{7.}
+{8.}{A}
+\tr{(ارجع إلى الشكل 5) مع وجود طاقة على القضيب الموزع، أي سلك يزود نقاط مرحّل المُدوِّر بطاقة الاستعداد؟}
+\ans{A}{السلك 4.}
+\sharh{«طاقة الاستعداد» (\en{standby power}) = طاقة موجودة وجاهزة عند نقاط المرحّل، تنتظر فقط أن يُغلق المرحّل لتمر إلى المُدوِّر. السلك 4 يصل القضيب الموزع (المغذى بالطاقة) مباشرة إلى نقاط (\en{contactor}) مرحّل المُدوِّر. عندما يُفعَّل المرحّل، يمر التيار الكبير عبر هذه النقاط إلى المُدوِّر.}
+\nohead
+\no{B}{السلك 7 ليس هو السلك الواصل بين القضيب ونقاط مرحّل المُدوِّر في الشكل.}
+\no{C}{السلك 8 يغذي \textbf{ملف} مرحّل المُدوِّر (لتشغيله)، لا \textbf{نقاطه}.}
+\tip{نقاط المرحّل = 4. ملف المرحّل = 8.}
+\qsep
+
+\Q{8615}{(Refer to Figure 5.) With power applied to the bus bar, what switch changes will allow the ignition exciters test switch to function?}
+{Engine master switch, battery switch and power lever switch.}
+{Engine master switch, start switch, and test switch.}
+{Engine master switch and ignition switch.}{C}
+\tr{(ارجع إلى الشكل 5) مع وجود طاقة على القضيب الموزع، ما تغييرات المفاتيح التي تسمح لمفتاح فحص وحدات الإثارة بالعمل؟}
+\ans{C}{المفتاح الرئيسي للمحرك ومفتاح الإشعال.}
+\sharh{السؤال يقول إن الطاقة موجودة أصلاً على القضيب الموزع. لكي يعمل مفتاح الفحص يجب أن تصل الطاقة إليه، وهي تمر عبر مفتاحين على التوالي في الشكل:
+\begin{itemize}
+  \item \textbf{المفتاح الرئيسي للمحرك (\en{engine master switch})} يجب أن يكون \en{ON} (للأعلى).
+  \item \textbf{مفتاح الإشعال (\en{ignition switch})} يجب أن يكون \en{ON} (للأعلى).
+\end{itemize}}
+\nohead
+\no{A}{مفتاح البطارية لا يلزم تغييره (الطاقة موجودة على القضيب أصلاً حسب السؤال)، ومفتاح ذراع القدرة غير مطلوب.}
+\no{B}{مفتاح التشغيل (\en{start}) يبدأ تسلسل التدوير، وليس مطلوباً لفحص المُثيرات؛ و«مفتاح الفحص» هو نفسه الذي نريد أن يعمل.}
+\tip{لفحص الإشعال تحتاج: \textbf{\en{Master} + \en{Ignition}}.}
+\qsep
+
+\Q{8616}{(Refer to Figure 5.) The type of system depicted is capable of operating with}
+{External power only.}
+{Either battery or external power.}
+{Battery power and external power simultaneously.}{B}
+\tr{(ارجع إلى الشكل 5) النظام الموضح قادر على العمل بـ:}
+\ans{B}{إما طاقة البطارية أو الطاقة الخارجية.}
+\sharh{يمكن تشغيل هذا النظام إما ببطارية الطائرة أو بمصدر طاقة خارجي، \textbf{لكن ليس بالاثنين معاً}. عند إدخال قابس الطاقة الخارجية، يُفتح مفتاح في المقبس، فيتوقف التيار عن ملف مرحّل البطارية، فيُفتح المرحّل وتنفصل البطارية عن النظام. هكذا لا يتصل المصدران بالنظام في نفس الوقت (لحماية البطارية من الشحن الزائد ومن تعارض المصدرين).}
+\nohead
+\no{A}{النظام يعمل بالبطارية أيضاً.}
+\no{C}{التصميم يمنع اتصال المصدرين معاً.}
+\tip{\en{Either ... or} = واحد فقط في كل مرة.}
+\qsep
+
+\Q{8618}{(Refer to Figure 5.) When an external power source is connected to the aircraft,}
+{The battery cannot be connected to the bus.}
+{Both battery power and external power are available to the bus.}
+{The starter relay coil has a path to ground.}{A}
+\tr{(ارجع إلى الشكل 5) عند توصيل مصدر طاقة خارجي بالطائرة:}
+\ans{A}{لا يمكن توصيل البطارية بالقضيب الموزع.}
+\sharh{الشرح الأصلي يعترف أن الشكل كما هو مرسوم يوحي بأن المصدرين متاحان معاً، لكن الشكل لا يبين ما الذي يشغل مفتاح مقبس الطاقة الخارجية. في الحقيقة هذا المفتاح يُفتح تلقائياً عند إدخال القابس. عندما يكون مفتوحاً، لا يمر تيار في ملف مرحّل البطارية، فيبقى المرحّل مفتوحاً والبطارية مفصولة عن القضيب. نفس فكرة 8616.}
+\nohead
+\no{B}{التصميم يمنع ذلك (انظر 8616).}
+\no{C}{توصيل الطاقة الخارجية لا يعطي ملف مرحّل المُدوِّر مساراً إلى الأرضي؛ المرحّل يُفعل بمفتاح التشغيل.}
+\tip{قابس خارجي داخل $\Leftarrow$ مرحّل البطارية يُفتح $\Leftarrow$ \textbf{البطارية خارج اللعبة}.}
+\qsep
+
+\Q{8617}{(Refer to Figure 5.) If wire No. 8 is broken or disconnected after starter rotation is initiated, and the power lever is advanced, the}
+{Starting sequence will continue normally.}
+{Starter will shut down, but the igniters will continue to fire.}
+{Starting sequence will discontinue.}{A}
+\tr{(ارجع إلى الشكل 5) إذا انقطع السلك رقم 8 أو انفصل \textbf{بعد} أن بدأ دوران المُدوِّر، ثم تقدّم ذراع القدرة، فإن:}
+\ans{A}{تسلسل التشغيل سيستمر بشكل طبيعي.}
+\sharh{السلك 8 يغذي ملف مرحّل المُدوِّر من مفتاح التشغيل، ودوره \textbf{بدء} التسلسل فقط. بعد أن يُغلق مرحّل المُدوِّر:
+\begin{enumerate}[label=\arabic*.]
+  \item يمر تيار كبير في ملفات التدوير للمُدوِّر-المولّد.
+  \item هذا التيار يجعل ملف مرحّل التيار المنخفض يصنع مجالاً قوياً كافياً لإغلاق نقاطه.
+  \item تيار القضيب يمر عبر نقاط مرحّل التيار المنخفض إلى ملف مرحّل المُدوِّر، فيبقيه مغلقاً (\textbf{مسار تثبيت ذاتي}).
+\end{enumerate}
+إذن بعد البدء لم يعد السلك 8 ضرورياً، والتسلسل يستمر طبيعياً. وينتهي التسلسل فقط عندما يوضع المفتاح على \en{STOP}، أو عندما يقل تيار المُدوِّر بما يكفي لفتح مرحّل التيار المنخفض.}
+\nohead
+\no{B}{المُدوِّر لن يتوقف لأن مرحّل التيار المنخفض يبقيه يعمل.}
+\no{C}{التسلسل لن يتوقف للسبب نفسه.}
+\tip{السلك 8 = «زر البدء» فقط. بعد البدء، مرحّل التيار المنخفض يتولى المهمة (مثل ضوء الدرج الذي يبقى مضاءً بعد أن ترفع إصبعك).}
+\qsep
+
+\Q{8621}{(Refer to Figure 5.) Which malfunctions will allow the igniters to operate when tested but be inoperative during a start attempt? 1. Conductor No. 10 broken. 2. Conductor No. 11 broken. 3. Ignition relay inoperative. 4. Conductor No. 12 broken.}
+{1 or 4.}
+{2 or 3.}
+{1 or 3.}{C}
+\tr{(ارجع إلى الشكل 5) أي الأعطال تسمح للمُشعِلات بالعمل عند الفحص، لكنها لا تعمل أثناء محاولة التشغيل؟ 1. انقطاع الموصل 10. 2. انقطاع الموصل 11. 3. مرحّل الإشعال معطل. 4. انقطاع الموصل 12.}
+\ans{C}{1 أو 3.}
+\sharh{المُشعِلات تعمل في الفحص $\Leftarrow$ وحدات الإثارة نفسها والأسلاك المشتركة سليمة. لا تعمل أثناء التشغيل $\Leftarrow$ العطل في الجزء \textbf{الخاص بطريق التشغيل فقط}. هذا الطريق يمر عبر \textbf{مرحّل الإشعال}، الذي يتغذى ملفه عبر \textbf{السلك 10}. إذن:
+\begin{itemize}
+  \item \textbf{السلك 10 مقطوع:} ملف مرحّل الإشعال لا يتغذى أثناء التشغيل، فلا تصل الطاقة إلى المُثيرات، لكن طريق الفحص لا يمر به $\Leftarrow$ الفحص يعمل.
+  \item \textbf{مرحّل الإشعال معطل:} نفس النتيجة.
+\end{itemize}}
+\nohead
+\no{A}{يحتوي على السلك 12؛ حسب الجواب المعتمد، انقطاعه لا يعطي هذه النتيجة بالتحديد (تتبعه في الشكل: هو ليس جزءاً خاصاً بطريق التشغيل وحده).}
+\no{B}{يحتوي على السلك 11، وانقطاعه لا يعطي هذه النتيجة حسب الشكل.}
+\tip{«يعمل في الفحص، لا يعمل في التشغيل» $\Leftarrow$ العطل في \textbf{مرحّل الإشعال أو سلك ملفه (10)}.}
+\qsep
+
+\Q{8622}{(Refer to Figure 5.) Which malfunctions will allow the igniters to operate normally during start but be inoperative when tested? 1. Conductor No. 14 broken. 2. Conductor No. 10 broken. 3. Conductor No. 15 broken. 4. Conductor No. 12 broken.}
+{2 or 4.}
+{1 or 3.}
+{3 or 4.}{B}
+\tr{(ارجع إلى الشكل 5) أي الأعطال تسمح للمُشعِلات بالعمل طبيعياً أثناء التشغيل، لكنها لا تعمل عند الفحص؟ 1. انقطاع الموصل 14. 2. انقطاع الموصل 10. 3. انقطاع الموصل 15. 4. انقطاع الموصل 12.}
+\ans{B}{1 أو 3 (السلك 14 أو السلك 15).}
+\sharh{هذا عكس السؤال السابق. المُشعِلات تعمل في التشغيل $\Leftarrow$ طريق التشغيل والمُثيرات سليمة. لا تعمل في الفحص $\Leftarrow$ العطل في الجزء \textbf{الخاص بطريق الفحص فقط}، أي في أسلاك مفتاح الفحص: \textbf{السلك 14 أو السلك 15}.}
+\nohead
+\no{A}{السلك 10 مقطوع يعطي العكس (يعمل في الفحص، لا يعمل في التشغيل - سؤال 8621).}
+\no{C}{السلك 12 ليس من أسلاك طريق الفحص الخاصة.}
+\tip{8621: التشغيل معطل $\Leftarrow$ (10، المرحّل). 8622: الفحص معطل $\Leftarrow$ (14، 15).}
+\qsep
+
+% ---------------- Pneumatic ----------------
+\subsection{المُدوِّر الهوائي (\en{Air Turbine Starter})}
+
+\Q{8625}{The primary advantage of pneumatic (air turbine) starters over comparable electric starters for turbine engines is}
+{A decreased fire hazard.}
+{Reduction gearing not required.}
+{High power-to-weight ratio.}{C}
+\tr{الميزة الرئيسية للمُدوِّرات الهوائية (التوربينية الهوائية) مقارنة بالمُدوِّرات الكهربائية المماثلة للمحركات التوربينية هي:}
+\ans{C}{نسبة قدرة إلى وزن عالية.}
+\sharh{المحركات التوربينية الكبيرة تحتاج عزماً كبيراً جداً لتدويرها. مُدوِّر كهربائي بهذا العزم سيكون ثقيلاً جداً (ومعه أسلاك ثقيلة). أما المُدوِّر الهوائي فيزن حوالي \textbf{خُمس} وزن مُدوِّر كهربائي يعطي نفس العزم. في الطائرات، الوزن هو كل شيء.}
+\nohead
+\no{A}{تقليل خطر الحريق ليس الميزة الرئيسية المذكورة.}
+\no{B}{المُدوِّر الهوائي \textbf{يحتاج} إلى تروس تخفيض، لأن توربينه يدور بسرعة عالية جداً.}
+\tip{هوائي = \textbf{خفيف وقوي} ($\frac{1}{5}$ الوزن).}
+\qsep
+
+\Q{8627}{Pneumatic starters are usually designed with what types of airflow impingement systems?}
+{Radial inward flow turbine and axial-flow turbine.}
+{Centrifugal compressor and axial-flow compressor.}
+{Double entry centrifugal outward flow and axial-flow turbines.}{A}
+\tr{تُصمَّم المُدوِّرات الهوائية عادة بأي نوع من أنظمة اصطدام الهواء؟}
+\ans{A}{توربين بتدفق قطري إلى الداخل، وتوربين بتدفق محوري.}
+\sharh{المُدوِّر الهوائي \textbf{توربين}، أي أنه يأخذ الطاقة من الهواء المضغوط (عكس الضاغط الذي يعطي طاقة للهواء). الهواء «يصطدم» (\en{impinge}) بشفرات التوربين فيديرها. يوجد شكلان:
+\begin{itemize}
+  \item \textbf{توربين قطري بتدفق إلى الداخل (\en{radial inflow}):} الهواء يدخل من المحيط ويتجه نحو المركز.
+  \item \textbf{توربين محوري (\en{axial-flow}):} الهواء يمر موازياً للمحور.
+\end{itemize}}
+\nohead
+\no{B}{الضواغط (\en{compressors}) تضغط الهواء وتستهلك طاقة، أما المُدوِّر فيأخذ الطاقة من الهواء، فهو توربين.}
+\no{C}{التدفق الطارد «إلى الخارج» هو صفة الضاغط الطارد المركزي، لا التوربين.}
+\tip{المُدوِّر \textbf{يأخذ} طاقة من الهواء = \textbf{توربين} (\en{inward} + \en{axial}).}
+\qsep
+
+\Q{8626}{A clicking sound heard at engine coast-down in a pneumatic starter incorporating a sprag clutch ratchet assembly is an indication of}
+{Gear tooth and/or pawl damage.}
+{One or more broken pawl springs.}
+{The pawls recontacting and riding on the ratchet gear.}{C}
+\tr{صوت طقطقة يُسمع عند تباطؤ المحرك بعد إيقافه، في مُدوِّر هوائي يحتوي على قابض بمخالب وسن منشاري، يدل على:}
+\ans{C}{أن المخالب تعود لتلامس الترس المسنن وتنزلق فوقه.}
+\sharh{القابض يعمل مثل «عجلة الدراجة الحرة»:
+\begin{itemize}
+  \item \textbf{أثناء التشغيل:} المُدوِّر يدير المحرك عبر المخالب المعشّقة في السن المنشاري.
+  \item \textbf{عندما يشتغل المحرك ويدور بسرعة:} القوة الطاردة المركزية تُبعد المخالب عن السن المنشاري فلا تلمسه، فلا يوجد احتكاك ولا صوت.
+  \item \textbf{عند إيقاف المحرك وتباطئه:} القوة الطاردة تضعف، والنوابض تعيد المخالب لتلامس السن المنشاري، فتنزلق فوق أسنانه محدثة \textbf{طقطقة} (مثل صوت عجلة الدراجة عندما تتوقف عن التبديل). هذا \textbf{طبيعي}.
+\end{itemize}}
+\nohead
+\no{A}{الطقطقة عند التباطؤ طبيعية ولا تدل على تلف.}
+\no{B}{النوابض المكسورة تمنع المخالب من العودة، فيقل الصوت لا يزيد.}
+\tip{طقطقة عند التوقف = \textbf{طبيعي} (مثل عجلة الدراجة).}
+\qsep
+
+\Q{8628}{Inspection of pneumatic starters by maintenance technicians usually includes checking the}
+{Oil level and magnetic drain plug condition.}
+{Stator and rotor blades for FOD.}
+{Rotor alignment.}{A}
+\tr{فحص المُدوِّرات الهوائية من قبل فنيي الصيانة يتضمن عادة التحقق من:}
+\ans{A}{مستوى الزيت وحالة سدادة التصريف المغناطيسية.}
+\sharh{المُدوِّر الهوائي يدور بسرعة 60,000 إلى 80,000 دورة في الدقيقة! عند هذه السرعات يصبح التزييت حرجاً جداً. للمُدوِّر نظام تزييت ذاتي (زيت داخل غلافه). لذلك الفحص الروتيني يشمل:
+\begin{itemize}
+  \item \textbf{مستوى الزيت:} للتأكد من كفايته.
+  \item \textbf{السدادة المغناطيسية:} تلتقط أي بُرادة حديدية في الزيت؛ وجود بُرادة يعني أن التروس أو المحامل بدأت تتلف.
+\end{itemize}}
+\nohead
+\no{B}{شفرات المُدوِّر داخلية ومحمية، ولا تُفحص روتينياً بحثاً عن أضرار الأجسام الغريبة.}
+\no{C}{محاذاة الدوار ليست جزءاً من الفحص الروتيني.}
+\tip{سرعة رهيبة = \textbf{الزيت هو الحياة} $\Leftarrow$ مستوى الزيت + السدادة المغناطيسية.}
+\qsep
+
+\Q{8629}{Air turbine starters are generally designed so that reduction gear distress or damage may be detected by}
+{Characteristic sounds from the starter assembly during engine start.}
+{Breakage of a shear section on the starter drive shaft.}
+{Inspection of a magnetic chip detector.}{C}
+\tr{تُصمَّم المُدوِّرات التوربينية الهوائية عموماً بحيث يمكن كشف إجهاد أو تلف تروس التخفيض عن طريق:}
+\ans{C}{فحص كاشف البُرادة المغناطيسي.}
+\sharh{عندما تبدأ التروس بالتلف، تتساقط منها رقائق وبُرادة معدنية صغيرة في الزيت. سدادة التصريف فيها \textbf{مغناطيس} يجذب هذه البرادة. عند الفحص، إذا وجد الفني برادة على المغناطيس، يعرف أن هناك تلفاً قبل أن يتحول إلى عطل كبير. هذا \textbf{إنذار مبكر}.}
+\nohead
+\no{A}{الأصوات ليست وسيلة الكشف المصممة.}
+\no{B}{نقطة القص في العمود حماية من السرعة الزائدة (عندما لا ينفصل القابض)، وليست كاشفاً لتلف التروس.}
+\tip{تلف تروس = \textbf{بُرادة} $\Leftarrow$ \en{magnetic chip detector}.}
+\qsep
+
+\Q{8630}{Airflow to the pneumatic starter from a ground unit is normally prevented from causing starter overspeed during engine start by}
+{Stator nozzle design that chokes airflow and stabilizes turbine wheel speed.}
+{Activation of a flyweight cutout switch.}
+{A preset timed cutoff of the airflow at the source.}{B}
+\tr{يُمنع تدفق الهواء من الوحدة الأرضية إلى المُدوِّر الهوائي من التسبب في سرعة زائدة للمُدوِّر أثناء تشغيل المحرك عادة عن طريق:}
+\ans{B}{تفعيل مفتاح القطع بالأثقال الطاردة (\en{flyweight cutout switch}).}
+\sharh{إذا زودت الوحدة الأرضية المُدوِّر بهواء مضغوط أكثر من اللازم، قد يدور بسرعة أعلى من حدوده. داخل المُدوِّر يوجد مفتاح فيه أثقال صغيرة تدور معه: كلما زادت السرعة تتحرك الأثقال للخارج بالقوة الطاردة المركزية. عند سرعة معينة تفتح هذه الأثقال المفتاح، فينقطع التيار عن \textbf{ملف (\en{solenoid}) صمام الهواء}، فيعود الصمام الفراشي (\en{butterfly valve}) إلى وضع الإغلاق ويقطع الهواء عن المُدوِّر.}
+\nohead
+\no{A}{تصميم الفوهة الخانقة هو حماية المُدوِّر \textbf{المباشر} (\en{direct-cranking}) - سؤال 8632.}
+\no{C}{لا يوجد قطع زمني مسبق عند المصدر.}
+\tip{\en{Flyweight} = أثقال طاردة $\Leftarrow$ تفتح المفتاح $\Leftarrow$ يُغلق الصمام.}
+\qsep
+
+\Q{8631}{A safety feature usually employed in pneumatic starters that is used if the clutch does not release from the engine drive at the proper time during start is the}
+{Flyweight cutout switch.}
+{Spring coupling release.}
+{Drive shaft shear point.}{C}
+\tr{ميزة الأمان المستخدمة عادة في المُدوِّرات الهوائية، في حال لم ينفصل القابض عن محرك الطائرة في الوقت المناسب أثناء التشغيل، هي:}
+\ans{C}{نقطة القص في عمود الإدارة.}
+\sharh{المشكلة هنا \textbf{معكوسة}: المحرك اشتغل وأصبح هو الذي يدير المُدوِّر (لأن القابض علق ولم ينفصل). المحرك قوي جداً، وسيدير المُدوِّر بسرعة أعلى بكثير من حدوده حتى يتفكك وينفجر. الحل: في عمود الإدارة جزء أضعف عمداً (\en{shear section}) ينكسر عند عزم معين، فيفصل المُدوِّر عن المحرك ميكانيكياً وينقذه.
+
+لاحظ الفرق مع 8630: هناك الهواء هو الذي يسرّع المُدوِّر، فالحل قطع الهواء (الأثقال الطاردة). هنا المحرك هو الذي يسرّعه، وقطع الهواء لا يفيد، فالحل كسر الوصلة.}
+\nohead
+\no{A}{مفتاح الأثقال يقطع الهواء، لكن المشكلة هنا أن المحرك يدير المُدوِّر، وقطع الهواء لن يوقفه.}
+\no{B}{لا يوجد «تحرير بوصلة نابضية» كميزة أمان لهذه الحالة.}
+\tip{القابض لم ينفصل $\Leftarrow$ \textbf{اكسر العمود} (\en{shear point}).}
+\qsep
+
+\Q{8632}{A safety feature usually employed in direct-cranking starters that is used to prevent the starter from reaching burst speed is the}
+{Drive shaft shear point.}
+{Stator nozzle design that chokes airflow and stabilizes turbine wheel speed.}
+{Spring coupling release.}{B}
+\tr{ميزة الأمان المستخدمة عادة في المُدوِّرات ذات التدوير المباشر لمنع المُدوِّر من الوصول إلى سرعة الانفجار هي:}
+\ans{B}{تصميم فوهة الجزء الثابت (\en{stator nozzle}) بحيث تخنق تدفق الهواء وتثبت سرعة عجلة التوربين.}
+\sharh{إذا لم يتوقف هواء الدخل في الوقت المحدد، فإن المُدوِّر سيستمر بالتسارع. لكن الفوهات مصممة بحيث إنه عند سرعة معينة يصل تدفق الهواء فيها إلى سرعة الصوت، فتصبح «مخنوقة» (\en{choked})، ولا يمكن أن يمر هواء أكثر مهما زاد الضغط. لذلك تستقر سرعة عجلة التوربين عند قيمة ثابتة (عالية لكنها آمنة)، بدلاً من الاستمرار بالتسارع حتى تتفكك.}
+\nohead
+\no{A}{نقطة القص للحالة التي لا ينفصل فيها القابض (8631).}
+\no{C}{لا يوجد تحرير بوصلة نابضية كحماية من سرعة الانفجار.}
+\tip{\en{Burst speed} + \en{direct-cranking} $\Leftarrow$ \en{\textbf{choked nozzle}}.}
+
+\newpage
+% =====================================================================
+\section{ملخص سريع قبل الامتحان (أهم القواعد في سطور)}
+% =====================================================================
+\begin{enumerate}[label=\arabic*.]
+  \item الجهد في الثانوي = عدد اللفات × سرعة \textbf{انهيار} المجال. الشرارة عند \textbf{قطع} الابتدائي (بداية فتح النقاط).
+  \item \en{Full register} = أكبر فيض = النقاط \textbf{تُغلق}. \en{E-gap} = بعد المحايد ببضع درجات = أكبر إجهاد = النقاط \textbf{تُفتح}. علامات التوقيت الداخلي = \en{E-gap}.
+  \item كل ما ينقل الفيض = \textbf{حديد ناعم} (حافظة، أحذية أقطاب مرققة).
+  \item النقاط، المكثف، والمفتاح = كلها \textbf{على التوازي}. المكثف التالف/الصغير = نقاط \textbf{محروقة متنقرة خشنة}. السليمة = \textbf{ناعمة كالصقيع}.
+  \item فجوة الأمان تحمي \textbf{الملف الثانوي} إذا انفصل سلك شمعة.
+  \item الماغنيتو \textbf{يُؤرَّض} ليتوقف، والبطارية \textbf{تُفتح} لتتوقف. \en{P-lead} مقطوع = ماغنيتو \textbf{حار}، والمحرك لا يتوقف.
+  \item ضوء التوقيت = المفتاح على \en{BOTH}. فحص المفتاح = \textbf{أبطأ} سرعة. فحص المغانط الطبيعي = \textbf{انخفاض بسيط}.
+  \item انخفاض \textbf{سريع} = شمعات. انخفاض \textbf{بطيء} = توقيت أو صمامات.
+  \item فجوة النقاط أكبر = شرارة \textbf{مبكرة وضعيفة}. تآكل النقاط = مبكر، تآكل تابع الكامة = متأخر.
+  \item الموزع = \textbf{½} سرعة العمود المرفقي (دائماً الأبطأ). أرقام الكتلة = \textbf{ترتيب الشرارة}.
+  \item التدريع والمرشح = لحماية \textbf{الراديو}. فحص التسرب = جهاز \en{high-tension tester}.
+  \item الإشعال قبل \en{TDC} في شوط الانضغاط (حوالي 20°). عند البدء: شرارة \textbf{متأخرة وقوية} (\en{impulse coupling} أو \en{Shower of Sparks}).
+  \item \en{Shower of Sparks}: الشرارة فقط عندما تكون مجموعتا النقاط \textbf{مفتوحتين}. نقاط \en{retard} للبدء فقط ولمنع الارتداد.
+  \item الإشعال المتدرج: شمعة \textbf{العادم أولاً} (الخليط هناك مخفف).
+  \item \en{Low-tension}: محول (ملف ثانوي) لكل \textbf{شمعة}؛ 18 أسطوانة = 36 ملفاً.
+  \item محرك \textbf{حار} $\Leftarrow$ شمعة \textbf{باردة} (طرف قصير). محرك \textbf{بارد} $\Leftarrow$ شمعة \textbf{حارة} (طرف طويل). حارة أكثر من اللازم = \textbf{اشتعال مبكر}.
+  \item سخام أسود = خليط \textbf{غني}. اتساخ الرصاص = حرارة \textbf{منخفضة}. عازل مشقوق = \textbf{رفض}. تآكل للنصف = \textbf{مستهلكة}.
+  \item السلك المدرع = مكثف $\Leftarrow$ إشعال لاحق $\Leftarrow$ العلاج \textbf{مقاومة} داخل الشمعة.
+  \item التوربين: تفريغ بالمكثف، طاقة عالية (ارتفاع عالٍ + حرارة \textbf{منخفضة})، يعمل للتشغيل \textbf{فقط}، النبضة العالية من \textbf{محول القدح}. الفك: اقطع الدخل $\Leftarrow$ انتظر $\Leftarrow$ افصل السلك $\Leftarrow$ أرّض القطب.
+  \item المُدوِّر الكهربائي: أعلى تيار عند \textbf{البدء}. مرحّل التيار المنخفض يفصل المُدوِّر والإشعال تلقائياً. \en{Hung start} = إيقاف يدوي.
+  \item المُدوِّر الهوائي: قدرة/وزن عالية، زيت + سدادة مغناطيسية، طقطقة عند التوقف طبيعية. سرعة زائدة من الهواء = \en{flyweight}، قابض لم ينفصل = \en{shear point}، مُدوِّر مباشر = \en{choked nozzle}.
+\end{enumerate}
+
+\newpage
+% =====================================================================
+\section{الفهرس الرقمي للأسئلة}
+% =====================================================================
+اضغط على رقم السؤال للانتقال إليه مباشرة.
+
+{\small
+\begin{longtable}{|c|c||c|c||c|c||c|c||c|c|}
+\hline
+\textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص}\\\hline\endhead
+\hyperref[q8500]{\en{8500}} & \pageref{q8500} & \hyperref[q8501]{\en{8501}} & \pageref{q8501} & \hyperref[q8502]{\en{8502}} & \pageref{q8502} & \hyperref[q8503]{\en{8503}} & \pageref{q8503} & \hyperref[q8504]{\en{8504}} & \pageref{q8504}\\\hline
+\hyperref[q8505]{\en{8505}} & \pageref{q8505} & \hyperref[q8506]{\en{8506}} & \pageref{q8506} & \hyperref[q8507]{\en{8507}} & \pageref{q8507} & \hyperref[q8508]{\en{8508}} & \pageref{q8508} & \hyperref[q8509]{\en{8509}} & \pageref{q8509}\\\hline
+\hyperref[q8510]{\en{8510}} & \pageref{q8510} & \hyperref[q8511]{\en{8511}} & \pageref{q8511} & \hyperref[q8512]{\en{8512}} & \pageref{q8512} & \hyperref[q8512-2]{\en{8512-2}} & \pageref{q8512-2} & \hyperref[q8513]{\en{8513}} & \pageref{q8513}\\\hline
+\hyperref[q8514]{\en{8514}} & \pageref{q8514} & \hyperref[q8515]{\en{8515}} & \pageref{q8515} & \hyperref[q8516]{\en{8516}} & \pageref{q8516} & \hyperref[q8517]{\en{8517}} & \pageref{q8517} & \hyperref[q8518]{\en{8518}} & \pageref{q8518}\\\hline
+\hyperref[q8519]{\en{8519}} & \pageref{q8519} & \hyperref[q8520]{\en{8520}} & \pageref{q8520} & \hyperref[q8521]{\en{8521}} & \pageref{q8521} & \hyperref[q8522]{\en{8522}} & \pageref{q8522} & \hyperref[q8523]{\en{8523}} & \pageref{q8523}\\\hline
+\hyperref[q8524]{\en{8524}} & \pageref{q8524} & \hyperref[q8525]{\en{8525}} & \pageref{q8525} & \hyperref[q8526]{\en{8526}} & \pageref{q8526} & \hyperref[q8527]{\en{8527}} & \pageref{q8527} & \hyperref[q8528]{\en{8528}} & \pageref{q8528}\\\hline
+\hyperref[q8529]{\en{8529}} & \pageref{q8529} & \hyperref[q8530]{\en{8530}} & \pageref{q8530} & \hyperref[q8531]{\en{8531}} & \pageref{q8531} & \hyperref[q8532]{\en{8532}} & \pageref{q8532} & \hyperref[q8533]{\en{8533}} & \pageref{q8533}\\\hline
+\hyperref[q8534]{\en{8534}} & \pageref{q8534} & \hyperref[q8535]{\en{8535}} & \pageref{q8535} & \hyperref[q8536]{\en{8536}} & \pageref{q8536} & \hyperref[q8537]{\en{8537}} & \pageref{q8537} & \hyperref[q8538]{\en{8538}} & \pageref{q8538}\\\hline
+\hyperref[q8539]{\en{8539}} & \pageref{q8539} & \hyperref[q8540]{\en{8540}} & \pageref{q8540} & \hyperref[q8541]{\en{8541}} & \pageref{q8541} & \hyperref[q8542]{\en{8542}} & \pageref{q8542} & \hyperref[q8543]{\en{8543}} & \pageref{q8543}\\\hline
+\hyperref[q8544]{\en{8544}} & \pageref{q8544} & \hyperref[q8545]{\en{8545}} & \pageref{q8545} & \hyperref[q8546]{\en{8546}} & \pageref{q8546} & \hyperref[q8547]{\en{8547}} & \pageref{q8547} & \hyperref[q8548]{\en{8548}} & \pageref{q8548}\\\hline
+\hyperref[q8549]{\en{8549}} & \pageref{q8549} & \hyperref[q8550]{\en{8550}} & \pageref{q8550} & \hyperref[q8551]{\en{8551}} & \pageref{q8551} & \hyperref[q8552]{\en{8552}} & \pageref{q8552} & \hyperref[q8553]{\en{8553}} & \pageref{q8553}\\\hline
+\hyperref[q8554]{\en{8554}} & \pageref{q8554} & \hyperref[q8555]{\en{8555}} & \pageref{q8555} & \hyperref[q8556]{\en{8556}} & \pageref{q8556} & \hyperref[q8557]{\en{8557}} & \pageref{q8557} & \hyperref[q8558]{\en{8558}} & \pageref{q8558}\\\hline
+\hyperref[q8559]{\en{8559}} & \pageref{q8559} & \hyperref[q8560]{\en{8560}} & \pageref{q8560} & \hyperref[q8561]{\en{8561}} & \pageref{q8561} & \hyperref[q8562]{\en{8562}} & \pageref{q8562} & \hyperref[q8563]{\en{8563}} & \pageref{q8563}\\\hline
+\hyperref[q8564]{\en{8564}} & \pageref{q8564} & \hyperref[q8565]{\en{8565}} & \pageref{q8565} & \hyperref[q8566]{\en{8566}} & \pageref{q8566} & \hyperref[q8567]{\en{8567}} & \pageref{q8567} & \hyperref[q8568]{\en{8568}} & \pageref{q8568}\\\hline
+\hyperref[q8569]{\en{8569}} & \pageref{q8569} & \hyperref[q8570]{\en{8570}} & \pageref{q8570} & \hyperref[q8571]{\en{8571}} & \pageref{q8571} & \hyperref[q8572]{\en{8572}} & \pageref{q8572} & \hyperref[q8573]{\en{8573}} & \pageref{q8573}\\\hline
+\hyperref[q8574]{\en{8574}} & \pageref{q8574} & \hyperref[q8575]{\en{8575}} & \pageref{q8575} & \hyperref[q8576]{\en{8576}} & \pageref{q8576} & \hyperref[q8577]{\en{8577}} & \pageref{q8577} & \hyperref[q8578]{\en{8578}} & \pageref{q8578}\\\hline
+\hyperref[q8579]{\en{8579}} & \pageref{q8579} & \hyperref[q8580]{\en{8580}} & \pageref{q8580} & \hyperref[q8581]{\en{8581}} & \pageref{q8581} & \hyperref[q8582]{\en{8582}} & \pageref{q8582} & \hyperref[q8583]{\en{8583}} & \pageref{q8583}\\\hline
+\hyperref[q8584]{\en{8584}} & \pageref{q8584} & \hyperref[q8585]{\en{8585}} & \pageref{q8585} & \hyperref[q8586]{\en{8586}} & \pageref{q8586} & \hyperref[q8587]{\en{8587}} & \pageref{q8587} & \hyperref[q8588]{\en{8588}} & \pageref{q8588}\\\hline
+\hyperref[q8589]{\en{8589}} & \pageref{q8589} & \hyperref[q8590]{\en{8590}} & \pageref{q8590} & \hyperref[q8591]{\en{8591}} & \pageref{q8591} & \hyperref[q8592]{\en{8592}} & \pageref{q8592} & \hyperref[q8593]{\en{8593}} & \pageref{q8593}\\\hline
+\hyperref[q8594]{\en{8594}} & \pageref{q8594} & \hyperref[q8595]{\en{8595}} & \pageref{q8595} & \hyperref[q8596]{\en{8596}} & \pageref{q8596} & \hyperref[q8597]{\en{8597}} & \pageref{q8597} & \hyperref[q8598]{\en{8598}} & \pageref{q8598}\\\hline
+\hyperref[q8599]{\en{8599}} & \pageref{q8599} & \hyperref[q8600]{\en{8600}} & \pageref{q8600} & \hyperref[q8601]{\en{8601}} & \pageref{q8601} & \hyperref[q8602]{\en{8602}} & \pageref{q8602} & \hyperref[q8603]{\en{8603}} & \pageref{q8603}\\\hline
+\hyperref[q8604]{\en{8604}} & \pageref{q8604} & \hyperref[q8605]{\en{8605}} & \pageref{q8605} & \hyperref[q8606]{\en{8606}} & \pageref{q8606} & \hyperref[q8607]{\en{8607}} & \pageref{q8607} & \hyperref[q8608]{\en{8608}} & \pageref{q8608}\\\hline
+\hyperref[q8609]{\en{8609}} & \pageref{q8609} & \hyperref[q8610]{\en{8610}} & \pageref{q8610} & \hyperref[q8611]{\en{8611}} & \pageref{q8611} & \hyperref[q8612]{\en{8612}} & \pageref{q8612} & \hyperref[q8613]{\en{8613}} & \pageref{q8613}\\\hline
+\hyperref[q8614]{\en{8614}} & \pageref{q8614} & \hyperref[q8615]{\en{8615}} & \pageref{q8615} & \hyperref[q8616]{\en{8616}} & \pageref{q8616} & \hyperref[q8617]{\en{8617}} & \pageref{q8617} & \hyperref[q8618]{\en{8618}} & \pageref{q8618}\\\hline
+\hyperref[q8619]{\en{8619}} & \pageref{q8619} & \hyperref[q8620]{\en{8620}} & \pageref{q8620} & \hyperref[q8621]{\en{8621}} & \pageref{q8621} & \hyperref[q8622]{\en{8622}} & \pageref{q8622} & \hyperref[q8623]{\en{8623}} & \pageref{q8623}\\\hline
+\hyperref[q8624]{\en{8624}} & \pageref{q8624} & \hyperref[q8625]{\en{8625}} & \pageref{q8625} & \hyperref[q8626]{\en{8626}} & \pageref{q8626} & \hyperref[q8627]{\en{8627}} & \pageref{q8627} & \hyperref[q8628]{\en{8628}} & \pageref{q8628}\\\hline
+\hyperref[q8629]{\en{8629}} & \pageref{q8629} & \hyperref[q8630]{\en{8630}} & \pageref{q8630} & \hyperref[q8631]{\en{8631}} & \pageref{q8631} & \hyperref[q8632]{\en{8632}} & \pageref{q8632} &  & \\\hline
+\end{longtable}
+}
+
+\end{document}
