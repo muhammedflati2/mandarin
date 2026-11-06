@@ -1,0 +1,928 @@
+<title>مختبر الإشعال المتحرك</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Noto+Kufi+Arabic:wght@600;800&display=swap">
+<style>
+/* Layout: an RTL lab manual of stations; each station = a wide moving diagram beside a narrow "what you are seeing" panel, stacked on phones */
+:root{
+  --bg:#F2F4EF; --surface:#FFFFFF; --surface2:#E7EBE4; --ink:#17212B; --muted:#55606B; --line:#CBD2C9;
+  --iron:#7C858E; --copper:#B5703A; --flux:#6A4BE0; --current:#0A877D; --volt:#D97F00; --spark:#FFB300;
+  --north:#C6432D; --south:#2E64C6; --danger:#C2412D; --ok:#2C8A4C; --mix:#86B6E6; --burnt:#9A938A; --flame:#F08A24;
+  --display:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1318; --surface:#161D24; --surface2:#1E2730; --ink:#E5EAEE; --muted:#97A3AE; --line:#2B3640;
+  --iron:#8E98A2; --copper:#D08A50; --flux:#A48FFF; --current:#3CC6B9; --volt:#FFB038; --spark:#FFC94A;
+  --north:#F0705A; --south:#6C9CF2; --danger:#FF6B57; --ok:#5ACB7D; --mix:#5A88B8; --burnt:#6F6A63; --flame:#FF9A3C;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E1318; --surface:#161D24; --surface2:#1E2730; --ink:#E5EAEE; --muted:#97A3AE; --line:#2B3640;
+  --iron:#8E98A2; --copper:#D08A50; --flux:#A48FFF; --current:#3CC6B9; --volt:#FFB038; --spark:#FFC94A;
+  --north:#F0705A; --south:#6C9CF2; --danger:#FF6B57; --ok:#5ACB7D; --mix:#5A88B8; --burnt:#6F6A63; --flame:#FF9A3C;
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.75;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1180px;margin-inline:auto}
+header.top{padding-block:32px 12px;display:grid;gap:8px}
+h1,h2,h3{font-family:var(--display);line-height:1.4;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800}
+h2{font-size:clamp(1.15rem,2.6vw,1.45rem);font-weight:800}
+h3{font-size:1.02rem;font-weight:600}
+.lead{color:var(--muted);max-width:68ch;margin:0}
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;
+  display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:thin}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.toc a{flex:none;text-decoration:none;color:var(--ink);font-size:.86rem;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+nav.toc a:hover,nav.toc a:focus-visible{border-color:var(--flux);outline:none}
+.station{margin-top:36px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:14px;scroll-margin-top:64px}
+.st-head{display:grid;gap:2px}
+.st-num{font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;color:var(--muted)}
+.qs{margin:0;color:var(--muted);font-size:.86rem}
+.qs b{font-family:var(--mono);font-weight:500;color:var(--ink)}
+.st-body{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.st-body{grid-template-columns:minmax(0,1fr)}}
+.stage{min-width:0;display:grid;gap:8px}
+.stage svg,.stage canvas{width:100%;height:auto;display:block;background:var(--surface2);border-radius:10px}
+.panel{min-width:0;display:grid;gap:10px;align-content:start}
+.phase{border-inline-start:4px solid var(--flux);padding-inline-start:12px}
+.phase h3{color:var(--flux)}
+.phase p{margin:4px 0 0}
+.note{font-size:.9rem;color:var(--muted);margin:0}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,select{font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--flux);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button.play{min-width:118px;font-weight:700}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+label.rng{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--muted)}
+input[type=range]{accent-color:var(--flux);width:120px}
+.meters{display:grid;gap:6px}
+.meter{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;align-items:center;font-size:.84rem}
+.bar{height:10px;background:var(--surface2);border-radius:6px;overflow:hidden;position:relative}
+.bar i{position:absolute;inset-block:0;inset-inline-start:0;width:0;border-radius:6px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:14px;height:3px;border-radius:2px;margin-inline-end:6px;vertical-align:middle;background:currentColor}
+.k-flux{color:var(--flux)}.k-cur{color:var(--current)}.k-volt{color:var(--volt)}.k-mag{color:var(--muted)}
+.chip{display:inline-block;font-size:.8rem;padding:1px 10px;border-radius:999px;border:1px solid var(--line)}
+.chip.ok{color:var(--ok);border-color:var(--ok)}.chip.bad{color:var(--danger);border-color:var(--danger)}.chip.warn{color:var(--volt);border-color:var(--volt)}
+/* mag check */
+.mc-grid{display:grid;gap:12px}
+.rpm{font-family:var(--mono);font-size:clamp(2rem,6vw,3rem);line-height:1;font-variant-numeric:tabular-nums}
+.rpm small{font-size:.9rem;color:var(--muted);margin-inline-start:6px}
+.gauge{height:14px;background:var(--surface2);border-radius:8px;overflow:hidden;position:relative}
+.gauge i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--current);border-radius:8px}
+.mags{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mag{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:4px;background:var(--surface2)}
+.mag strong{font-family:var(--display);font-size:.95rem}
+.cyls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cyl{border:1px solid var(--line);border-radius:10px 10px 4px 4px;padding:8px 4px;text-align:center;font-size:.78rem;color:var(--muted);display:grid;gap:6px;justify-items:center}
+.plugs{display:flex;gap:8px}
+.plug{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:.62rem;color:var(--muted);transition:background .05s}
+.plug.on{background:var(--spark);border-color:var(--spark);color:#1a1300}
+.plug.dead{border-style:dashed;border-color:var(--danger)}
+.explain{background:var(--surface2);border-radius:10px;padding:10px 12px}
+.explain p{margin:0}
+/* heat range */
+.hr-results{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hr-card{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:4px}
+ol.steps{margin:0;padding-inline-start:1.4em;display:grid;gap:4px}
+ol.steps li{color:var(--muted);transition:color .2s}
+ol.steps li.now{color:var(--ink);font-weight:700}
+.lamps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.lamp{display:flex;align-items:center;gap:8px;font-size:.84rem;border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.lamp i{width:12px;height:12px;border-radius:50%;background:var(--surface2);border:1px solid var(--line);flex:none}
+.lamp.on i{background:var(--ok);border-color:var(--ok);box-shadow:0 0 8px var(--ok)}
+table.mini{border-collapse:collapse;width:100%;font-size:.88rem}
+table.mini td,table.mini th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:start;vertical-align:top}
+.tblwrap{overflow-x:auto}
+.videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.videos a{display:grid;gap:2px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.videos a:hover,.videos a:focus-visible{border-color:var(--flux);outline:none}
+.videos small{color:var(--muted)}
+.en{font-family:var(--mono);font-size:.86em;direction:ltr;unicode-bidi:isolate}
+svg text{font-family:var(--body);fill:var(--ink);unicode-bidi:plaintext}
+svg .lbl{font-size:12px;fill:var(--muted)}
+svg .wire{fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+svg .live{stroke:var(--current)}
+svg .sec{stroke:var(--volt)}
+svg .spark{fill:none;stroke:var(--spark);stroke-width:3;stroke-linejoin:round;filter:url(#glow)}
+@media (prefers-reduced-motion: reduce){ .plug{transition:none} }
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+<header class="top">
+  <h1>مختبر الإشعال المتحرك</h1>
+  <p class="lead">شاهد أجزاء نظام الإشعال ونظام بدء التشغيل وهي تعمل. كل محطة فيها رسم متحرك تستطيع إيقافه وتقديمه خطوة بخطوة، وبجانبه شرح لما يحدث في تلك اللحظة، مع أرقام أسئلة الامتحان المرتبطة به. جرّب الأعطال من الأزرار وراقب كيف يتغير كل شيء.</p>
+</header>
+<nav class="toc" aria-label="المحطات">
+  <a href="#magneto">١ الماغنيتو</a><a href="#magcheck">٢ فحص المغانط</a><a href="#stroke">٣ التوقيت والإشعال المتدرج</a>
+  <a href="#heat">٤ المدى الحراري</a><a href="#shower">٥ وابل الشرارات</a><a href="#turbine">٦ إشعال التوربين</a>
+  <a href="#starter">٧ المُدوِّر</a><a href="#videos">فيديوهات حقيقية</a>
+</nav>
+
+<!-- ============ 1 MAGNETO ============ -->
+<section class="station" id="magneto">
+  <div class="st-head"><span class="st-num">المحطة 1</span><h2>كيف يصنع الماغنيتو الشرارة؟</h2>
+    <p class="qs">الأسئلة: <b>8505</b> <b>8506</b> <b>8509</b> <b>8510</b> <b>8511</b> <b>8512</b> <b>8514</b> <b>8520</b> <b>8521</b> <b>8524</b> <b>8525</b> <b>8526</b> <b>8528</b> <b>8534</b> <b>8539</b> <b>8540</b> <b>8570</b> <b>8582</b> <b>8596</b> <b>8609</b> <b>8613</b></p></div>
+  <div class="st-body">
+    <div class="stage" dir="ltr">
+      <svg id="mag-svg" viewBox="0 0 560 380" role="img" aria-label="رسم متحرك لدوائر الماغنيتو">
+        <defs><filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <!-- secondary circuit -->
+        <path class="wire sec" d="M124 92 V30 H530 V140"/>
+        <path id="m-leadlow" class="wire sec" d="M530 140 V240"/>
+        <path class="wire sec" d="M124 30 H80"/>
+        <path class="wire" d="M64 30 V58 M54 58 H74 M58 63 H70 M62 68 H66"/>
+        <path id="m-sgspark" class="spark" d="M80 30 L76 24 L72 36 L68 25 L64 30" opacity="0"/>
+        <text class="lbl" x="72" y="16" text-anchor="middle">فجوة الأمان</text>
+        <text class="lbl" x="330" y="22" text-anchor="middle">الدائرة الثانوية (جهد عالٍ)</text>
+        <g id="m-leadoff" opacity="0"><path class="wire sec" d="M530 165 V178"/><text x="520" y="200" text-anchor="end" style="font-size:12px;fill:var(--danger)">سلك الشمعة مفصول</text></g>
+        <!-- primary circuit -->
+        <path id="m-feed" class="wire" d="M200 92 V62 H300 V200"/>
+        <path id="m-br-pts" class="wire" d="M300 62 H352"/>
+        <circle cx="356" cy="62" r="4" fill="var(--iron)"/>
+        <g id="m-arm"><line x1="430" y1="62" x2="361" y2="62" stroke="var(--iron)" stroke-width="5" stroke-linecap="round"/></g>
+        <circle cx="430" cy="62" r="5" fill="var(--surface)" stroke="var(--iron)" stroke-width="2"/>
+        <path id="m-arc" class="spark" d="M356 60 L361 55 L357 52 L363 47" opacity="0"/>
+        <path id="m-br-pts2" class="wire" d="M435 62 H480"/>
+        <text class="lbl" x="395" y="88" text-anchor="middle">نقاط القاطع</text>
+        <path id="m-br-cap" class="wire" d="M300 130 H386 M396 130 H480"/>
+        <path d="M386 116 V144 M396 116 V144" stroke="var(--ink)" stroke-width="3"/>
+        <text class="lbl" x="391" y="162" text-anchor="middle">المكثف</text>
+        <path id="m-br-sw" class="wire" d="M300 200 H332 M348 200 H380 M424 200 H480"/>
+        <path id="m-pgap" class="wire" d="M332 200 H348"/>
+        <path id="m-px" d="M334 192 L346 208 M346 192 L334 208" stroke="var(--danger)" stroke-width="3" opacity="0"/>
+        <text class="lbl" x="340" y="190" text-anchor="middle">P-lead</text>
+        <g id="m-blade"><line x1="380" y1="200" x2="420" y2="200" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/></g>
+        <circle cx="380" cy="200" r="3.5" fill="var(--ink)"/><circle cx="424" cy="200" r="3.5" fill="var(--ink)"/>
+        <text class="lbl" x="402" y="230" text-anchor="middle">مفتاح الإشعال</text>
+        <text id="m-swstate" x="402" y="182" text-anchor="middle" style="font-size:12px;font-weight:700">ON</text>
+        <path class="wire" d="M480 62 V240 M470 240 H490 M474 245 H486 M478 250 H482"/>
+        <text class="lbl" x="480" y="268" text-anchor="middle">الأرضي</text>
+        <!-- iron: core, extensions, pole shoes -->
+        <path d="M113 253 L90 230 V110 H230 V230 L207 253" fill="none" stroke="var(--iron)" stroke-width="18" stroke-linejoin="round"/>
+        <path d="M183.3 236.1 A68 68 0 0 1 223.9 276.7 M96.1 276.7 A68 68 0 0 1 136.7 236.1" fill="none" stroke="var(--iron)" stroke-width="14"/>
+        <g id="m-fr" transform="translate(230 172)"><path d="M0 -12 L8 4 L-8 4 Z" fill="var(--flux)"/></g>
+        <g id="m-fl" transform="translate(90 172)"><path d="M0 -12 L8 4 L-8 4 Z" fill="var(--flux)"/></g>
+        <!-- coil -->
+        <rect x="112" y="90" width="96" height="40" rx="6" fill="var(--copper)"/>
+        <path d="M120 90 V130 M128 90 V130 M136 90 V130 M144 90 V130 M152 90 V130 M160 90 V130 M168 90 V130 M176 90 V130 M184 90 V130 M192 90 V130 M200 90 V130" stroke="var(--surface)" stroke-opacity=".45" stroke-width="1.2"/>
+        <text class="lbl" x="160" y="152" text-anchor="middle">الملف على القلب</text>
+        <text class="lbl" x="160" y="168" text-anchor="middle">(ابتدائي + ثانوي)</text>
+        <text class="lbl" x="250" y="292">أحذية الأقطاب</text>
+        <!-- rotating magnet -->
+        <g id="m-rotor">
+          <path d="M160 300 L199.6 260.4 A56 56 0 0 1 199.6 339.6 Z" fill="var(--north)"/>
+          <path d="M160 300 L199.6 339.6 A56 56 0 0 1 120.4 339.6 Z" fill="var(--south)"/>
+          <path d="M160 300 L120.4 339.6 A56 56 0 0 1 120.4 260.4 Z" fill="var(--north)"/>
+          <path d="M160 300 L120.4 260.4 A56 56 0 0 1 199.6 260.4 Z" fill="var(--south)"/>
+          <text x="196" y="305" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:15px">N</text>
+          <text x="160" y="341" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:15px">S</text>
+          <text x="124" y="305" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:15px">N</text>
+          <text x="160" y="270" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:15px">S</text>
+        </g>
+        <circle cx="160" cy="300" r="6" fill="var(--surface)" stroke="var(--ink)"/>
+        <text class="lbl" x="160" y="374" text-anchor="middle">المغناطيس الدوّار (4 أقطاب)</text>
+        <!-- spark plug -->
+        <rect x="526" y="240" width="8" height="14" fill="var(--iron)"/>
+        <rect x="521" y="252" width="18" height="44" rx="3" fill="var(--surface)" stroke="var(--line)"/>
+        <rect x="513" y="292" width="34" height="20" rx="2" fill="var(--iron)"/>
+        <rect x="517" y="312" width="26" height="8" fill="var(--iron)" opacity=".7"/>
+        <line x1="530" y1="318" x2="530" y2="341" stroke="var(--ink)" stroke-width="3"/>
+        <path d="M517 318 V352 H535" fill="none" stroke="var(--ink)" stroke-width="3"/>
+        <path id="m-spark" class="spark" d="M530 341 L524 344 L536 347 L530 351" opacity="0"/>
+        <text class="lbl" x="546" y="372" text-anchor="end">الشمعة</text>
+      </svg>
+      <svg id="mag-graph" viewBox="0 0 560 186" role="img" aria-label="رسم بياني للفيض والتيار والجهد مع دوران المغناطيس">
+        <g id="mg-grid"></g>
+        <polyline id="mg-pm" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <polyline id="mg-phi" fill="none" stroke="var(--flux)" stroke-width="2.2"/>
+        <polyline id="mg-i" fill="none" stroke="var(--current)" stroke-width="2.2"/>
+        <polyline id="mg-v" fill="none" stroke="var(--volt)" stroke-width="2"/>
+        <line id="mg-cur" x1="12" x2="12" y1="14" y2="178" stroke="var(--ink)" stroke-width="1.4"/>
+        <text class="lbl" x="556" y="40" text-anchor="end">الفيض في القلب</text>
+        <text class="lbl" x="556" y="100" text-anchor="end">التيار الابتدائي</text>
+        <text class="lbl" x="556" y="156" text-anchor="end">الجهد الثانوي</text>
+      </svg>
+      <div class="legend"><span class="k-flux">الفيض الفعلي في القلب</span><span class="k-mag">فيض المغناطيس وحده</span><span class="k-cur">التيار الابتدائي</span><span class="k-volt">الجهد الثانوي</span><span style="color:var(--muted)">الخطوط العمودية: <span class="en">FR</span> تطابق كامل، <span class="en">E</span> لحظة فتح النقاط</span></div>
+    </div>
+    <aside class="panel">
+      <div class="phase"><h3 id="m-ph-t">…</h3><p id="m-ph-p"></p></div>
+      <div class="meters">
+        <div class="meter"><span>الفيض في القلب</span><div class="bar"><i id="m-b-phi" style="background:var(--flux)"></i></div></div>
+        <div class="meter"><span>التيار الابتدائي</span><div class="bar"><i id="m-b-i" style="background:var(--current)"></i></div></div>
+        <div class="meter"><span>الجهد الثانوي</span><div class="bar"><i id="m-b-v" style="background:var(--volt)"></i></div></div>
+      </div>
+      <p class="note">زاوية المغناطيس: <span class="en" id="m-ang">0°</span>. السلك الملوّن بالأخضر المزرق هو الذي يمر فيه التيار الابتدائي الآن.</p>
+      <p class="note">جرّب الأعطال:</p>
+      <div class="seg" id="m-modes" role="group" aria-label="حالة الماغنيتو">
+        <button data-m="normal" aria-pressed="true">طبيعي</button>
+        <button data-m="off">المفتاح OFF</button>
+        <button data-m="pleadoff">OFF مع P-lead مقطوع</button>
+        <button data-m="nocap">مكثف تالف</button>
+        <button data-m="lead">سلك الشمعة مفصول</button>
+        <button data-m="gap">فجوة النقاط أكبر</button>
+      </div>
+    </aside>
+  </div>
+  <div class="controls">
+    <button class="play" id="m-play">إيقاف مؤقت</button>
+    <button id="m-go-fr">قفز إلى: التطابق الكامل</button>
+    <button id="m-go-n">قفز إلى: المحايد</button>
+    <button id="m-go-e">قفز إلى: <span class="en">E-gap</span></button>
+    <label class="rng" for="m-speed">السرعة <input id="m-speed" type="range" min="4" max="60" value="20"></label>
+  </div>
+</section>
+
+<!-- ============ 2 MAG CHECK ============ -->
+<section class="station" id="magcheck">
+  <div class="st-head"><span class="st-num">المحطة 2</span><h2>مفتاح الإشعال وفحص المغانط على الأرض</h2>
+    <p class="qs">الأسئلة: <b>8534</b> <b>8567</b> <b>8568</b> <b>8579</b> <b>8583</b> <b>8590</b> <b>8598</b> <b>8599</b> <b>8613</b></p></div>
+  <div class="st-body">
+    <div class="stage mc-grid">
+      <div><div class="rpm"><span id="mc-rpm">1700</span><small>RPM</small></div><div class="gauge" style="margin-top:8px"><i id="mc-g"></i></div></div>
+      <div class="mags">
+        <div class="mag"><strong>المغناطيس الأيسر L</strong><span id="mc-L" class="chip ok">يعمل</span></div>
+        <div class="mag"><strong>المغناطيس الأيمن R</strong><span id="mc-R" class="chip ok">يعمل</span></div>
+      </div>
+      <div class="cyls" id="mc-cyls"></div>
+      <p class="note">كل أسطوانة فيها شمعتان: واحدة من المغناطيس الأيسر <span class="en">L</span> وواحدة من الأيمن <span class="en">R</span>. الدائرة تومض عندما تشتعل الشمعة.</p>
+    </div>
+    <aside class="panel">
+      <div><p class="note" style="margin-bottom:6px">وضع المفتاح:</p>
+        <div class="seg" id="mc-pos" role="group" aria-label="وضع مفتاح الإشعال">
+          <button data-p="OFF">OFF</button><button data-p="R">R</button><button data-p="L">L</button><button data-p="BOTH" aria-pressed="true">BOTH</button>
+        </div></div>
+      <label for="mc-fault" class="note">العطل المخفي:</label>
+      <select id="mc-fault">
+        <option value="none">لا يوجد عطل</option>
+        <option value="plead">سلك P-lead للمغناطيس الأيمن مقطوع</option>
+        <option value="rgnd">ابتدائي المغناطيس الأيمن مؤرَّض (قصر)</option>
+        <option value="plug">شمعة متسخة على المغناطيس الأيمن</option>
+        <option value="timing">توقيت المغناطيس الأيمن خاطئ</option>
+      </select>
+      <div class="explain"><p id="mc-exp"></p></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ 3 FOUR STROKE ============ -->
+<section class="station" id="stroke">
+  <div class="st-head"><span class="st-num">المحطة 3</span><h2>متى تحدث الشرارة؟ والإشعال المتدرج ووصلة الدفع</h2>
+    <p class="qs">الأسئلة: <b>8594</b> <b>8595</b> <b>8532</b> <b>8572</b> <b>8600</b> <b>8531</b> <b>8605</b></p></div>
+  <div class="st-body">
+    <div class="stage"><canvas id="st-cv" aria-label="أسطوانة ومكبس يتحركان في أربعة أشواط"></canvas></div>
+    <aside class="panel">
+      <div class="phase"><h3 id="st-t">…</h3><p id="st-p"></p></div>
+      <p class="note">الحركة تتباطأ تلقائياً قرب الشرارة حتى ترى انتشار اللهب.</p>
+      <div class="seg" id="st-modes" role="group" aria-label="نمط الإشعال">
+        <button data-s="same" aria-pressed="true">الشمعتان معاً</button>
+        <button data-s="stag">إشعال متدرج</button>
+        <button data-s="start">بدء التشغيل (وصلة الدفع)</button>
+      </div>
+      <div class="explain"><p id="st-exp"></p></div>
+    </aside>
+  </div>
+  <div class="controls"><button class="play" id="st-play">إيقاف مؤقت</button>
+    <label class="rng" for="st-speed">السرعة <input id="st-speed" type="range" min="40" max="400" value="160"></label></div>
+</section>
+
+<!-- ============ 4 HEAT RANGE ============ -->
+<section class="station" id="heat">
+  <div class="st-head"><span class="st-num">المحطة 4</span><h2>الشمعة الحارة والشمعة الباردة</h2>
+    <p class="qs">الأسئلة: <b>8571</b> <b>8577</b> <b>8580</b> <b>8587</b> <b>8589</b> <b>8592</b> <b>8593</b></p></div>
+  <div class="st-body">
+    <div class="stage" dir="ltr">
+      <svg id="hr-svg" viewBox="0 0 560 330" role="img" aria-label="مقطع في شمعة حارة وشمعة باردة مع مسار الحرارة">
+        <g id="hr-g"></g>
+      </svg>
+    </div>
+    <aside class="panel">
+      <p class="note" style="margin:0">اختر نوع المحرك:</p>
+      <div class="seg" id="hr-eng" role="group" aria-label="نوع المحرك">
+        <button data-e="cold" aria-pressed="true">محرك بارد (انضغاط منخفض)</button>
+        <button data-e="hot">محرك حار (انضغاط عالٍ)</button>
+      </div>
+      <div class="hr-results">
+        <div class="hr-card"><strong>الشمعة الحارة</strong><span class="note">طرف عازل طويل</span><span id="hr-r-hot" class="chip"></span></div>
+        <div class="hr-card"><strong>الشمعة الباردة</strong><span class="note">طرف عازل قصير</span><span id="hr-r-cold" class="chip"></span></div>
+      </div>
+      <div class="explain"><p id="hr-exp"></p></div>
+      <p class="note">النقاط البرتقالية هي الحرارة وهي تخرج من طرف العازل إلى جسم الشمعة ثم إلى رأس الأسطوانة. كلما طال الطريق بقي الطرف أسخن.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ 5 SHOWER OF SPARKS ============ -->
+<section class="station" id="shower">
+  <div class="st-head"><span class="st-num">المحطة 5</span><h2>وابل الشرارات: الشرارة فقط عندما تُفتح المجموعتان</h2>
+    <p class="qs">الأسئلة: <b>8515</b> <b>8541</b></p></div>
+  <div class="st-body">
+    <div class="stage" dir="ltr">
+      <svg id="sos-svg" viewBox="0 0 560 300" role="img" aria-label="دائرة وابل الشرارات وخط زمني لفتح النقاط">
+        <defs><filter id="glow2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <rect x="16" y="30" width="134" height="46" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+        <text id="sos-vib" x="83" y="58" text-anchor="middle" style="font-size:12px">المهتز + البطارية</text>
+        <path id="sos-w0" class="wire" d="M150 53 H200 V145"/>
+        <path id="sos-wc" class="wire" d="M200 53 H262 M338 53 H520"/>
+        <path d="M262 53 q6 -16 12 0 q6 -16 12 0 q6 -16 12 0 q6 -16 12 0 q6 -16 12 0 q6 -16 14 0" fill="none" stroke="var(--copper)" stroke-width="3"/>
+        <text class="lbl" x="300" y="26" text-anchor="middle">الملف الابتدائي</text>
+        <g transform="translate(440 76)"><path d="M-6 -8 L0 -2 L-4 2 L6 10" fill="none" stroke="var(--line)" stroke-width="2"/><path id="sos-spark" d="M-6 -8 L0 -2 L-4 2 L6 10" fill="none" stroke="var(--spark)" stroke-width="3.5" filter="url(#glow2)" opacity="0"/></g>
+        <text class="lbl" x="462" y="80">الشمعة</text>
+        <path id="sos-wa" class="wire" d="M200 108 H330 M380 108 H520"/>
+        <g id="sos-ba"><line x1="330" y1="108" x2="376" y2="108" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/></g>
+        <circle cx="330" cy="108" r="3.5" fill="var(--ink)"/><circle cx="380" cy="108" r="3.5" fill="var(--ink)"/>
+        <text class="lbl" x="265" y="100" text-anchor="middle">نقاط التشغيل (Advance)</text>
+        <g id="sos-retg">
+          <path id="sos-wr" class="wire" d="M200 145 H330 M380 145 H520"/>
+          <g id="sos-br"><line x1="330" y1="145" x2="376" y2="145" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/></g>
+          <circle cx="330" cy="145" r="3.5" fill="var(--ink)"/><circle cx="380" cy="145" r="3.5" fill="var(--ink)"/>
+          <text class="lbl" x="265" y="137" text-anchor="middle">نقاط التأخير (Retard)</text>
+        </g>
+        <path class="wire" d="M520 53 V160 M510 160 H530 M514 165 H526 M518 170 H522"/>
+        <!-- timeline -->
+        <g id="sos-tl"></g>
+        <line id="sos-cur" x1="0" x2="0" y1="192" y2="290" stroke="var(--ink)" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <aside class="panel">
+      <div class="seg" id="sos-mode" role="group" aria-label="مرحلة التشغيل">
+        <button data-k="start" aria-pressed="true">أثناء البدء (START)</button>
+        <button data-k="run">بعد التشغيل (BOTH)</button>
+      </div>
+      <div class="phase"><h3 id="sos-t">…</h3><p id="sos-p"></p></div>
+      <p class="note">المسار الملوّن هو الطريق الذي يسلكه التيار الآن. ما دامت أي مجموعة نقاط مغلقة، يذهب التيار إلى الأرضي عبرها ولا يمر في الملف.</p>
+    </aside>
+  </div>
+  <div class="controls"><button class="play" id="sos-play">إيقاف مؤقت</button></div>
+</section>
+
+<!-- ============ 6 TURBINE ============ -->
+<section class="station" id="turbine">
+  <div class="st-head"><span class="st-num">المحطة 6</span><h2>الإشعال بتفريغ المكثف في المحرك التوربيني</h2>
+    <p class="qs">الأسئلة: <b>8542</b> <b>8548</b> <b>8549</b> <b>8556</b> <b>8559</b> <b>8561</b> <b>8569</b> <b>8597</b> <b>8606</b> <b>8607</b></p></div>
+  <div class="st-body">
+    <div class="stage" dir="ltr">
+      <svg id="tb-svg" viewBox="0 0 560 210" role="img" aria-label="سلسلة وحدة الإثارة حتى المشعل">
+        <defs><filter id="glow3" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <g id="tb-g"></g>
+      </svg>
+      <p class="note" dir="rtl">الطاقة تسير من اليمين إلى اليسار: من كهرباء الطائرة حتى المُشعِل.</p>
+    </div>
+    <aside class="panel">
+      <ol class="steps" id="tb-steps">
+        <li>وحدة الإثارة ترفع الجهد وتشحن مكثف التخزين.</li>
+        <li>عند جهد معيّن يتأين الغاز في أنبوب التفريغ فيصبح موصلاً.</li>
+        <li>جزء من الشحنة يمر في محول القدح فيتولد جهد عالٍ جداً يقفز عبر فجوة المُشعِل ويؤيّنها <span class="en">(8549)</span>.</li>
+        <li>الفجوة أصبحت موصلة، فيفرّغ المكثف كل طاقته دفعة واحدة: شرارة ضخمة وحارة جداً.</li>
+      </ol>
+      <div class="explain"><p><strong>تذكّر:</strong> هذا الإشعال يعمل عند بدء التشغيل فقط ثم يُفصل، ولهذا يعيش المُشعِل طويلاً. الشرارة الحارة تنظّف المُشعِل وتعيد إشعال المحرك في الارتفاع العالي والبرد الشديد.</p></div>
+      <h3>فك المُشعِل بأمان (8559)</h3>
+      <ol class="steps" style="color:var(--ink)">
+        <li style="color:var(--ink)">أطفئ مفتاح الإشعال.</li>
+        <li style="color:var(--ink)">افصل سلك الدخل لوحدة الإثارة.</li>
+        <li style="color:var(--ink)">انتظر المدة المحددة (1 إلى 5 دقائق عادة).</li>
+        <li style="color:var(--ink)">افصل سلك المُشعِل، ثم أرّض القطب الأوسط بالمحرك.</li>
+      </ol>
+    </aside>
+  </div>
+  <div class="controls"><button class="play" id="tb-play">إيقاف مؤقت</button></div>
+</section>
+
+<!-- ============ 7 STARTER ============ -->
+<section class="station" id="starter">
+  <div class="st-head"><span class="st-num">المحطة 7</span><h2>المُدوِّر-المولّد ومرحّل التيار المنخفض</h2>
+    <p class="qs">الأسئلة: <b>8617</b> <b>8619</b> <b>8620</b> <b>8623</b> <b>8624</b></p></div>
+  <div class="st-body">
+    <div class="stage"><canvas id="sg-cv" aria-label="رسم بياني لتيار المدور وسرعة المحرك مع الزمن"></canvas>
+      <div class="legend"><span class="k-cur">تيار المُدوِّر</span><span class="k-flux">سرعة المحرك</span><span class="k-volt">حد مرحّل التيار المنخفض</span></div>
+    </div>
+    <aside class="panel">
+      <div class="lamps">
+        <div class="lamp" id="sg-l1"><i></i>مرحّل المُدوِّر</div>
+        <div class="lamp" id="sg-l2"><i></i>مرحّل التيار المنخفض</div>
+        <div class="lamp" id="sg-l3"><i></i>مرحّل الإشعال (المُثيرات)</div>
+        <div class="lamp" id="sg-l4"><i></i>المحرك مشتعل</div>
+      </div>
+      <div class="controls">
+        <button id="sg-go">تشغيل عادي</button><button id="sg-hung">تشغيل معلّق (Hung start)</button><button id="sg-stop">STOP</button>
+      </div>
+      <div class="phase"><h3 id="sg-t">…</h3><p id="sg-p"></p></div>
+    </aside>
+  </div>
+  <div class="explain">
+    <h3 style="margin-bottom:6px">المُدوِّر الهوائي (8625 إلى 8632)</h3>
+    <div class="tblwrap"><table class="mini">
+      <tr><th>المشكلة</th><th>الحماية</th></tr>
+      <tr><td>الهواء من الوحدة الأرضية يدير المُدوِّر أسرع من حدوده</td><td>مفتاح الأثقال الطاردة (<span class="en">flyweight cutout</span>) يغلق صمام الهواء</td></tr>
+      <tr><td>القابض لم ينفصل، والمحرك صار يدير المُدوِّر</td><td>نقطة القص في العمود (<span class="en">shear point</span>) تنكسر</td></tr>
+      <tr><td>المُدوِّر المباشر: الهواء لم يتوقف في وقته</td><td>الفوهة تختنق (<span class="en">choked nozzle</span>) فتثبت السرعة</td></tr>
+    </table></div>
+    <p class="note" style="margin-top:6px">الميزة الرئيسية: قدرة عالية لوزن قليل. الفحص الدوري: مستوى الزيت والسدادة المغناطيسية. والطقطقة عند توقف المحرك طبيعية: المخالب تعود وتنزلق فوق السن المنشاري.</p>
+  </div>
+</section>
+
+<!-- ============ VIDEOS ============ -->
+<section class="station" id="videos">
+  <div class="st-head"><h2>فيديوهات حقيقية</h2>
+    <p class="qs">لم أستطع التأكد من فيديو محدد بعينه، لذلك هذه روابط بحث جاهزة في يوتيوب لكل موضوع. ابحث عن مقاطع من قنوات تدريب الصيانة (A&amp;P) أو من الشركات المصنّعة. ومن المصادر القديمة المفيدة فيلم التدريب المتحرك من الحرب العالمية الثانية <span class="en">Aircraft Magneto Part 1: Theory of Four Pole Magneto</span>، وفيه شرح متحرك لـ<span class="en">E-gap</span>.</p></div>
+  <div class="videos" id="vid-list"></div>
+</section>
+</div>
+
+<script>
+(() => {
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+const C = {};
+function readColors(){ const cs=getComputedStyle(document.documentElement);
+  ['bg','surface','surface2','ink','muted','line','iron','copper','flux','current','volt','spark','danger','ok','mix','burnt','flame','body'].forEach(n=>C[n]=cs.getPropertyValue('--'+n).trim()); }
+readColors();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readColors();redrawAll();});
+new MutationObserver(()=>{readColors();redrawAll();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+const scenes=[];
+function redrawAll(){ scenes.forEach(s=>s.draw()); }
+function playBtn(btn, s){ const set=()=>{btn.textContent=s.playing?'إيقاف مؤقت':'تشغيل';};
+  btn.addEventListener('click',()=>{s.playing=!s.playing;set();}); s.syncBtn=set; set(); }
+function seg(groupId, attr, onPick){ const g=$(groupId);
+  g.addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return;
+    g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false')); onPick(b.dataset[attr]);}); }
+function fitCanvas(cv,w,h){ const d=Math.min(2,window.devicePixelRatio||1); cv.width=w*d; cv.height=h*d; cv.style.aspectRatio=w+'/'+h; const ctx=cv.getContext('2d'); ctx.setTransform(d,0,0,d,0,0); return ctx; }
+const NS='http://www.w3.org/2000/svg';
+function S(tag,attrs,parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ================= 1. MAGNETO ================= */
+const mag = { el:$('magneto'), playing:!reduce, theta:62, speed:20, mode:'normal', sparkVis:0 };
+(function(){
+  const STEP=0.25, N=361;
+  function build(m){
+    const tO = m==='gap'?40:55, tau = m==='nocap'?7:1.2, grounded = m==='off';
+    const iAt=t=>(1-Math.cos(Math.PI*Math.min(t,55)/55))/2, i0=iAt(tO);
+    const phi=new Float32Array(N), cur=new Float32Array(N), V=new Float32Array(N), pm=new Float32Array(N);
+    for(let k=0;k<N;k++){ const t=k*STEP; pm[k]=Math.cos(2*t*Math.PI/180); let i;
+      if(t<=tO) i=iAt(t); else if(grounded) i=i0*Math.cos(Math.PI/2*(t-tO)/(90-tO)); else i=i0*Math.exp(-(t-tO)/tau);
+      cur[k]=i; phi[k]=pm[k]+0.9*i; }
+    for(let k=0;k<N;k++){ const a=Math.max(0,k-1), b=Math.min(N-1,k+1); V[k]=-(phi[b]-phi[a])/((b-a)*STEP); }
+    return {tO,phi,cur,V,pm};
+  }
+  let cv = build('normal');
+  function at(theta){ const n=Math.floor(theta/90), s=(n%2)?-1:1, t=theta-90*n, k=Math.min(N-1,Math.round(t/STEP));
+    return {t, s, phi:s*cv.phi[k], i:s*cv.cur[k], V:s*cv.V[k], pm:s*cv.pm[k]}; }
+  // graph
+  const gx=th=>12+th/360*440;
+  function drawGraph(){
+    const grid=$('mg-grid'); grid.innerHTML='';
+    for(let q=0;q<=4;q++){ const x=gx(q*90); S('line',{x1:x,x2:x,y1:14,y2:178,stroke:'var(--line)','stroke-width':1},grid);
+      S('text',{x:x,y:11,'text-anchor':'middle',class:'lbl',style:'font-size:10px'},grid).textContent='FR'; }
+    for(let q=0;q<4;q++){ const x=gx(q*90+cv.tO); S('line',{x1:x,x2:x,y1:14,y2:178,stroke:'var(--volt)','stroke-width':1,'stroke-dasharray':'3 3',opacity:.7},grid);
+      S('text',{x:x,y:11,'text-anchor':'middle',class:'lbl',style:'font-size:10px'},grid).textContent='E'; }
+    [40,100,156].forEach(y=>S('line',{x1:12,x2:452,y1:y,y2:y,stroke:'var(--line)','stroke-width':1},grid));
+    let a=[],b=[],c=[],d=[];
+    for(let th=0;th<=360;th+=0.5){ const v=at(Math.min(th,359.99)); const x=gx(th).toFixed(1);
+      a.push(x+','+(40-22*v.pm).toFixed(1)); b.push(x+','+(40-22*v.phi).toFixed(1));
+      c.push(x+','+(100-22*v.i).toFixed(1)); d.push(x+','+(156-24*clamp(v.V/0.8,-1.1,1.1)).toFixed(1)); }
+    $('mg-pm').setAttribute('points',a.join(' ')); $('mg-phi').setAttribute('points',b.join(' '));
+    $('mg-i').setAttribute('points',c.join(' ')); $('mg-v').setAttribute('points',d.join(' '));
+  }
+  drawGraph();
+  const TXT={
+    fr:['التطابق الكامل (Full register)','قطبا المغناطيس أمام أحذية الأقطاب تماماً، فالفيض في القلب أكبر ما يمكن. في هذه اللحظة تقريباً تُغلق النقاط (8506، 8609).'],
+    build:['النقاط مغلقة: التيار الابتدائي يُبنى','المغناطيس يبتعد عن الأقطاب فيبدأ فيضه بالنقصان (الخط المتقطع). هذا التغير يولد تياراً في الملف الابتدائي يمر عبر النقاط المغلقة إلى الأرضي، وهذا التيار يمسك الفيض في القلب ويمنعه من الهبوط (الخط البنفسجي يبقى عالياً).'],
+    neutral:['الوضع المحايد (Neutral)','المغناطيس في منتصف المسافة بين الأقطاب، ففيضه وحده في القلب يساوي صفراً. لكن التيار الابتدائي ما زال يمسك الفيض القديم. الفرق بين الخطين هو «الإجهاد المغناطيسي».'],
+    stress:['بعد المحايد: الإجهاد يصل إلى قمته','المغناطيس يحاول أن يعكس اتجاه الفيض، والتيار الابتدائي يقاومه بكل قوته. التيار والإجهاد في أقصاهما: هذه أفضل لحظة لفتح النقاط (8540).'],
+    open:['النقاط مفتوحة','المغناطيس يتجه نحو التطابق الكامل التالي، وهناك ستُغلق النقاط من جديد. في الدورة الواحدة للمغناطيس رباعي الأقطاب يتكرر هذا 4 مرات.']
+  };
+  const EG={
+    normal:['E-gap: النقاط تُفتح!','انقطع التيار الابتدائي فجأة، فانقلب الفيض في القلب إلى الاتجاه الجديد بسرعة هائلة (انظر السقوط الحاد للخط البنفسجي). هذه السرعة ولّدت جهداً عالياً جداً في آلاف لفات الملف الثانوي، فقفزت الشرارة في الشمعة (8514، 8539، 8596).'],
+    off:['النقاط تُفتح… ولكن لا شرارة','المفتاح على OFF يعني أنه مغلق ويوصل الابتدائي بالأرضي. لاحظ أن التيار ما زال يمر في فرع المفتاح ولم ينقطع، فتغير الفيض ببطء ولم يتولد جهد عالٍ. هكذا يُطفأ الماغنيتو: بالتأريض، لا بالفتح (8570، 8582).'],
+    pleadoff:['المفتاح OFF لكن الشرارة مستمرة!','سلك P-lead مقطوع، فلم يصل التأريض من المفتاح إلى الماغنيتو. التيار انقطع عند النقاط كالمعتاد وحدثت الشرارة. الماغنيتو «حار» والمحرك لن يتوقف (8534، 8568، 8599، 8613).'],
+    nocap:['بدون مكثف: قوس عند النقاط','لاحظ الوهج بين النقاط: التيار قفز بينها على شكل قوس، فتوقف ببطء وانهار المجال ببطء. الجهد في الثانوي أقل بكثير (الشرارة ضعيفة)، والقوس يحرق النقاط وينقّرها (8520، 8526، 8550، 8566).'],
+    lead:['سلك الشمعة مفصول: فجوة الأمان تعمل','الجهد العالي لم يجد الشمعة، فكان سيرتفع حتى يخترق عازل الملف الثانوي. بدلاً من ذلك قفز عبر فجوة الأمان إلى الأرضي (أعلى اليسار) وحمى الملف (8510، 8525).'],
+    gap:['فجوة النقاط أكبر: فتح مبكر','النقاط فُتحت قبل E-gap (الخط E تحرك إلى اليسار)، قبل أن يصل التيار إلى قمته. النتيجة: شرارة مبكرة (متقدمة) وأضعف (8509).']
+  };
+  function phase(t){ const tO=cv.tO;
+    if(t<6||t>=88) return TXT.fr; if(t<40) return TXT.build; if(t<50 && t<tO) return TXT.neutral; if(t<tO) return TXT.stress;
+    if(t<tO+14) return EG[mag.mode]; return TXT.open; }
+  let lastPhase='';
+  mag.step=dt=>{ mag.theta=(mag.theta+mag.speed*dt)%360; };
+  mag.draw=()=>{
+    const v=at(mag.theta), t=v.t, open=(t>cv.tO && t<89.5), m=mag.mode;
+    $('m-rotor').setAttribute('transform',`rotate(${mag.theta.toFixed(2)} 160 300)`);
+    const a=Math.abs(v.phi), sc=(0.55+0.6*Math.min(1,a)).toFixed(2), op=(0.15+0.85*Math.min(1,a)).toFixed(2);
+    $('m-fr').setAttribute('transform',`translate(230 172) rotate(${v.phi>=0?0:180}) scale(${sc})`); $('m-fr').setAttribute('opacity',op);
+    $('m-fl').setAttribute('transform',`translate(90 172) rotate(${v.phi>=0?180:0}) scale(${sc})`); $('m-fl').setAttribute('opacity',op);
+    $('m-arm').setAttribute('transform',open?'rotate(14 430 62)':'');
+    const ai=Math.abs(v.i);
+    const arc = m==='nocap' && open && ai>0.04;
+    $('m-arc').setAttribute('opacity',arc?(0.4+0.6*Math.min(1,ai*1.5)).toFixed(2):0);
+    const swClosed = (m==='off'||m==='pleadoff');
+    $('m-blade').setAttribute('transform',swClosed?'':'rotate(-28 380 200)');
+    $('m-swstate').textContent=swClosed?'OFF (مغلق إلى الأرضي)':'ON (مفتوح)';
+    $('m-pgap').setAttribute('opacity',m==='pleadoff'?0:1); $('m-px').setAttribute('opacity',m==='pleadoff'?1:0);
+    const live=ai>0.02;
+    $('m-feed').classList.toggle('live',live);
+    $('m-br-pts').classList.toggle('live',live && (!open||arc)); $('m-br-pts2').classList.toggle('live',live && (!open||arc));
+    $('m-br-sw').classList.toggle('live',live && m==='off' && open);
+    $('m-pgap').classList.toggle('live',live && m==='off' && open);
+    const hv=Math.abs(v.V)>0.1;
+    const target = hv ? clamp((Math.abs(v.V)-0.1)/0.6,0.25,1) : 0;
+    mag.sparkVis = Math.max(target, mag.sparkVis - 0.06);
+    const sp = mag.sparkVis.toFixed(2);
+    $('m-spark').setAttribute('opacity', m==='lead'?0:sp);
+    $('m-sgspark').setAttribute('opacity', m==='lead'?sp:0);
+    $('m-leadlow').setAttribute('opacity', m==='lead'?0:1); $('m-leadoff').setAttribute('opacity', m==='lead'?1:0);
+    $('mg-cur').setAttribute('x1',gx(mag.theta)); $('mg-cur').setAttribute('x2',gx(mag.theta));
+    $('m-b-phi').style.width=(Math.min(1,a)*100).toFixed(0)+'%';
+    $('m-b-i').style.width=(Math.min(1,ai)*100).toFixed(0)+'%';
+    $('m-b-v').style.width=(Math.min(1,Math.abs(v.V)/0.8)*100).toFixed(0)+'%';
+    $('m-ang').textContent=mag.theta.toFixed(0)+'°';
+    const ph=phase(t); if(ph[0]!==lastPhase){ lastPhase=ph[0]; $('m-ph-t').textContent=ph[0]; $('m-ph-p').textContent=ph[1]; }
+  };
+  playBtn($('m-play'),mag);
+  seg('m-modes','m',m=>{ mag.mode=m; cv=build(m); drawGraph(); lastPhase=''; mag.draw(); });
+  $('m-speed').addEventListener('input',e=>mag.speed=+e.target.value);
+  const jump=off=>{ const base=Math.floor(mag.theta/90)*90; mag.theta=(base+off+90)%360; mag.playing=false; mag.syncBtn(); mag.sparkVis=0; mag.draw(); };
+  $('m-go-fr').onclick=()=>jump(0); $('m-go-n').onclick=()=>jump(45); $('m-go-e').onclick=()=>{ jump(cv.tO+0.5); };
+})();
+scenes.push(mag);
+
+/* ================= 2. MAG CHECK ================= */
+const mc={el:$('magcheck'),playing:true,pos:'BOTH',fault:'none',rpm:1700,target:1700,tau:.5,clock:0};
+(function(){
+  const cyls=$('mc-cyls'), plugs=[];
+  for(let c=0;c<4;c++){ const d=document.createElement('div'); d.className='cyl';
+    d.innerHTML=`<span>أسطوانة ${c+1}</span><div class="plugs"><span class="plug">L</span><span class="plug">R</span></div>`;
+    cyls.appendChild(d); plugs.push(d.querySelectorAll('.plug')); }
+  function state(){ const p=mc.pos,f=mc.fault;
+    let L=(p==='L'||p==='BOTH'), R=(p==='R'||p==='BOTH');
+    if(f==='plead') R=true; if(f==='rgnd') R=false;
+    let rpm,tau=.5,exp;
+    if(!L&&!R){ rpm=0; tau=.9; }
+    else if(L&&R) rpm=1700;
+    else if(f==='rgnd' && L) rpm=1700;
+    else if(L) rpm=1625;
+    else { if(f==='plug'){rpm=1450;tau=.25;} else if(f==='timing'){rpm=1560;tau=2.6;} else rpm=1625; }
+    // explanation
+    const E={
+      none:{BOTH:'الوضع الطبيعي: المغناطيسان يعملان، وكل أسطوانة تشتعل من نقطتين. السرعة 1,700.',
+            L:'المغناطيس الأيمن مؤرَّض، وتعمل شمعة واحدة في كل أسطوانة فيحترق الخليط أبطأ قليلاً. انخفاض بسيط في السرعة (حوالي 75) = عمل صحيح (8583).',
+            R:'المغناطيس الأيسر مؤرَّض. انخفاض بسيط مثل الوضع L = المغناطيس الأيمن سليم (8583).',
+            OFF:'المغناطيسان مؤرَّضان، فلا شرارة والمحرك يتوقف. هذا فحص المفتاح، ويُجرى في أبطأ سرعة ممكنة حتى لا يحدث انفجار خلفي في العادم (8608).'},
+      plead:{BOTH:'لا شيء يظهر في وضع BOTH. العطل مخفي.',
+            L:'لاحظ: لا يوجد أي انخفاض في السرعة! المفتاح حاول تأريض المغناطيس الأيمن، لكن سلك P-lead مقطوع فبقي يعمل. «لا انخفاض» علامة مشبوهة.',
+            R:'انخفاض طبيعي، لأن المغناطيس الأيسر سليم ويتأرض.',
+            OFF:'المحرك لم يتوقف! المغناطيس الأيمن «حار» ويعمل في كل الأوضاع. هذا هو سؤال 8534 و8568 و8599 و8613.'},
+      rgnd:{BOTH:'المغناطيس الأيمن مؤرَّض بشكل دائم، فالمحرك يعمل أصلاً على الأيسر وحده. السرعة 1,700 كما في جواب السؤال 8567.',
+            L:'السرعة بقيت 1,700 بلا أي انخفاض: الوضعان BOTH وL متطابقان فعلياً لأن الأيمن لا يعمل أصلاً (8567).',
+            R:'السرعة صفر! المفتاح أرّض الأيسر، والأيمن مؤرَّض بالعطل، فلا يعمل شيء (8567).',
+            OFF:'صفر، كالمعتاد.'},
+      plug:{BOTH:'لا شيء يظهر في BOTH، لأن الشمعة الأخرى في الأسطوانة 3 تعمل.',
+            L:'انخفاض طبيعي. الشمعة المتسخة موصولة بالمغناطيس الأيمن.',
+            R:'انخفاض سريع وكبير: الأسطوانة 3 فقدت شمعتها العاملة الوحيدة فتوقفت فوراً. الانخفاض السريع = شمعات (8590).',
+            OFF:'صفر، كالمعتاد.'},
+      timing:{BOTH:'لا شيء واضح في BOTH.',
+            L:'انخفاض طبيعي.',
+            R:'راقب العداد: السرعة تنخفض ببطء وبشكل تدريجي. الانخفاض البطيء = توقيت خاطئ أو ضبط صمامات (8598).',
+            OFF:'صفر، كالمعتاد.'}};
+    exp=E[f][p];
+    return {L,R,rpm,tau,exp};
+  }
+  let st=state();
+  function apply(){ st=state(); mc.target=st.rpm; mc.tau=st.tau; $('mc-exp').textContent=st.exp;
+    const set=(el,on,why)=>{ el.textContent=on?'يعمل':why; el.className='chip '+(on?'ok':'bad'); };
+    const why = n => (mc.fault==='rgnd'&&n==='R') ? 'مؤرَّض بالعطل' : 'مؤرَّض بالمفتاح';
+    set($('mc-L'),st.L,why('L')); set($('mc-R'),st.R,why('R'));
+    if(mc.fault==='plead'&&st.R&&mc.pos!=='R'&&mc.pos!=='BOTH'){ $('mc-R').textContent='يعمل رغم المفتاح!'; $('mc-R').className='chip warn'; }
+    plugs.forEach((pp,c)=>{ pp[0].classList.toggle('dead',!st.L); pp[1].classList.toggle('dead',!st.R || (mc.fault==='plug'&&c===2)); });
+  }
+  seg('mc-pos','p',p=>{mc.pos=p;apply();});
+  $('mc-fault').addEventListener('change',e=>{mc.fault=e.target.value;apply();});
+  mc.step=dt=>{ mc.rpm += (mc.target-mc.rpm)*(1-Math.exp(-dt/mc.tau)); mc.clock+=dt*(mc.rpm/1700)*(reduce?0:3); };
+  mc.draw=()=>{ $('mc-rpm').textContent=Math.round(mc.rpm).toLocaleString('en-US'); $('mc-g').style.width=(mc.rpm/1800*100).toFixed(1)+'%';
+    plugs.forEach((pp,c)=>{ const ph=((mc.clock+c*0.25)%1); const fire = mc.rpm>30 && ph<0.18;
+      pp[0].classList.toggle('on',fire&&st.L); pp[1].classList.toggle('on',fire&&st.R&&!(mc.fault==='plug'&&c===2)); }); };
+  apply();
+})();
+scenes.push(mc);
+
+/* ================= 3. FOUR STROKE ================= */
+const fs={el:$('stroke'),playing:!reduce,a:300,speed:160,mode:'same'};
+(function(){
+  const cvs=$('st-cv'); const W=560,H=400; const ctx=fitCanvas(cvs,W,H);
+  const CX=280,CY=330,R=50,L=150, XL=186, XR=374, YP=64, TOP=40;
+  const sparks=()=> fs.mode==='stag'?{L:340,R:327}: fs.mode==='start'?{L:365,R:365}:{L:340,R:340};
+  const rate={L:7,R:3.5};
+  function pinY(a){ const r=a*Math.PI/180; return CY-(R*Math.cos(r)+Math.sqrt(L*L-(R*Math.sin(r))**2)); }
+  function meetInfo(){ const s=sparks(); // solve rL+rR=188
+    const t0=Math.max(s.L,s.R); let a=t0; for(;a<t0+60;a+=0.1){ const rl=Math.max(0,a-s.L)*rate.L, rr=Math.max(0,a-s.R)*rate.R; if(rl+rr>=XR-XL) return {a,x:XL+rl}; } return null; }
+  let meet=meetInfo();
+  const strokeName=a=> a<180?'شوط السحب':a<360?'شوط الانضغاط':a<540?'شوط القدرة':'شوط العادم';
+  fs.step=dt=>{ const a=fs.a%720; const slow=(a>310&&a<400)?0.28:1; fs.a=(fs.a+fs.speed*slow*dt*(fs.mode==='start'?0.6:1))%720; };
+  fs.draw=()=>{
+    const a=fs.a%720, s=sparks();
+    ctx.clearRect(0,0,W,H); ctx.fillStyle=C.surface2; ctx.fillRect(0,0,W,H);
+    const py=pinY(a%360), ptop=py-22;
+    // chamber gas
+    let gas=null;
+    if(a<180) gas=C.mix; else if(a<Math.min(s.L,s.R)) gas=C.mix; else if(a<540) gas=null; else gas=C.burnt;
+    ctx.save(); ctx.beginPath(); ctx.rect(180,TOP,200,ptop-TOP); ctx.clip();
+    if(gas){ ctx.globalAlpha=a<180?0.35:(a<360?0.35+0.35*(a-180)/180:0.35); if(a>=540) ctx.globalAlpha=0.5*(1-(a-540)/180)+0.1; ctx.fillStyle=gas; ctx.fillRect(180,TOP,200,ptop-TOP); ctx.globalAlpha=1; }
+    if(a>=Math.min(s.L,s.R) && a<540){
+      const rl=Math.max(0,a-s.L)*rate.L, rr=Math.max(0,a-s.R)*rate.R;
+      const burnt = meet && a>meet.a+10;
+      ctx.fillStyle=burnt?C.burnt:C.mix; ctx.globalAlpha=burnt?0.45:0.6; ctx.fillRect(180,TOP,200,ptop-TOP); ctx.globalAlpha=1;
+      if(burnt){ ctx.fillStyle=C.flame; ctx.globalAlpha=Math.max(0,0.85-(a-meet.a-10)/90); ctx.fillRect(180,TOP,200,ptop-TOP); ctx.globalAlpha=1; }
+      else { ctx.fillStyle=C.flame; ctx.globalAlpha=0.85;
+        if(rl>0){ctx.beginPath();ctx.arc(XL,YP,rl,0,Math.PI*2);ctx.fill();}
+        if(rr>0){ctx.beginPath();ctx.arc(XR,YP,rr,0,Math.PI*2);ctx.fill();} ctx.globalAlpha=1; }
+    }
+    ctx.restore();
+    // meeting marker
+    if(meet && a>=meet.a && a<540){ ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(CX,TOP); ctx.lineTo(CX,ptop); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.danger; ctx.beginPath(); ctx.arc(meet.x,YP+10,6,0,Math.PI*2); ctx.fill();
+      ctx.font='12px '+C.body; ctx.textAlign='center'; ctx.fillStyle=C.ink; ctx.direction='rtl'; ctx.fillText('نقطة الالتقاء', meet.x, YP+32); ctx.fillStyle=C.muted; ctx.fillText('المركز', CX, ptop-6); ctx.direction='ltr'; }
+    // cylinder walls & head
+    ctx.strokeStyle=C.ink; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(180,TOP); ctx.lineTo(180,262); ctx.moveTo(380,TOP); ctx.lineTo(380,262); ctx.moveTo(176,TOP); ctx.lineTo(384,TOP); ctx.stroke();
+    // valves
+    const iv = a<180? 1:0, ev = a>=540?1:0;
+    const valve=(x,open,col)=>{ const y=TOP+4+open*16; ctx.strokeStyle=col; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x,6); ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x-18,y); ctx.lineTo(x+18,y); ctx.stroke(); };
+    valve(235,iv,C.current); valve(325,ev,C.burnt);
+    ctx.font='12px '+C.body; ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.direction='rtl';
+    ctx.fillText('صمام السحب',235,24); ctx.fillText('صمام العادم',325,24);
+    // plugs
+    const plug=(x,dir,firing,label)=>{ ctx.fillStyle=C.iron; ctx.fillRect(dir<0?x-30:x,YP-7,30,14); ctx.fillStyle=C.ink; ctx.fillRect(dir<0?x-2:x-4,YP-2,6,4);
+      if(firing){ ctx.strokeStyle=C.spark; ctx.lineWidth=3; ctx.shadowColor=C.spark; ctx.shadowBlur=12; ctx.beginPath(); const xx=x+(dir<0?6:-6); ctx.moveTo(xx,YP-9); ctx.lineTo(xx+(dir<0?6:-6),YP-2); ctx.lineTo(xx,YP+3); ctx.lineTo(xx+(dir<0?8:-8),YP+10); ctx.stroke(); ctx.shadowBlur=0; }
+      ctx.fillStyle=C.muted; ctx.textAlign=dir<0?'right':'left'; ctx.fillText(label, dir<0?x-34:x+34, YP+4); };
+    plug(180,-1, a>=s.L && a<s.L+5, 'شمعة جهة السحب');
+    plug(380, 1, a>=s.R && a<s.R+5, 'شمعة جهة العادم');
+    // piston & rod & crank
+    ctx.fillStyle=C.iron; ctx.fillRect(184,ptop,192,44); ctx.fillStyle=C.surface; ctx.fillRect(184,ptop+12,192,3); ctx.fillRect(184,ptop+20,192,3);
+    const r=(a%360)*Math.PI/180, cx2=CX+R*Math.sin(r), cy2=CY-R*Math.cos(r);
+    ctx.strokeStyle=C.muted; ctx.lineWidth=1.5; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=C.ink; ctx.lineWidth=8; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(CX,py); ctx.lineTo(cx2,cy2); ctx.stroke();
+    ctx.lineWidth=6; ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(cx2,cy2); ctx.stroke(); ctx.lineCap='butt';
+    ctx.fillStyle=C.surface; ctx.beginPath(); ctx.arc(CX,CY,5,0,7); ctx.fill();
+    // angle readout
+    const rel = a-360; ctx.direction='rtl'; ctx.textAlign='right'; ctx.fillStyle=C.ink; ctx.font='bold 14px '+C.body;
+    ctx.fillText(strokeName(a), W-12, 26);
+    ctx.font='12px '+C.body; ctx.fillStyle=C.muted;
+    const near = Math.abs(rel)<=60 ? (rel<0? `${Math.round(-rel)}° قبل النقطة الميتة العليا` : rel===0?'عند النقطة الميتة العليا':`${Math.round(rel)}° بعد النقطة الميتة العليا`) : `زاوية العمود ${Math.round(a)}°`;
+    ctx.fillText(near, W-12, 46); ctx.direction='ltr';
+    // text
+    let t,p;
+    if(a<300){ t=strokeName(a); p=a<180?'المكبس ينزل وصمام السحب مفتوح، فيدخل خليط الوقود والهواء.':'الصمامان مغلقان والمكبس يصعد ويضغط الخليط. راقب ما يحدث قبل وصوله إلى الأعلى.'; }
+    else if(a<Math.min(s.L,s.R)){ t='الشرارة تقترب'; p= fs.mode==='start'?'في بدء التشغيل ننتظر حتى يصل المكبس إلى الأعلى أو يتجاوزه قليلاً.':'الاحتراق يحتاج وقتاً، لذلك نشعل الخليط قبل أن يصل المكبس إلى النقطة الميتة العليا بحوالي 20 درجة (8594).'; }
+    else if(a<420){ t= fs.mode==='start'?'شرارة متأخرة بعد النقطة الميتة العليا':'الشرارة: قبل النقطة الميتة العليا';
+      p= fs.mode==='stag'?'شمعة جهة العادم اشتعلت أولاً لأن الخليط هناك مخفف بغازات العادم المتبقية ويحترق أبطأ (لهبها ينمو ببطء). بهذا يلتقي اللهبان في المركز تماماً (8532، 8572).'
+        : fs.mode==='start'?'المكبس تجاوز الأعلى وبدأ ينزل، فضغط الاحتراق يدفعه في الاتجاه الصحيح ولا يرتد المحرك إلى الخلف. وصلة الدفع تدير المغناطيس بسرعة لحظية فتكون الشرارة متأخرة وقوية (8531).'
+        : 'الشمعتان اشتعلتا معاً. لهب جهة العادم ينمو أبطأ لأن الخليط هناك مخفف، فيلتقي اللهبان بعيداً عن المركز باتجاه العادم. جرّب «إشعال متدرج».'; }
+    else if(a<540){ t='شوط القدرة'; p='ضغط الاحتراق يدفع المكبس إلى الأسفل. أعلى ضغط يحدث بعد النقطة الميتة العليا بقليل، وهذا سبب تقديم الشرارة.'; }
+    else { t='شوط العادم'; p='صمام العادم مفتوح والمكبس يصعد ويدفع الغازات المحترقة. جزء منها يبقى قرب صمام العادم ويخفف الخليط الجديد هناك.'; }
+    if($('st-t').textContent!==t){ $('st-t').textContent=t; $('st-p').textContent=p; }
+  };
+  const EXP={same:'الشمعتان تشتعلان في اللحظة نفسها (20° قبل الأعلى). نقطة الالتقاء تنحرف نحو جهة العادم.',
+    stag:'الإشعال المتدرج: شمعة جهة العادم تشتعل قبل الأخرى ببضع درجات، فيلتقي اللهبان في وسط رأس المكبس.',
+    start:'عند بدء التشغيل المحرك بطيء. لو اشتعل الخليط مبكراً لدفع المكبس الصاعد إلى الخلف (ارتداد kickback). لذلك نؤخر الشرارة حتى بعد الأعلى.'};
+  $('st-exp').textContent=EXP.same;
+  seg('st-modes','s',m=>{ fs.mode=m; meet=meetInfo(); $('st-exp').textContent=EXP[m]; fs.draw(); });
+  playBtn($('st-play'),fs); $('st-speed').addEventListener('input',e=>fs.speed=+e.target.value);
+})();
+scenes.push(fs);
+
+/* ================= 4. HEAT RANGE ================= */
+const hr={el:$('heat'),playing:!reduce,eng:'cold',clock:0};
+(function(){
+  const g=$('hr-g');
+  // cylinder head band and chamber
+  S('rect',{x:0,y:150,width:560,height:52,fill:'var(--iron)',opacity:.55},g);
+  for(let x=10;x<560;x+=26) S('rect',{x:x,y:132,width:12,height:18,fill:'var(--iron)',opacity:.45},g);
+  const ch=S('rect',{x:0,y:202,width:560,height:128,fill:'var(--flame)',opacity:.18},g);
+  S('text',{x:550,y:320,'text-anchor':'end',class:'lbl'},g).textContent='غرفة الاحتراق';
+  S('text',{x:550,y:180,'text-anchor':'end',class:'lbl'},g).textContent='رأس الأسطوانة';
+  const plugs={};
+  function plug(cx,seatY,key,title){
+    const G=S('g',{},g);
+    S('rect',{x:cx-6,y:20,width:12,height:22,fill:'var(--iron)'},G);
+    S('rect',{x:cx-13,y:40,width:26,height:56,rx:4,fill:'var(--surface)',stroke:'var(--line)'},G);
+    S('rect',{x:cx-24,y:96,width:48,height:54,rx:3,fill:'var(--iron)'},G); // shell hex/body
+    S('rect',{x:cx-20,y:150,width:40,height:52,fill:'var(--iron)',opacity:.85},G); // threads in head
+    for(let y=154;y<200;y+=7) S('line',{x1:cx-20,x2:cx+20,y1:y,y2:y+3,stroke:'var(--surface2)','stroke-width':1.2},G);
+    // cavity inside shell
+    S('rect',{x:cx-14,y:seatY,width:28,height:204-seatY,fill:'var(--surface2)'},G);
+    // insulator nose
+    const nose=S('path',{d:`M${cx-13} 96 V${seatY} L${cx-7} ${seatY+8} V206 Q${cx} 212 ${cx+7} 206 V${seatY+8} L${cx+13} ${seatY} V96 Z`,fill:'var(--surface)',stroke:'var(--line)'},G);
+    const tip=S('circle',{cx:cx,cy:206,r:8,fill:'var(--flame)',opacity:.5},G);
+    S('line',{x1:cx,y1:40,x2:cx,y2:216,stroke:'var(--ink)','stroke-width':2.5},G);
+    S('path',{d:`M${cx+20} 202 V222 H${cx+4}`,fill:'none',stroke:'var(--ink)','stroke-width':3},G);
+    S('circle',{cx:cx-14,cy:seatY,r:3,fill:'var(--volt)'},G); S('circle',{cx:cx+14,cy:seatY,r:3,fill:'var(--volt)'},G);
+    S('text',{x:cx,y:250,'text-anchor':'middle',style:'font-weight:700;font-size:14px'},G).textContent=title;
+    const tt=S('text',{x:cx,y:270,'text-anchor':'middle',class:'lbl'},G);
+    // path for heat dots: tip -> up insulator to seat -> out to shell -> into head
+    const pts=[[cx+4,204],[cx+9,seatY+8],[cx+16,seatY],[cx+24,seatY],[cx+24,175],[cx+70,175]];
+    const dots=[]; for(let i=0;i<6;i++) dots.push(S('circle',{r:3.2,fill:'var(--flame)'},G));
+    // thermometer
+    const tx=cx-92; S('rect',{x:tx-6,y:30,width:12,height:200,rx:6,fill:'var(--surface)',stroke:'var(--line)'},g);
+    const band=S('rect',{x:tx-6,y:0,width:12,height:0,fill:'var(--ok)',opacity:.3},g);
+    const lvl=S('rect',{x:tx-4,y:0,width:8,height:0,rx:4,fill:'var(--danger)'},g);
+    plugs[key]={pts,dots,tip,tt,band,lvl,tx,len:(204-seatY)};
+  }
+  plug(140,112,'hot','شمعة حارة'); plug(400,178,'cold','شمعة باردة');
+  const Ty=T=>230-(T-200)/1000*200; // 200..1200 C
+  const TEMPS={cold:{hot:700,cold:380},hot:{hot:980,cold:720}};
+  function lerpPath(pts,f){ const segs=[]; let tot=0; for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); segs.push(d); tot+=d;}
+    let d=f*tot; for(let i=0;i<segs.length;i++){ if(d<=segs[i]){const u=d/segs[i]; return [pts[i][0]+(pts[i+1][0]-pts[i][0])*u, pts[i][1]+(pts[i+1][1]-pts[i][1])*u];} d-=segs[i]; } return pts[pts.length-1]; }
+  function verdict(T){ return T<450?['يتّسخ (Fouling)','bad']:T>850?['اشتعال مبكر (Preignition)','bad']:['مثالي: ينظّف نفسه','ok']; }
+  function apply(){ const t=TEMPS[hr.eng];
+    for(const k of ['hot','cold']){ const P=plugs[k], T=t[k], v=verdict(T);
+      P.band.setAttribute('y',Ty(850)); P.band.setAttribute('height',Ty(450)-Ty(850));
+      P.lvl.setAttribute('y',Ty(T)); P.lvl.setAttribute('height',230-Ty(T)); P.lvl.setAttribute('fill', v[1]==='ok'?'var(--ok)':'var(--danger)');
+      P.tt.textContent=`حرارة الطرف ≈ ${T}°C`;
+      P.tip.setAttribute('opacity', (0.25+0.75*clamp((T-300)/700,0,1)).toFixed(2));
+      const el=$('hr-r-'+k); el.textContent=v[0]; el.className='chip '+v[1]; }
+    ch.setAttribute('opacity', hr.eng==='hot'?.32:.16);
+    $('hr-exp').textContent = hr.eng==='cold'
+      ? 'المحرك البارد لا يعطي حرارة كافية. الشمعة الحارة تحتفظ بحرارتها (طريقها طويل) فيبقى طرفها ساخناً ويحرق الترسبات: هي الاختيار الصحيح (8577). الباردة هنا تتسخ.'
+      : 'المحرك الحار يحتاج شمعة باردة (طريق قصير) تتخلص من حرارتها بسرعة، فتعمل طبيعياً (8592). الحارة هنا تصبح كالجمرة وتسبب اشتعالاً مبكراً (8587).';
+  }
+  seg('hr-eng','e',e=>{hr.eng=e;apply();});
+  hr.step=dt=>{hr.clock+=dt;};
+  hr.draw=()=>{ for(const k of ['hot','cold']){ const P=plugs[k];
+      P.dots.forEach((d,i)=>{ const f=((hr.clock*0.35)+i/P.dots.length)%1; const [x,y]=lerpPath(P.pts,f); d.setAttribute('cx',x.toFixed(1)); d.setAttribute('cy',y.toFixed(1)); d.setAttribute('opacity',(1-f*0.7).toFixed(2)); }); } };
+  S('text',{x:280,y:300,'text-anchor':'middle',class:'lbl'},g).textContent='النقطتان الصفراوان: حيث يلمس العازل جسم الشمعة. من هنا تخرج الحرارة.';
+  S('text',{x:280,y:318,'text-anchor':'middle',class:'lbl'},g).textContent='الشريط الأخضر في مقياس الحرارة: نطاق التنظيف الذاتي (≈450 إلى 850°C)';
+  apply();
+})();
+scenes.push(hr);
+
+/* ================= 5. SHOWER OF SPARKS ================= */
+const sos={el:$('shower'),playing:!reduce,deg:-40,mode:'start',vib:0};
+(function(){
+  const tl=$('sos-tl'); const X=d=>30+(d+40)/75*420;
+  const ADV=[-20,12], RET=[0,18];
+  function drawTL(){ tl.innerHTML='';
+    S('line',{x1:X(-40),x2:X(35),y1:286,y2:286,stroke:'var(--muted)'},tl);
+    [-40,-20,0,20].forEach(d=>{ S('line',{x1:X(d),x2:X(d),y1:282,y2:290,stroke:'var(--muted)'},tl);
+      S('text',{x:X(d),y:299,'text-anchor':'middle',class:'lbl',style:'font-size:10px'},tl).textContent= d===0?'TDC':(d>0?'+':'')+d+'°'; });
+    S('rect',{x:X(ADV[0]),y:200,width:X(ADV[1])-X(ADV[0]),height:14,rx:3,fill:'var(--current)',opacity:.75},tl);
+    S('text',{x:556,y:211,'text-anchor':'end',class:'lbl'},tl).textContent='Advance مفتوحة';
+    const r=S('rect',{x:X(RET[0]),y:226,width:X(RET[1])-X(RET[0]),height:14,rx:3,fill:'var(--flux)',opacity:sos.mode==='start'?.75:.2},tl);
+    S('text',{x:556,y:237,'text-anchor':'end',class:'lbl'},tl).textContent='Retard مفتوحة';
+    S('text',{x:556,y:263,'text-anchor':'end',class:'lbl'},tl).textContent='الشرارات';
+    if(sos.mode==='start'){ for(let d=RET[0];d<ADV[1];d+=1.5) S('line',{x1:X(d),x2:X(d),y1:252,y2:268,stroke:'var(--spark)','stroke-width':2.5},tl); }
+    else S('line',{x1:X(ADV[0]),x2:X(ADV[0]),y1:250,y2:270,stroke:'var(--spark)','stroke-width':3.5},tl);
+  }
+  drawTL();
+  sos.step=dt=>{ sos.deg+=dt*14; if(sos.deg>35) sos.deg=-40; sos.vib+=dt; };
+  sos.draw=()=>{ const d=sos.deg, start=sos.mode==='start';
+    const advOpen=d>=ADV[0]&&d<ADV[1], retOpen=d>=RET[0]&&d<RET[1];
+    $('sos-ba').setAttribute('transform',advOpen?'rotate(-22 330 108)':''); $('sos-br').setAttribute('transform',retOpen?'rotate(-22 330 145)':'');
+    $('sos-retg').setAttribute('opacity',start?1:.3);
+    $('sos-vib').textContent=start?'المهتز + البطارية (يعمل)':'المهتز (مطفأ)';
+    let path='';
+    if(start){ if(!advOpen) path='adv'; else if(!retOpen) path='ret'; else path='coil'; }
+    else { path = !advOpen?'adv':'coil'; }
+    const live=(id,on)=>$(id).classList.toggle('live',on);
+    live('sos-w0',start); live('sos-wa',path==='adv'&&start); live('sos-wr',path==='ret'); live('sos-wc',path==='coil'&&start);
+    const pulse=Math.sin(sos.vib*40)>0;
+    let spark=false;
+    if(start) spark = path==='coil' && pulse; else spark = d>=ADV[0] && d<ADV[0]+2.2;
+    $('sos-spark').setAttribute('opacity',spark?1:0);
+    $('sos-cur').setAttribute('x1',X(d)); $('sos-cur').setAttribute('x2',X(d));
+    let t,p;
+    if(start){
+      if(path==='adv'){ t='المجموعتان مغلقتان'; p='التيار المتقطع من المهتز يذهب إلى الأرضي عبر النقاط ولا يمر في الملف. لا شيء يحدث.'; }
+      else if(path==='ret'){ t='نقاط التشغيل فُتحت… ولا شرارة'; p='التيار ما زال يجد طريقاً إلى الأرضي عبر نقاط التأخير المغلقة. هذه هي اللحظة التي كانت ستحدث فيها الشرارة المبكرة، لكننا لا نريدها عند البدء.'; }
+      else { t='المجموعتان مفتوحتان: وابل من الشرارات'; p='الطريق الوحيد للتيار الآن هو الملف الابتدائي. التيار متقطع (من المهتز)، فكل انقطاع يحث جهداً عالياً: سلسلة شرارات متتالية متأخرة بعد الأعلى، فلا يرتد المحرك (8515، 8541).'; }
+    } else { t='بعد التشغيل: نقاط التأخير خارج الدائرة'; p='المهتز مطفأ ونقاط التأخير لا تعمل. الماغنيتو يعطي شرارة واحدة عادية عند فتح نقاط التشغيل في الوقت المبكر. نقاط التأخير ليست احتياطاً لنقاط التشغيل (8541).'; }
+    if($('sos-t').textContent!==t){ $('sos-t').textContent=t; $('sos-p').textContent=p; }
+  };
+  seg('sos-mode','k',k=>{ sos.mode=k; drawTL(); sos.draw(); });
+  playBtn($('sos-play'),sos);
+})();
+scenes.push(sos);
+
+/* ================= 6. TURBINE ================= */
+const tb={el:$('turbine'),playing:!reduce,t:1.2};
+(function(){
+  const g=$('tb-g');
+  const box=(x,w,title,sub)=>{ S('rect',{x,y:60,width:w,height:76,rx:8,fill:'var(--surface)',stroke:'var(--line)'},g);
+    S('text',{x:x+w/2,y:86,'text-anchor':'middle',style:'font-size:12px;font-weight:700'},g).textContent=title;
+    if(sub) S('text',{x:x+w/2,y:104,'text-anchor':'middle',class:'lbl',style:'font-size:10.5px'},g).textContent=sub; };
+  box(474,78,'كهرباء الطائرة','');
+  box(372,86,'وحدة الإثارة','رافع جهد + مقوّم');
+  box(272,84,'مكثف التخزين','');
+  box(184,72,'أنبوب التفريغ','');
+  box(92,78,'محول القدح','Trigger');
+  box(8,70,'المُشعِل','Igniter');
+  [[474,458],[372,356],[272,256],[184,170],[92,78]].forEach(([a,b])=>{ S('path',{d:`M${a} 98 H${b+4}`,stroke:'var(--muted)','stroke-width':2,fill:'none'},g); S('path',{d:`M${b+4} 92 L${b-4} 98 L${b+4} 104 Z`,fill:'var(--muted)'},g); });
+  S('rect',{x:292,y:108,width:44,height:20,rx:3,fill:'var(--surface2)',stroke:'var(--line)'},g);
+  const chg=S('rect',{x:294,y:110,width:0,height:16,rx:2,fill:'var(--volt)'},g);
+  const tube=S('ellipse',{cx:220,cy:118,rx:20,ry:8,fill:'var(--flux)',opacity:.1},g);
+  const pulse=S('circle',{cx:170,cy:98,r:6,fill:'var(--spark)',opacity:0},g);
+  const sp=S('path',{d:'M43 140 L36 152 L48 158 L38 176 L52 168 L44 190',fill:'none',stroke:'var(--spark)','stroke-width':4,filter:'url(#glow3)',opacity:0},g);
+  const sp2=S('circle',{cx:43,cy:170,r:24,fill:'var(--spark)',opacity:0,filter:'url(#glow3)'},g);
+  S('text',{x:43,y:205,'text-anchor':'middle',class:'lbl'},g).textContent='الشرارة';
+  S('text',{x:280,y:40,'text-anchor':'middle',class:'lbl'},g).textContent='الشحن يتكرر عدة مرات في الثانية أثناء بدء التشغيل فقط';
+  const steps=[...$('tb-steps').children];
+  const CYC=2.4;
+  tb.step=dt=>{ tb.t=(tb.t+dt)%CYC; };
+  tb.draw=()=>{ const t=tb.t; let st;
+    const charge = t<1.6 ? t/1.6 : t<1.9 ? 1 : 1-(t-1.9)/0.15;
+    chg.setAttribute('width',(40*clamp(charge,0,1)).toFixed(1));
+    if(t<1.6) st=0; else if(t<1.75) st=1; else if(t<1.9) st=2; else st=3;
+    tube.setAttribute('opacity', st>=1&&t<2.05? .85 : .1);
+    if(st===2){ const u=(t-1.75)/0.15; pulse.setAttribute('cx',(170-u*92).toFixed(1)); pulse.setAttribute('opacity',1);} else pulse.setAttribute('opacity',0);
+    sp.setAttribute('opacity', st===2? .6 : st===3 && t<2.2 ? 1 : 0);
+    sp2.setAttribute('opacity', st===3 && t<2.2 ? (0.75*(1-(t-1.9)/0.3)).toFixed(2) : 0);
+    steps.forEach((li,i)=>li.classList.toggle('now',i===st)); };
+  playBtn($('tb-play'),tb);
+})();
+scenes.push(tb);
+
+/* ================= 7. STARTER-GENERATOR ================= */
+const sg={el:$('starter'),playing:true};
+(function(){
+  const cvs=$('sg-cv'), W=560,H=250, ctx=fitCanvas(cvs,W,H);
+  const X=t=>44+t/20*490, Y=v=>222-v/100*196;
+  let S0;
+  function reset(hung){ S0={t:0,rpm:0,I:0,starter:true,uc:true,ign:true,lit:false,hung,stopped:false,hist:[],done:false,openAt:null}; }
+  function tick(dt){ const s=S0; if(s.done) return;
+    s.t+=dt;
+    if(s.starter){ s.I=clamp(100*(1-s.rpm/60),0,100);
+      if(s.ign && s.rpm>=22) s.lit=true;
+      let d= !s.lit? 7 : (s.hung? 6*(34-s.rpm)/12 : 9);
+      s.rpm+=d*dt;
+      if(s.I<20){ s.uc=false; s.starter=false; s.ign=false; s.openAt=s.t; }
+    } else { s.I=0;
+      if(s.lit && !s.stopped) s.rpm += 3*(60-s.rpm)/10*dt*3;
+      else s.rpm=Math.max(0,s.rpm-8*dt);
+    }
+    s.hist.push([s.t,s.rpm,s.I]);
+    if(s.t>=20) s.done=true; }
+  function run(hung,instant){ reset(hung); if(instant){ while(!S0.done) tick(1/30); } }
+  run(false,true);
+  $('sg-go').onclick=()=>run(false,false);
+  $('sg-hung').onclick=()=>run(true,false);
+  $('sg-stop').onclick=()=>{ if(!S0.done && S0.starter){ S0.starter=false; S0.uc=false; S0.ign=false; S0.stopped=true; S0.openAt=S0.t; } };
+  sg.step=dt=>{ for(let i=0;i<3;i++) tick(dt*0.6/3*2); };
+  sg.draw=()=>{ const s=S0; ctx.clearRect(0,0,W,H); ctx.fillStyle=C.surface2; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.font='11px '+C.body; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    for(let t=0;t<=20;t+=5){ ctx.beginPath(); ctx.moveTo(X(t),Y(0)); ctx.lineTo(X(t),Y(100)); ctx.stroke(); ctx.fillText(t+' ث',X(t),240); }
+    ctx.textAlign='right'; for(let v=0;v<=100;v+=25){ ctx.beginPath(); ctx.moveTo(X(0),Y(v)); ctx.lineTo(X(20),Y(v)); ctx.stroke(); ctx.fillText(v+'%',38,Y(v)+4); }
+    ctx.strokeStyle=C.volt; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(X(0),Y(20)); ctx.lineTo(X(20),Y(20)); ctx.stroke(); ctx.setLineDash([]);
+    const line=(idx,col)=>{ ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.beginPath(); s.hist.forEach((h,i)=>{ const x=X(h[0]),y=Y(h[idx]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke(); };
+    line(2,C.current); line(1,C.flux);
+    if(s.openAt!==null){ ctx.strokeStyle=C.ink; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(X(s.openAt),Y(0)); ctx.lineTo(X(s.openAt),Y(100)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.ink; ctx.textAlign='center'; ctx.direction='rtl'; ctx.fillText(s.stopped?'STOP':'فصل تلقائي', X(s.openAt), 18); ctx.direction='ltr'; }
+    const lamp=(id,on)=>$(id).classList.toggle('on',on);
+    lamp('sg-l1',s.starter); lamp('sg-l2',s.uc&&s.starter); lamp('sg-l3',s.ign); lamp('sg-l4',s.lit&&!(s.stopped&&s.rpm<1));
+    let t,p;
+    if(s.starter && !s.lit){ t='التدوير بدأ: التيار في أعلى قيمة'; p='عند السكون لا يعيق التيار إلا مقاومة الأسلاك، فيسحب المُدوِّر تياراً هائلاً. كلما دار أسرع ولّد جهداً عكسياً فقل التيار (8623، 8624). التيار الكبير يُبقي مرحّل التيار المنخفض مغلقاً، وهو يُبقي مرحّل المُدوِّر ومرحّل الإشعال يعملان، حتى لو انقطع السلك 8 (8617).'; }
+    else if(s.starter && s.hung){ t='تشغيل معلّق: السرعة لا ترتفع'; p='المحرك اشتعل لكن سرعته علقت، فالتيار بقي فوق الحد ولن يُفتح مرحّل التيار المنخفض أبداً. يجب أن تضغط STOP لإيقاف التسلسل يدوياً (8620).'; }
+    else if(s.starter){ t='المحرك اشتعل ويتسارع'; p='المحرك يساعد نفسه الآن، فيقل الحمل على المُدوِّر وينخفض تياره نحو الخط المتقطع.'; }
+    else if(s.stopped){ t='أوقفت التسلسل بزر STOP'; p='مرحّل الإيقاف قطع التيار عن ملف مرحّل المُدوِّر وملف مرحّل الإشعال.'; }
+    else { t='مرحّل التيار المنخفض فُتح تلقائياً'; p='تيار المُدوِّر نزل تحت الحد، ففُتح المرحّل، وتوقف المُدوِّر والمُثيرات معاً. المحرك يكمل وحده إلى سرعة الخمول (8619).'; }
+    if($('sg-t').textContent!==t){ $('sg-t').textContent=t; $('sg-p').textContent=p; }
+  };
+})();
+scenes.push(sg);
+
+/* ================= VIDEOS ================= */
+(function(){
+  const V=[
+    ['كيف يعمل الماغنيتو','aircraft magneto how it works'],
+    ['توقيت E-gap وضبط النقاط','magneto E-gap internal timing'],
+    ['توقيت الماغنيتو على المحرك','timing magneto to aircraft engine timing light'],
+    ['فحص المغانط أثناء التشغيل الأرضي','aircraft magneto check run up rpm drop'],
+    ['وصلة الدفع Impulse coupling','magneto impulse coupling how it works'],
+    ['نظام وابل الشرارات','shower of sparks ignition system aircraft'],
+    ['شمعات الطائرات والمدى الحراري','aircraft spark plug heat range explained'],
+    ['فحص الشمعات وضبط الفجوة','aircraft spark plug inspection gapping'],
+    ['إشعال المحرك التوربيني','turbine engine ignition exciter igniter'],
+    ['المُدوِّر الهوائي','air turbine starter how it works'],
+    ['المُدوِّر-المولّد','starter generator turbine engine how it works'],
+    ['فيلم التدريب القديم عن الماغنيتو','WWII training film aircraft magneto four pole']
+  ];
+  const box=$('vid-list');
+  V.forEach(([ar,q])=>{ const a=document.createElement('a'); a.href='https://www.youtube.com/results?search_query='+encodeURIComponent(q); a.target='_blank'; a.rel='noopener';
+    a.innerHTML=`<strong>${ar}</strong><small class="en">${q}</small><small>بحث في يوتيوب ←</small>`; box.appendChild(a); });
+})();
+
+/* ================= LOOP ================= */
+const io=new IntersectionObserver(es=>es.forEach(e=>{ const s=scenes.find(x=>x.el===e.target); if(s) s.visible=e.isIntersecting; }),{rootMargin:'80px'});
+scenes.forEach(s=>{ s.visible=false; io.observe(s.el); s.draw(); });
+let last=performance.now();
+function frame(now){ const dt=Math.min(0.05,(now-last)/1000); last=now;
+  for(const s of scenes){ if(s.visible){ if(s.playing) s.step(dt); s.draw(); } }
+  requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+if(document.fonts) document.fonts.ready.then(redrawAll);
+})();
+</script>
