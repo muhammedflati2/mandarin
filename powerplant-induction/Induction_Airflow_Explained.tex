@@ -1,0 +1,1094 @@
+% =====================================================================
+%  Powerplant Test Guide — Induction and Engine Airflow Systems
+%  شرح موسّع بالعربية لكل سؤال
+%
+%  طريقة التحويل في Overleaf:
+%    Menu  ->  Compiler  ->  XeLaTeX      (مهم جداً: لن يعمل مع pdfLaTeX)
+%  ثم اضغط Recompile.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2cm,headheight=15pt]{geometry}
+\usepackage{fontspec}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{etoolbox}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=qframe,urlcolor=qframe,unicode=true]{hyperref}
+
+% ---------- اللغات والخطوط ----------
+\usepackage{polyglossia}
+\setmainlanguage[numerals=maghrib]{arabic}
+\setotherlanguage{english}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.18]{Amiri}
+\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.18]{Amiri}
+\newfontfamily\arabicfonttt[Script=Arabic,Scale=1.18]{Amiri}
+
+\linespread{1.12}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlength{\emergencystretch}{3em}
+
+% ---------- الألوان ----------
+\definecolor{qframe}{HTML}{1F4E79}
+\definecolor{qback}{HTML}{F3F7FB}
+\definecolor{ansgreen}{HTML}{1E8449}
+\definecolor{ansback}{HTML}{EAF7EE}
+\definecolor{conceptc}{HTML}{7D3C98}
+\definecolor{wrongc}{HTML}{B03A2E}
+\definecolor{tipback}{HTML}{FFF6D5}
+\definecolor{tipframe}{HTML}{C9A227}
+\definecolor{introback}{HTML}{F4ECF7}
+
+% ---------- اختصارات ----------
+% \en{...}  أي نص إنجليزي داخل جملة عربية (يحافظ على اتجاه اليسار لليمين)
+\newcommand{\en}[1]{\textenglish{#1}}
+
+% ---------- صندوق السؤال الإنجليزي ----------
+\newcommand{\correctletter}{}
+\newcommand{\opt}[2]{%
+  \ifdefstring{\correctletter}{#1}%
+    {\textcolor{ansgreen}{\textbf{#1— #2\ \ $\checkmark$}}}%
+    {#1— #2}\par}
+
+% \Q{رقم}{نص السؤال}{A}{B}{C}{الحرف الصحيح}
+\newcommand{\Q}[6]{%
+  \renewcommand{\correctletter}{#6}%
+  \par\bigskip
+  \phantomsection\label{q#1}%
+  \begin{tcolorbox}[enhanced,breakable,colback=qback,colframe=qframe,
+      arc=2mm,boxrule=0.8pt,fonttitle=\bfseries,
+      title={\en{Question #1}}]
+    \begin{english}
+      #2\par\smallskip
+      \opt{A}{#3}\opt{B}{#4}\opt{C}{#5}
+    \end{english}
+  \end{tcolorbox}}
+
+% ترجمة السؤال
+\newcommand{\tr}[1]{\textbf{\textcolor{qframe}{ترجمة السؤال:}} #1\par}
+
+% الجواب الصحيح
+\newcommand{\ans}[2]{%
+  \begin{tcolorbox}[colback=ansback,colframe=ansgreen,boxrule=0.6pt,arc=1.5mm,
+      left=4pt,right=4pt,top=2pt,bottom=2pt]
+    \textbf{\textcolor{ansgreen}{الجواب الصحيح (\en{#1}):}} #2
+  \end{tcolorbox}}
+
+% الشرح المفصّل
+\newcommand{\sharh}[1]{\textbf{\textcolor{conceptc}{الشرح المفصّل:}}\par #1\par}
+
+% لماذا الخيار الآخر خطأ  \no{A}{السبب}
+\newcommand{\nohead}{\textbf{\textcolor{wrongc}{لماذا الخيارات الأخرى خاطئة؟}}\par}
+\newcommand{\no}[2]{\hspace*{1em}\textcolor{wrongc}{$\times$}\ \textbf{\en{#1}:} #2\par}
+
+% فكرة للحفظ
+\newcommand{\tip}[1]{%
+  \begin{tcolorbox}[colback=tipback,colframe=tipframe,boxrule=0.5pt,arc=1.5mm,
+      left=4pt,right=4pt,top=2pt,bottom=2pt]
+    \textbf{فكرة تساعدك على الحفظ:} #1
+  \end{tcolorbox}}
+
+% صندوق المفهوم في بداية كل فصل
+\newtcolorbox{concept}[1]{enhanced,breakable,colback=introback,colframe=conceptc,
+  boxrule=0.8pt,arc=2mm,fonttitle=\bfseries\large,title={#1}}
+
+% فاصل بين الأسئلة
+\newcommand{\qsep}{\par\medskip\noindent\textcolor{qframe!40}{\rule{\linewidth}{0.4pt}}\par}
+
+% ---------- رأس الصفحة ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small نظام السحب وتدفق هواء المحرك}
+\fancyhead[L]{\small\en{Powerplant — Induction \& Airflow}}
+\fancyfoot[C]{\thepage}
+
+\begin{document}
+% ===================== صفحة العنوان =====================
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Huge\bfseries\textcolor{qframe}{نظام السحب وتدفق هواء المحرك}\par}
+\vspace{0.6cm}
+{\LARGE\en{Induction and Engine Airflow Systems}\par}
+\vspace{0.4cm}
+{\large\en{Powerplant Test Guide — Questions 8771 to 8812}\par}
+\vspace{1.5cm}
+\begin{tcolorbox}[colback=qback,colframe=qframe,width=0.85\linewidth,arc=2mm]
+\centering
+شرح موسّع بالعربية لكل سؤال من بطاقات \en{Anki}\\[4pt]
+السؤال بالإنجليزية كما سيأتيك في الامتحان، ثم: الترجمة، الجواب الصحيح،\\
+شرح المفهوم خطوة بخطوة، لماذا الخيارات الأخرى خاطئة، وفكرة تساعدك على الحفظ.
+\end{tcolorbox}
+\vfill
+{\large عدد الأسئلة: 43 سؤالاً}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ===================== كيف تستخدم هذا الملف =====================
+\section*{كيف تذاكر من هذا الملف؟}
+\addcontentsline{toc}{section}{كيف تذاكر من هذا الملف؟}
+
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{ابدأ بـ«الصورة الكبيرة»} في الصفحات التالية. فكرتان فقط تحلان أغلب الأسئلة: (1) \textbf{الهواء الساخن أخف} (أقل كثافة)، و(2) \textbf{الكاربوريتر يقيس الهواء بالحجم والمحرك يحرقه بالوزن}.
+  \item الأسئلة مرتبة \textbf{حسب الموضوع} وليس حسب الرقم. في بداية كل فصل صندوق بنفسجي يشرح مفهومه.
+  \item للوصول إلى سؤال برقمه، استعمل \textbf{الفهرس الرقمي} في آخر الملف.
+  \item الجواب الصحيح ملوّن بالأخضر داخل صندوق السؤال؛ غطّه وحاول أن تجيب أولاً.
+\end{enumerate}
+
+% ===================== قاموس المصطلحات =====================
+\section{قاموس المصطلحات الأساسية}
+
+\begin{longtable}{|>{\raggedleft\arraybackslash}p{4.2cm}|>{\raggedleft\arraybackslash}p{3.6cm}|>{\raggedleft\arraybackslash}p{7.2cm}|}
+\hline
+\textbf{المصطلح بالإنجليزية} & \textbf{بالعربية} & \textbf{المعنى ببساطة}\\\hline\endhead
+\en{Induction system} & نظام السحب & كل الطريق الذي يمر فيه الهواء من خارج الطائرة حتى الأسطوانات.\\\hline
+\en{Air scoop} & مجرف الهواء & فتحة أمامية تستقبل الهواء المندفع نحو الطائرة.\\\hline
+\en{Ram effect / Ram air} & تأثير الاندفاع & ارتفاع ضغط الهواء قليلاً لأن الطائرة تندفع نحوه.\\\hline
+\en{Carburetor (Carb)} & الكاربوريتر (المغذّي) & جهاز يخلط الوقود بالهواء بنسبة صحيحة.\\\hline
+\en{Venturi} & الفنتوري (الاختناق) & جزء ضيق في الكاربوريتر؛ يسرّع الهواء فينخفض ضغطه فيسحب الوقود.\\\hline
+\en{Throttle valve} & صمام الخانق & صمام فراشي يتحكم بكمية الخليط الداخل إلى المحرك (دوّاسة البنزين).\\\hline
+\en{Intake manifold} & مجمع السحب & الأنابيب التي توزع الخليط على الأسطوانات.\\\hline
+\en{Manifold pressure (MP)} & ضغط المجمع & الضغط \textbf{المطلق} للهواء في مجمع السحب، بالبوصة زئبق (\en{in. Hg}). مقياس مباشر لكثافة الشحنة وبالتالي للقدرة.\\\hline
+\en{Ambient pressure} & الضغط المحيط & ضغط الجو خارج الطائرة (حوالي 30 \en{in. Hg} عند سطح البحر).\\\hline
+\en{Density} & الكثافة & كم «وزن» من الهواء في حجم معيّن. الهواء البارد أكثف، والساخن أخف.\\\hline
+\en{Fuel/air ratio, Air/fuel ratio} & نسبة الوقود إلى الهواء & مثال: 12:1 تعني 12 رطلاً من الهواء لكل رطل وقود (أي وقود/هواء = 0.083).\\\hline
+\en{Rich / Lean mixture} & خليط غني / فقير & غني = وقود أكثر من اللازم. فقير = وقود أقل من اللازم.\\\hline
+\en{Carburetor heat} & تسخين الكاربوريتر & صمام يجعل المحرك يسحب هواءً ساخناً (مسخّناً حول العادم) بدل الهواء البارد.\\\hline
+\en{Carburetor ice} & جليد الكاربوريتر & جليد يتكون داخل الكاربوريتر بسبب التبريد الناتج عن تبخر الوقود وهبوط الضغط في الفنتوري.\\\hline
+\en{Impact ice} & جليد الاصطدام & جليد يتكون من قطرات ماء تصطدم بفتحة المجرف أو الفلتر.\\\hline
+\en{Alternate air} & الهواء البديل & مصدر هواء ثانٍ يُستخدم إذا انسد المصدر الرئيسي.\\\hline
+\en{AMC (Automatic Mixture Control)} & التحكم الآلي في الخليط & جهاز يصحح الخليط تلقائياً عند تغير كثافة الهواء.\\\hline
+\en{Detonation} & التفجّر (الصفع) & انفجار عنيف للخليط بدل احتراقه الهادئ؛ يزيد مع الشحنة الساخنة.\\\hline
+\en{Volumetric efficiency} & الكفاءة الحجمية & نسبة الشحنة التي تدخل الأسطوانة فعلاً إلى ما تتسعه عند الضغط الجوي العادي.\\\hline
+\en{Supercharger} & الشاحن الفائق (الميكانيكي) & ضاغط هواء تديره تروس من العمود المرفقي.\\\hline
+\en{Turbocharger (Turbosupercharger)} & الشاحن التوربيني & ضاغط هواء يديره توربين تدفعه غازات العادم.\\\hline
+\en{Waste gate} & بوابة الفضلات (بوابة التصريف) & صمام يسمح للعادم بأن يتجاوز التوربين. مفتوحة = التوربين بطيء، مغلقة = التوربين سريع.\\\hline
+\en{Boost} & التعزيز & ضغط مجمع أعلى من الضغط المحيط (أعلى من حوالي 30 \en{in. Hg}).\\\hline
+\en{Critical altitude} & الارتفاع الحرج & أعلى ارتفاع يستطيع الشاحن عنده أن يحافظ على ضغط المجمع المطلوب؛ فوقه تكون بوابة الفضلات مغلقة تماماً ويبدأ الضغط بالهبوط.\\\hline
+\en{Upper deck pressure} & ضغط السطح العلوي & ضغط الهواء بين الشاحن التوربيني وصمام الخانق.\\\hline
+\en{Bootstrapping} & الانجراف الذاتي & دائرة مفرغة: زيادة قدرة $\Leftarrow$ عادم أكثر $\Leftarrow$ شاحن أسرع $\Leftarrow$ قدرة أكثر... فينجرف ضغط المجمع باستمرار.\\\hline
+\en{Bellmouth inlet} & مدخل فم الجرس & مدخل مستدير الحواف على شكل بوق، كفاءته الهوائية عالية جداً.\\\hline
+\en{Divergent duct} & مجرى متباعد & مجرى يتسع تدريجياً؛ تقل فيه سرعة الهواء ويرتفع ضغطه.\\\hline
+\en{FOD (Foreign Object Damage)} & ضرر الأجسام الغريبة & تلف المحرك بحصى أو رمل أو جليد يُبتلع.\\\hline
+\en{Vortex dissipator} & مبدد الدوامة & نفثة هواء تكسر الدوامة التي تتكون بين مدخل المحرك والأرض.\\\hline
+\en{Anti-ice / De-ice} & منع الجليد / إزالة الجليد & \en{anti} = منع تكونه أصلاً. \en{de} = إزالته بعد أن يتكون.\\\hline
+\en{Bleed air} & هواء النزف & هواء ساخن مضغوط يؤخذ من ضاغط المحرك التوربيني.\\\hline
+\en{EGT / EPR} & حرارة غاز العادم / نسبة ضغط المحرك & مؤشرات أداء المحرك التوربيني.\\\hline
+\end{longtable}
+
+% ===================== الصورة الكبيرة =====================
+\section{الصورة الكبيرة: رحلة الهواء إلى داخل الأسطوانة}
+
+\subsection{الطريق الذي يسلكه الهواء في محرك بكاربوريتر}
+
+\begin{center}
+\begin{english}
+\begin{tikzpicture}[font=\small, >=Stealth,
+  box/.style={draw, rounded corners, minimum width=2.2cm, minimum height=1.0cm, align=center, fill=white}]
+  \node[box, fill=ansback] (scoop) at (0,0) {Air scoop\\(ram air)};
+  \node[box] (filter) at (2.8,0) {Air filter};
+  \node[box, fill=tipback] (heat) at (5.6,0) {Carb heat\\valve};
+  \node[box, fill=qback] (vent) at (8.4,0) {Venturi\\(fuel added)};
+  \node[box] (thr) at (11.2,0) {Throttle};
+  \node[box] (man) at (11.2,-2.2) {Intake\\manifold};
+  \node[box] (cyl) at (8.4,-2.2) {Cylinders};
+  \node[box, fill=tipback] (hot) at (5.6,-2.2) {Heated air\\(around exhaust,\\unfiltered)};
+  \draw[->, thick] (scoop) -- (filter);
+  \draw[->, thick] (filter) -- (heat);
+  \draw[->, thick] (heat) -- (vent);
+  \draw[->, thick] (vent) -- (thr);
+  \draw[->, thick] (thr) -- (man);
+  \draw[->, thick] (man) -- (cyl);
+  \draw[->, thick, dashed, wrongc] (hot) -- (heat);
+  \node[ansgreen, font=\footnotesize\bfseries] at (0,0.85) {Highest pressure};
+  \node[wrongc, font=\footnotesize\bfseries] at (8.4,0.85) {Lowest pressure};
+  \node[font=\footnotesize] at (11.2,-3.15) {below ambient};
+\end{tikzpicture}
+\end{english}
+\end{center}
+
+\begin{itemize}
+  \item \textbf{مجرف الهواء:} الطائرة تندفع إلى الأمام، فيُدفع الهواء داخل المجرف ويرتفع ضغطه قليلاً فوق الضغط المحيط (\en{ram effect}). هذا هو \textbf{أعلى ضغط} في النظام (أسئلة 8780، 8812).
+  \item \textbf{الفنتوري:} ممر ضيق يسرّع الهواء، وكلما زادت السرعة قلّ الضغط (مبدأ برنولي). هذا الضغط المنخفض يسحب الوقود من الكاربوريتر. هنا \textbf{أقل ضغط} وأبرد نقطة.
+  \item \textbf{الخانق ثم المجمع:} صمام الخانق يعيق الهواء، فيكون الضغط بعده (في المجمع) \textbf{أقل من الضغط المحيط} في المحرك غير المشحون. لهذا يقرأ عدّاد ضغط المجمع في المحرك المتوقف حوالي 30 \en{in. Hg} (الضغط الجوي)، ثم \textbf{ينخفض} عندما يدور المحرك.
+\end{itemize}
+
+\subsection{الفكرة الأولى: القدرة = وزن الهواء}
+المحرك لا يهتم بـ«حجم» الهواء، بل بـ\textbf{وزنه}؛ لأن ما يحترق مع الوقود هو الأكسجين، وكمية الأكسجين تتناسب مع وزن الهواء (كثافته).
+\begin{itemize}
+  \item \textbf{ضغط مجمع أعلى} $\Leftarrow$ هواء أكثف $\Leftarrow$ وزن شحنة أكبر $\Leftarrow$ قدرة أكبر (سؤال 8782).
+  \item \textbf{هواء أسخن} $\Leftarrow$ أقل كثافة $\Leftarrow$ وزن شحنة أقل $\Leftarrow$ قدرة أقل (سؤال 8805).
+\end{itemize}
+
+\subsection{الفكرة الثانية: الكاربوريتر يقيس بالحجم، والمحرك يحرق بالوزن}
+الكاربوريتر يضيف الوقود حسب \textbf{حجم} الهواء المار في الفنتوري (سرعة الهواء). فإذا دخل نفس الحجم من هواء ساخن (أخف وزناً)، سيضيف الكاربوريتر نفس كمية الوقود، لكن الهواء أصبح أقل وزناً $\Leftarrow$ وقود أكثر بالنسبة لوزن الهواء $\Leftarrow$ \textbf{الخليط يصبح أغنى} (أسئلة 8803، 8806، 8807). الشيء نفسه يحدث عند الصعود إلى الارتفاعات العالية (الهواء أخف)، ولهذا يوجد التحكم في الخليط.
+
+\begin{concept}{ماذا يحدث عند تشغيل تسخين الكاربوريتر؟ (احفظ هذا الجدول)}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{الشيء} & \textbf{ماذا يحدث له؟}\\\hline
+كثافة الهواء & تقل\\\hline
+وزن شحنة الوقود والهواء & يقل\\\hline
+الخليط & يصبح \textbf{أغنى}\\\hline
+القدرة & تقل\\\hline
+احتمال التفجّر (\en{detonation}) & يزيد (الشحنة ساخنة)\\\hline
+ضغط المجمع (إذا لم يكن هناك جليد) & ينخفض قليلاً\\\hline
+ضغط المجمع (إذا كان هناك جليد وذاب) & \textbf{يرتفع} بعد أن يذوب الجليد\\\hline
+\end{tabular}
+\end{center}
+\end{concept}
+
+\subsection{الطريق في المحرك ذي الشاحن التوربيني}
+
+\begin{center}
+\begin{english}
+\begin{tikzpicture}[font=\small, >=Stealth,
+  box/.style={draw, rounded corners, minimum width=2.3cm, minimum height=1.0cm, align=center, fill=white}]
+  \node[box] (air) at (0,0) {Outside air};
+  \node[box, fill=qback] (comp) at (3,0) {Compressor};
+  \node[box, fill=ansback] (deck) at (6,0) {Upper deck\\pressure};
+  \node[box] (thr) at (9,0) {Throttle};
+  \node[box] (man) at (12,0) {Manifold\\pressure};
+  \node[box] (cyl) at (12,-2.4) {Cylinders};
+  \node[box, fill=qback] (turb) at (3,-2.4) {Turbine};
+  \node[box, fill=tipback] (wg) at (7.5,-2.4) {Waste gate};
+  \node[box] (ex) at (3,-4.2) {Exhaust out};
+  \draw[->, thick] (air) -- (comp);
+  \draw[->, thick] (comp) -- (deck);
+  \draw[->, thick] (deck) -- (thr);
+  \draw[->, thick] (thr) -- (man);
+  \draw[->, thick] (man) -- (cyl);
+  \draw[->, thick, wrongc] (cyl) -- node[above]{exhaust} (wg);
+  \draw[->, thick, wrongc] (wg) -- node[above, font=\footnotesize]{closed: all} (turb);
+  \draw[->, thick, wrongc, dashed] (wg) |- node[pos=0.25, right, font=\footnotesize]{open: bypasses turbine} (ex);
+  \draw[->, thick, wrongc] (turb) -- (ex);
+  \draw[very thick, double] (turb) -- node[left]{shaft} (comp);
+\end{tikzpicture}
+\end{english}
+\end{center}
+
+\begin{itemize}
+  \item غازات العادم تدير \textbf{التوربين}، والتوربين مربوط بعمود مع \textbf{الضاغط}، فيضغط الضاغط هواء السحب.
+  \item \textbf{بوابة الفضلات} هي التي تقرر كم من العادم يمر عبر التوربين، فهي التي تنظم سرعة الشاحن مباشرة (8790). مغلقة تماماً = كل العادم عبر التوربين = أقصى سرعة (8786).
+  \item كلما صعدت الطائرة، يخف الهواء، فتُغلق بوابة الفضلات تدريجياً لتعويض ذلك. عند \textbf{الارتفاع الحرج} تكون مغلقة تماماً، وفوقه لا يمكن الحفاظ على ضغط المجمع.
+\end{itemize}
+
+\newpage
+% =====================================================================
+\section{نسبة الخليط، ضغط المجمع، والضغط في نظام السحب}
+% =====================================================================
+
+\begin{concept}{المفهوم: نسب الخليط وضغط المجمع}
+\textbf{نسب الخليط المهمة (هواء : وقود بالوزن):}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{هواء : وقود} & \textbf{وقود ÷ هواء} & \textbf{المعنى}\\\hline
+8:1 & 0.125 & غني جداً (قرب حد الاشتعال الغني)\\\hline
+\textbf{12:1} & \textbf{0.083} & \textbf{أقصى قدرة} (\en{best power})\\\hline
+15:1 & 0.067 & الخليط الكيميائي الصحيح تقريباً (كل الوقود يحترق مع كل الأكسجين)\\\hline
+16:1 & 0.062 & أفضل اقتصاد تقريباً (\en{best economy})\\\hline
+\end{tabular}
+\end{center}
+لماذا أقصى قدرة في خليط \textbf{أغنى} من الكيميائي الصحيح؟ لأن الوقود الزائد قليلاً يضمن أن يجد \textbf{كل} جزيء أكسجين وقوداً يحترق معه، والوقود الزائد يبرّد الشحنة قليلاً فيقلل احتمال التفجّر.
+
+\textbf{ضغط المجمع (\en{MP}):} ضغط \textbf{مطلق} (يُقاس من الفراغ التام). المحرك المتوقف عند سطح البحر يقرأ حوالي 30 \en{in. Hg}. أي ضغط أعلى من الضغط المحيط (فوق 30 \en{in. Hg} تقريباً) يسمى \textbf{تعزيزاً} (\en{boost})، ولا يمكن الوصول إليه إلا بشاحن.
+
+\textbf{الكفاءة الحجمية:} \(\displaystyle \text{الكفاءة الحجمية} = \frac{\text{الشحنة التي دخلت فعلاً}}{\text{ما تتسعه الأسطوانة عند الضغط الجوي العادي}}\). المحرك غير المشحون أقل دائماً من 100\% (احتكاك الهواء بالمجاري وإعاقة الخانق والحرارة). الشاحن يدفع الهواء بالقوة فيمكن أن تتجاوز 100\%.
+\end{concept}
+
+\Q{8771}{Maximum power is normally considered to be developed in a reciprocating engine with a fuel/air mixture ratio of approximately}
+{8:1.}
+{12:1.}
+{15:1.}{B}
+\tr{تُعتبر أقصى قدرة في المحرك المكبسي ناتجة عادة عن نسبة خليط تقارب:}
+\ans{B}{12:1 (هواء إلى وقود)، أي نسبة وقود إلى هواء حوالي 0.083.}
+\sharh{لاحظ أن السؤال يقول «\en{fuel/air}» لكن الأرقام في الخيارات مكتوبة كنسبة هواء إلى وقود. هذا معتاد في الامتحان؛ لا تنشغل بذلك.
+
+12 رطلاً من الهواء لكل رطل من الوقود: $1 \div 12 = 0.083$. هذه النسبة \textbf{أغنى قليلاً} من النسبة الكيميائية الصحيحة (حوالي 15:1). في هذه النسبة يحترق كل الأكسجين الموجود في الأسطوانة، فنحصل على أكبر طاقة ممكنة من الشحنة، والوقود الزائد قليلاً يساعد في تبريدها.}
+\nohead
+\no{A}{8:1 غني جداً؛ وقود كثير لا يجد أكسجيناً، فتقل القدرة ويخرج دخان أسود.}
+\no{C}{15:1 قريبة من النسبة الكيميائية الصحيحة، وهي أقرب إلى الاقتصاد منها إلى أقصى قدرة.}
+\tip{\textbf{12 = قدرة} (مثل 12 حصاناً). 15 = كيميائي، 16 = اقتصاد.}
+\qsep
+
+\Q{8782}{As manifold pressure increases in a reciprocating engine, the}
+{Volume of air in the cylinder increases.}
+{Weight of the fuel/air charge decreases.}
+{Density of air in the cylinder increases.}{C}
+\tr{مع زيادة ضغط المجمع في المحرك المكبسي:}
+\ans{C}{تزداد كثافة الهواء في الأسطوانة.}
+\sharh{ضغط المجمع هو الضغط المطلق للهواء في نظام السحب، أي الهواء الذي سيدخل الأسطوانة. حجم الأسطوانة ثابت لا يتغير (المكبس يتحرك نفس المسافة دائماً). فإذا ارتفع ضغط الهواء الذي يملأ هذا الحجم الثابت، فهذا يعني أن جزيئات أكثر محشورة في نفس الحجم، أي \textbf{كثافة أعلى}، أي وزن شحنة أكبر، أي قدرة أكبر. لهذا يُستخدم ضغط المجمع كمقياس للقدرة في المحركات ذات المروحة ثابتة السرعة.}
+\nohead
+\no{A}{حجم الأسطوانة ثابت؛ الذي يتغير هو كمية (كثافة) الهواء داخل هذا الحجم.}
+\no{B}{العكس: وزن الشحنة \textbf{يزيد} مع زيادة ضغط المجمع.}
+\tip{ضغط أكثر في نفس الحجم = \textbf{أكثف}.}
+\qsep
+
+\Q{8783}{Which of the following statements regarding volumetric efficiency of an engine is true?}
+{The volumetric efficiency of an engine will remain the same regardless of the amount of throttle opening.}
+{It is impossible to exceed 100 percent volumetric efficiency of any engine regardless of the type of supercharger used.}
+{It is possible to exceed 100 percent volumetric efficiency of some engines by the use of superchargers of the proper type.}{C}
+\tr{أي العبارات التالية بخصوص الكفاءة الحجمية للمحرك صحيحة؟}
+\ans{C}{يمكن تجاوز كفاءة حجمية 100\% في بعض المحركات باستخدام شواحن من النوع المناسب.}
+\sharh{الكفاءة الحجمية = الشحنة التي دخلت الأسطوانة فعلاً ÷ الشحنة التي تتسعها الأسطوانة عند الضغط الجوي العادي.
+\begin{itemize}
+  \item في المحرك غير المشحون، المكبس «يمتص» الهواء فقط، ولا يستطيع أن يملأ الأسطوانة بأكثر من الضغط الجوي، بل أقل منه دائماً بسبب مقاومة المجاري والخانق. لذلك الكفاءة أقل من 100\%.
+  \item الشاحن «يدفع» الهواء بضغط أعلى من الضغط الجوي، فيدخل إلى الأسطوانة هواء أكثر مما تتسعه عند الضغط الجوي $\Leftarrow$ أكثر من 100\%.
+\end{itemize}}
+\nohead
+\no{A}{فتحة الخانق تغيّر الكفاءة الحجمية كثيراً: الخانق شبه المغلق يعيق الهواء فتقل الكفاءة.}
+\no{B}{هذا خطأ؛ الشاحن يمكنه تجاوز 100\%.}
+\tip{شاحن = يحشو الهواء حشواً $\Leftarrow$ \textbf{أكثر من 100\%} ممكن.}
+\qsep
+
+\Q{8787}{Boost manifold pressure is generally considered to be any manifold pressure above}
+{14.7 inches Hg.}
+{50 inches Hg.}
+{30 inches Hg.}{C}
+\tr{ضغط المجمع المعزّز (\en{boost}) يُعتبر عموماً أي ضغط مجمع أعلى من:}
+\ans{C}{30 بوصة زئبق.}
+\sharh{التعزيز = أي ضغط في المجمع \textbf{أعلى من الضغط الجوي المحيط}. الضغط الجوي القياسي عند سطح البحر يساوي 29.92 بوصة زئبق، أي حوالي \textbf{30 \en{in. Hg}}، وهو أيضاً 14.7 رطل لكل بوصة مربعة (\en{psi}). فكل ما فوق 30 \en{in. Hg} مطلقة هو تعزيز.}
+\nohead
+\no{A}{14.7 هو الضغط الجوي لكن بوحدة \textbf{\en{psi}}، لا بالبوصة زئبق. هذا فخ وحدات.}
+\no{B}{50 \en{in. Hg} ضغط تعزيز عالٍ، وليس الحد الذي يبدأ عنده التعزيز.}
+\tip{الضغط الجوي = \textbf{30 \en{in. Hg}} = \textbf{14.7 \en{psi}}. انتبه للوحدة في السؤال.}
+\qsep
+
+\Q{8780}{During full power output of an unsupercharged engine equipped with a float-type carburetor, in which of the following areas will the highest pressure exist?}
+{Venturi.}
+{Intake manifold.}
+{Carburetor air scoop.}{C}
+\tr{أثناء القدرة الكاملة لمحرك غير مشحون مزوّد بكاربوريتر ذي عوامة، في أي المناطق التالية يوجد أعلى ضغط؟}
+\ans{C}{مجرف هواء الكاربوريتر.}
+\sharh{تتبّع الهواء من الخارج إلى الداخل (انظر رسم «الصورة الكبيرة»):
+\begin{itemize}
+  \item \textbf{المجرف:} الطائرة تتقدم نحو الهواء فيُحشر فيه، فيرتفع الضغط قليلاً \textbf{فوق} الضغط المحيط (تأثير الاندفاع). $\Leftarrow$ الأعلى.
+  \item \textbf{الفنتوري:} الهواء يتسارع في الممر الضيق فينخفض ضغطه \textbf{تحت} الضغط المحيط (وهذا ما يسحب الوقود).
+  \item \textbf{مجمع السحب:} بعد الخانق، والمحرك غير مشحون، فالضغط \textbf{أقل} من المحيط حتى في القدرة الكاملة (بسبب الفنتوري والمقاومة).
+\end{itemize}
+إذن المجرف هو الوحيد الذي ضغطه أعلى من المحيط.}
+\nohead
+\no{A}{الفنتوري هو منطقة \textbf{أقل} ضغط تقريباً (هذا مبدأ عمله).}
+\no{B}{في المحرك غير المشحون، ضغط المجمع دائماً أقل من الضغط المحيط.}
+\tip{\textbf{المجرف يواجه الريح} $\Leftarrow$ أعلى ضغط. كل ما بعده ينقص.}
+\qsep
+
+\Q{8812}{The action of a carburetor airscoop is to supply air to the carburetor, but it may also}
+{Cool the engine.}
+{Keep fuel lines cool and prevent vapor lock.}
+{Increase the pressure of the incoming air by ram effect.}{C}
+\tr{وظيفة مجرف هواء الكاربوريتر توفير الهواء للكاربوريتر، لكنه قد أيضاً:}
+\ans{C}{يزيد ضغط الهواء الداخل بتأثير الاندفاع.}
+\sharh{المجرف فتحة موجهة إلى الأمام. عندما تطير الطائرة، يُدفع الهواء داخل المجرف بسرعة الطائرة، فيتباطأ داخله ويتحول جزء من سرعته إلى ضغط. هذا يرفع ضغط الهواء الداخل قليلاً فوق الضغط المحيط، وهو ما يسمى \textbf{تأثير الاندفاع} (\en{ram effect})، ويعطي زيادة صغيرة في ضغط المجمع والقدرة.}
+\nohead
+\no{A}{تبريد المحرك وظيفة أغطية المحرك (\en{cowling}) والزعانف ومجاري التبريد، لا مجرف الكاربوريتر.}
+\no{B}{منع انسداد البخار في أنابيب الوقود ليس وظيفة المجرف.}
+\tip{\en{Scoop} = يغرف الهواء $\Leftarrow$ \en{\textbf{ram}} (اندفاع) $\Leftarrow$ ضغط أعلى قليلاً.}
+
+\newpage
+% =====================================================================
+\section{جليد الكاربوريتر وتسخين الكاربوريتر}
+% =====================================================================
+
+\begin{concept}{المفهوم: لماذا يتجمد الكاربوريتر حتى في جو غير بارد؟}
+داخل الكاربوريتر يحدث تبريدان في نفس الوقت:
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{تبخّر الوقود:} الوقود السائل يحتاج إلى حرارة لكي يتحول إلى بخار، فيأخذها من الهواء المحيط به. (مثل الكحول على يدك: تشعر بالبرودة عندما يتبخر). هذا هو \textbf{السبب الأكبر}.
+  \item \textbf{هبوط الضغط في الفنتوري:} الهواء يتمدد عندما ينخفض ضغطه فيبرد.
+\end{enumerate}
+مجموع التبريدين قد يخفض حرارة الهواء داخل الكاربوريتر بحوالي 30 درجة مئوية أو أكثر. فإذا كان في الهواء رطوبة، تتكثف ثم تتجمد على جدران الفنتوري وصمام الخانق، فتضيّق مجرى الهواء.
+
+\textbf{متى يكون أخطر؟} عندما تكون حرارة الهواء الخارجي بين 30 و40 فهرنهايت (حوالي −1 إلى 4 درجات مئوية) والرطوبة عالية. ولأنه لا يحتاج إلى غيوم أو مطر، فالكاربوريتر \textbf{أول} جزء في الطائرة يتجمد.
+
+\textbf{كيف تكتشفه؟} الجليد يقلل كمية الهواء الداخل:
+\begin{itemize}
+  \item \textbf{مروحة ثابتة الخطوة:} تنخفض السرعة (\en{RPM}).
+  \item \textbf{مروحة ثابتة السرعة:} الحاكم يُبقي \en{RPM} ثابتة، فالعلامة هي \textbf{انخفاض ضغط المجمع}.
+\end{itemize}
+
+\textbf{كيف تعالجه؟} \textbf{تسخين هواء السحب} (تسخين الكاربوريتر): صمام يجعل المحرك يأخذ هواءً مسخّناً حول أنابيب العادم. ورش \textbf{الكحول} في مدخل الكاربوريتر يمنع جليد الاصطدام.
+
+\textbf{ثمن التسخين:} الهواء الساخن أقل كثافة $\Leftarrow$ خليط أغنى + شحنة أخف $\Leftarrow$ قدرة أقل، واحتمال تفجّر. والهواء الساخن \textbf{غير مفلتر}، فلا يُستخدم على الأرض.
+\end{concept}
+
+\Q{8776}{What part of an aircraft in flight will begin to accumulate ice before any other?}
+{Wing leading edge.}
+{Propeller spinner or dome.}
+{Carburetor.}{C}
+\tr{أي جزء من الطائرة في الطيران سيبدأ بتجميع الجليد قبل أي جزء آخر؟}
+\ans{C}{الكاربوريتر.}
+\sharh{حافة الجناح الأمامية وغطاء محور المروحة يتجمدان بـ\textbf{الجليد الجوي}، وهذا لا يحدث إلا إذا طارت الطائرة داخل رطوبة مرئية (غيوم، مطر، رذاذ) وكانت الحرارة تحت الصفر.
+
+أما الكاربوريتر فيبرّد الهواء بنفسه (تبخر الوقود وهبوط الضغط)، فيمكن أن يتكون فيه الجليد في يوم صافٍ تماماً بلا غيوم، وحتى لو كانت الحرارة الخارجية فوق الصفر بعدة درجات. لهذا فهو يتجمد قبل أي جزء آخر.}
+\nohead
+\no{A}{حافة الجناح تحتاج إلى رطوبة مرئية وحرارة تحت الصفر.}
+\no{B}{غطاء المروحة كذلك يحتاج إلى رطوبة مرئية.}
+\tip{الكاربوريتر «يصنع برده بنفسه» $\Leftarrow$ \textbf{أول من يتجمد}.}
+\qsep
+
+\Q{8773}{Carburetor icing is most severe at}
+{Air temperatures between 30 and 40°F.}
+{High altitudes.}
+{Low engine temperatures.}{A}
+\tr{يكون جليد الكاربوريتر في أشد حالاته عند:}
+\ans{A}{حرارة هواء بين 30 و40 درجة فهرنهايت.}
+\sharh{30 إلى 40 فهرنهايت = حوالي −1 إلى +4 درجات مئوية. في هذا المدى، الهواء الخارجي قريب جداً من التجمد، وفيه عادة رطوبة كافية (الهواء الأبرد من ذلك يحمل رطوبة أقل). عندما يدخل الكاربوريتر ويأخذ الوقود المتبخر حرارته، تهبط حرارته تحت الصفر بكثير، فتتكثف رطوبته وتتجمد داخل الكاربوريتر. الشرط الثاني: \textbf{رطوبة نسبية عالية}.}
+\nohead
+\no{B}{في الارتفاعات العالية يكون الهواء عادة بارداً جداً وجافاً، فرطوبته قليلة؛ وجليد الكاربوريتر يعتمد على الحرارة والرطوبة لا على الارتفاع.}
+\no{C}{حرارة المحرك ليست العامل الحاسم؛ العامل هو حرارة الهواء الداخل ورطوبته.}
+\tip{\textbf{30 إلى 40°F + رطوبة عالية} = أسوأ جليد كاربوريتر.}
+\qsep
+
+\Q{8772}{A method commonly used to prevent carburetor icing is to}
+{Preheat the intake air.}
+{Mix alcohol with the fuel.}
+{Electrically heat the venturi and throttle valve.}{A}
+\tr{طريقة شائعة الاستخدام لمنع جليد الكاربوريتر هي:}
+\ans{A}{تسخين هواء السحب مسبقاً.}
+\sharh{إذا دخل الهواء إلى الكاربوريتر وهو ساخن بما يكفي، فحتى بعد التبريد الذي يحدث في داخله تبقى حرارته فوق الصفر، فلا يتجمد شيء. لذلك يوجد في أغلب الطائرات ذات الكاربوريتر \textbf{مسخن هواء الكاربوريتر}: غلاف حول أنبوب العادم يسخّن الهواء، وصمام في القمرة (\en{Carb Heat}) يختار بين الهواء البارد والساخن. هذه هي الطريقة الأكثر شيوعاً.}
+\nohead
+\no{B}{خلط الكحول بالوقود ليس الطريقة الشائعة؛ الكحول يُرش في الهواء أمام الكاربوريتر في بعض الأنظمة فقط.}
+\no{C}{التسخين الكهربائي للفنتوري والخانق ليس الطريقة المعتادة.}
+\tip{منع الجليد = \textbf{سخّن الهواء قبل أن يدخل} (\en{preheat}).}
+\qsep
+
+\Q{8777}{Carburetor icing may be eliminated by which of the following methods?}
+{Alcohol spray and electrically heated induction duct.}
+{Ethylene glycol spray and heated induction air.}
+{Alcohol spray and heated induction air.}{C}
+\tr{يمكن إزالة جليد الكاربوريتر بأي الطرق التالية؟}
+\ans{C}{رش الكحول وتسخين هواء السحب.}
+\sharh{طريقتان:
+\begin{itemize}
+  \item \textbf{تسخين هواء السحب:} بتمرير الهواء حول العادم، أو بأخذه من مكان دافئ داخل غطاء المحرك. هذا يمنع جليد الكاربوريتر (جليد التبخر).
+  \item \textbf{رش الكحول:} يمنع \textbf{جليد الاصطدام} (\en{impact ice}) على مدخل الكاربوريتر؛ الكحول يخفض نقطة تجمد الماء.
+\end{itemize}}
+\nohead
+\no{A}{المجرى المسخّن كهربائياً ليس الطريقة المعتمدة.}
+\no{B}{الإيثيلين غلايكول (مثل سائل التبريد) لا يُرش في هواء السحب؛ الذي يُرش هو الكحول.}
+\tip{\textbf{كحول + هواء ساخن}. (الغلايكول والكهرباء = فخاخ).}
+\qsep
+
+\Q{8774}{Into what part of a reciprocating engine induction system is deicing alcohol normally injected?}
+{The supercharger or impeller section.}
+{The airstream ahead of the carburetor.}
+{The low-pressure area ahead of the throttle valve.}{B}
+\tr{في أي جزء من نظام السحب في المحرك المكبسي يُحقن كحول إزالة الجليد عادةً؟}
+\ans{B}{في تيار الهواء أمام الكاربوريتر.}
+\sharh{يوجد حلقة رش (\en{spray ring}) عند مدخل هواء الكاربوريتر. الكحول يُرش في تيار الهواء \textbf{قبل} أن يدخل الكاربوريتر، فيختلط بالهواء ويمر معه عبر الفنتوري والخانق، فيذيب الجليد الموجود ويمنع تكونه على كل هذه الأجزاء.}
+\nohead
+\no{A}{قسم الشاحن (المروحة الدافعة) بعد الكاربوريتر؛ الرش هناك لن يصل إلى الفنتوري والخانق حيث يتكون الجليد.}
+\no{C}{لا يُحقن في منطقة الضغط المنخفض أمام الخانق؛ مكانه المعتاد هو مدخل الكاربوريتر.}
+\tip{الكحول يجب أن «يمر» على كل الأجزاء المتجمدة $\Leftarrow$ يُرش \textbf{قبلها} (\en{ahead of the carburetor}).}
+\qsep
+
+\Q{8778}{Where would a carburetor air heater be located in a fuel injection system?}
+{At the air intake entrance.}
+{None is required.}
+{Between the air intake and the venturi.}{B}
+\tr{أين يوجد مسخن هواء الكاربوريتر في نظام حقن الوقود؟}
+\ans{B}{لا يلزم وجوده.}
+\sharh{في المحرك ذي حقن الوقود (\en{fuel injection}) لا يتبخر الوقود في مجرى الهواء الرئيسي؛ بل يُحقن عند صمام السحب لكل أسطوانة، بعد الخانق، في مكان دافئ. لذلك لا يوجد التبريد الكبير الذي يحدث في الكاربوريتر، ولا حاجة إلى مسخن هواء الكاربوريتر.
+
+لكن انتبه: قد يتجمد \textbf{فلتر الهواء} عند المدخل بسبب جليد الاصطدام. لذلك في معظم هذه المحركات يوجد \textbf{نظام هواء بديل} يأخذ هواءً دافئاً من داخل حجرة المحرك إذا انسد الفلتر.}
+\nohead
+\no{A}{لا يوجد مسخن كاربوريتر أصلاً، فلا مكان له.}
+\no{C}{لا يوجد مسخن كاربوريتر في نظام الحقن.}
+\tip{لا كاربوريتر = لا جليد كاربوريتر = \textbf{لا مسخن} (لكن يوجد هواء بديل).}
+\qsep
+
+\Q{8775}{Carburetor icing on an engine equipped with a constant-speed propeller can be detected by}
+{A decrease in power output with no change in manifold pressure or RPM.}
+{An increase in manifold pressure with a constant RPM.}
+{A decrease in manifold pressure with a constant RPM.}{C}
+\tr{يمكن اكتشاف جليد الكاربوريتر في محرك مزود بمروحة ثابتة السرعة عن طريق:}
+\ans{C}{انخفاض ضغط المجمع مع بقاء السرعة ثابتة.}
+\sharh{الجليد يضيّق مجرى الهواء في الكاربوريتر، فيصل إلى المجمع هواء أقل $\Leftarrow$ \textbf{ينخفض ضغط المجمع}.
+
+أما السرعة فلا تتغير لأن \textbf{المروحة ثابتة السرعة} لها حاكم (\en{governor}) يغير زاوية الشفرات تلقائياً ليبقي \en{RPM} ثابتة: عندما تقل القدرة، يصغّر زاوية الشفرات فتبقى السرعة كما هي. لذلك في هذا النوع من المراوح، المؤشر الذي يكشف الجليد هو عداد ضغط المجمع.
+
+(في المروحة ثابتة الخطوة \en{fixed-pitch}، لا يوجد حاكم، فتنخفض \en{RPM}).}
+\nohead
+\no{A}{ضغط المجمع ينخفض فعلاً، فلا يمكن أن يبقى بلا تغيير.}
+\no{B}{الجليد يقلل الهواء، فينخفض الضغط ولا يزيد.}
+\tip{مروحة ثابتة \textbf{السرعة} $\Leftarrow$ \en{RPM} لا تتحرك $\Leftarrow$ انظر إلى \textbf{\en{MP}} ينخفض.}
+\qsep
+
+\Q{8779}{An increase in manifold pressure when carburetor heat is applied indicates}
+{Ice was forming in the carburetor.}
+{Mixture was too lean.}
+{Overheating of cylinder heads.}{A}
+\tr{زيادة ضغط المجمع عند تطبيق تسخين الكاربوريتر تدل على:}
+\ans{A}{أن الجليد كان يتكون في الكاربوريتر.}
+\sharh{القاعدة: تشغيل التسخين بلا جليد يجعل ضغط المجمع \textbf{ينخفض} قليلاً (الهواء الساخن أخف). فلماذا يرتفع أحياناً؟ لأن جليداً كان يضيّق المجرى؛ التسخين أذابه، فانفتح المجرى ودخل هواء أكثر، فارتفع ضغط المجمع.
+
+التسلسل المعتاد عندما يكون هناك جليد: عند تشغيل التسخين ينخفض الضغط أولاً قليلاً (هواء ساخن + ماء ذائب يمر في المحرك وقد يجعله يرتجف)، ثم \textbf{يرتفع} مع ذوبان الجليد.}
+\nohead
+\no{B}{الخليط الفقير لا يجعل ضغط المجمع يرتفع عند التسخين؛ والتسخين أصلاً يُغني الخليط.}
+\no{C}{سخونة رؤوس الأسطوانات لا علاقة لها بارتفاع ضغط المجمع.}
+\tip{تسخين $\Leftarrow$ \en{MP} \textbf{يرتفع} = كان هناك \textbf{جليد} وذاب.}
+\qsep
+
+\Q{8806}{The application of carburetor heat will have which of the following effects?}
+{The manifold pressure will be increased.}
+{The mixture will become leaner.}
+{The mixture will become richer.}{C}
+\tr{تطبيق تسخين الكاربوريتر له أي التأثيرات التالية؟}
+\ans{C}{سيصبح الخليط أغنى.}
+\sharh{هذه هي «الفكرة الثانية» في الصورة الكبيرة:
+\begin{itemize}
+  \item الكاربوريتر يضيف الوقود حسب \textbf{حجم} الهواء المار في الفنتوري.
+  \item المحرك يحرق الوقود حسب \textbf{وزن} الهواء (الأكسجين).
+\end{itemize}
+الهواء الساخن أخف وزناً لنفس الحجم. الكاربوريتر يرى نفس الحجم فيضيف نفس كمية الوقود تقريباً، لكن وزن الهواء أصبح أقل $\Leftarrow$ نسبة الوقود إلى وزن الهواء زادت $\Leftarrow$ \textbf{أغنى}.}
+\nohead
+\no{A}{بدون جليد، ضغط المجمع \textbf{ينخفض} قليلاً عند التسخين.}
+\no{B}{العكس: يصبح أغنى لا أفقر.}
+\tip{\textbf{حجم} للكاربوريتر، \textbf{وزن} للمحرك. هواء ساخن = خفيف = \textbf{غني}.}
+\qsep
+
+\Q{8803}{If carburetor or induction system icing is not present when carburetor heat is applied with no change in the throttle setting, the}
+{Mixture will become richer.}
+{Manifold pressure will increase.}
+{Engine RPM will increase.}{A}
+\tr{إذا لم يكن هناك جليد في الكاربوريتر أو نظام السحب عند تطبيق التسخين دون تغيير وضع الخانق، فإن:}
+\ans{A}{الخليط سيصبح أغنى.}
+\sharh{نفس فكرة 8806. لا يوجد جليد يذوب، فالتأثير الوحيد هو أن الهواء أصبح أسخن وأخف، فيصبح الخليط أغنى وتنخفض القدرة. ونتيجة لذلك ينخفض ضغط المجمع قليلاً، وتنخفض \en{RPM} قليلاً (في المروحة ثابتة الخطوة).}
+\nohead
+\no{B}{ضغط المجمع يرتفع فقط إذا كان هناك جليد وذاب؛ والسؤال يقول لا يوجد جليد.}
+\no{C}{القدرة تقل، فلا تزيد \en{RPM}.}
+\tip{لا جليد + تسخين $\Leftarrow$ أغنى، وكل المؤشرات \textbf{تنخفض} قليلاً.}
+\qsep
+
+\Q{8807}{When operating an engine, the application of carburetor heat will have what effect on the fuel/air mixture?}
+{Enriching the mixture because the AMC cannot make a correction for increased temperature.}
+{Enriching the mixture until the AMC can make a compensation.}
+{Leaning the mixture until the AMC can make a compensation.}{B}
+\tr{أثناء تشغيل المحرك، ما تأثير تطبيق تسخين الكاربوريتر على الخليط؟}
+\ans{B}{يصبح الخليط أغنى إلى أن يعوّض التحكم الآلي في الخليط (\en{AMC}).}
+\sharh{التسخين يقلل كثافة الهواء، والكاربوريتر يقيس بالحجم، فيصبح الخليط أغنى فوراً. لكن بعض الكاربوريترات (خاصة في المحركات الكبيرة) فيها \textbf{تحكم آلي في الخليط} (\en{AMC}): كبسولة (منفاخ) مملوءة بغاز تتمدد وتنكمش حسب \textbf{ضغط وحرارة} الهواء، أي حسب كثافته، فتعدّل كمية الوقود تلقائياً. عندما يسخن الهواء، يتحسس الـ\en{AMC} الكثافة المنخفضة ويقلل الوقود، فيعود الخليط إلى النسبة الصحيحة. إذن: أغنى أولاً، ثم يعوّض الـ\en{AMC}.}
+\nohead
+\no{A}{الـ\en{AMC} \textbf{يستطيع} تعويض تغير الحرارة؛ هذه وظيفته (يتحسس الكثافة).}
+\no{C}{التسخين يُغني الخليط ولا يُفقره.}
+\tip{أغنى $\Leftarrow$ ثم \en{AMC} \textbf{يصلح} (\en{until the AMC compensates}).}
+\qsep
+
+\Q{8805}{The application of carburetor heat during engine operation will}
+{Decrease the weight of the fuel/air charge.}
+{Decrease the volume of air in the cylinder.}
+{Increase the density of air in the cylinder.}{A}
+\tr{تطبيق تسخين الكاربوريتر أثناء تشغيل المحرك سوف:}
+\ans{A}{يقلل وزن شحنة الوقود والهواء.}
+\sharh{الأسطوانة تمتلئ بنفس \textbf{الحجم} دائماً. لكن الهواء الساخن أقل كثافة، فوزن هذا الحجم أقل. إذن وزن الشحنة (الهواء + الوقود) الداخلة إلى الأسطوانة يقل، والقدرة تقل.}
+\nohead
+\no{B}{الحجم لا يتغير؛ الأسطوانة تمتلئ بنفس الحجم.}
+\no{C}{العكس: الكثافة \textbf{تقل} مع التسخين.}
+\tip{ساخن = \textbf{خفيف} $\Leftarrow$ \en{decrease the \textbf{weight}}.}
+\qsep
+
+\Q{8781}{The use of the carburetor air heater when it is not needed causes}
+{A very lean mixture.}
+{Excessive increase in manifold pressure.}
+{A decrease in power and possibly detonation.}{C}
+\tr{استخدام مسخن هواء الكاربوريتر عندما لا تكون هناك حاجة إليه يسبب:}
+\ans{C}{انخفاض القدرة، واحتمال حدوث التفجّر.}
+\sharh{أثران سيئان للتسخين غير الضروري:
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{انخفاض القدرة:} شحنة أخف وزناً + خليط غني أكثر من اللازم.
+  \item \textbf{احتمال التفجّر:} الشحنة الداخلة إلى الأسطوانة ساخنة أصلاً، وبعد الانضغاط ترتفع حرارتها أكثر، فقد تصل إلى درجة الاشتعال الذاتي فتنفجر بعنف بدل أن تحترق بهدوء. خاصة عند القدرة العالية.
+\end{enumerate}
+لذلك لا يُستخدم التسخين عند الإقلاع أو القدرة الكاملة إلا إذا تطلبت الظروف ذلك.}
+\nohead
+\no{A}{التسخين يجعل الخليط \textbf{أغنى} لا أفقر.}
+\no{B}{ضغط المجمع ينخفض قليلاً ولا يزيد.}
+\tip{تسخين بلا داعٍ = \textbf{قدرة أقل + خطر تفجّر}.}
+\qsep
+
+\Q{8785}{Which of the following would be a factor in the failure of an engine to develop full power at takeoff?}
+{Improper adjustment of carburetor heat valve control linkage.}
+{Excessively rich setting on the idle mixture adjustment.}
+{Failure of the economizer valve to remain closed at takeoff throttle setting.}{A}
+\tr{أي مما يلي قد يكون عاملاً في فشل المحرك في إنتاج قدرته الكاملة عند الإقلاع؟}
+\ans{A}{ضبط خاطئ لوصلات التحكم في صمام تسخين الكاربوريتر.}
+\sharh{إذا كانت الوصلات (الأسلاك والأذرع) بين ذراع \en{Carb Heat} في القمرة والصمام غير مضبوطة، فقد لا يُغلق الصمام تماماً حتى عندما يكون الذراع على \en{COLD}. فيدخل جزء من الهواء الساخن دائماً. الهواء الساخن كثافته منخفضة، فلا يوفر الأكسجين الكافي لإنتاج القدرة الكاملة عند الإقلاع.}
+\nohead
+\no{B}{ضبط خليط الخمول يؤثر في السرعات المنخفضة، أما عند الإقلاع (خانق كامل) فنظام الخمول لا يعمل تقريباً.}
+\no{C}{صمام الاقتصاد (\en{economizer}) \textbf{يُفتح} عند القدرة العالية ليضيف وقوداً إضافياً للتبريد؛ بقاؤه مفتوحاً عند الإقلاع هو الوضع الطبيعي أصلاً، فالخيار يصف حالة غير منطقية كعطل.}
+\tip{قدرة إقلاع ناقصة $\Leftarrow$ ابحث عن \textbf{هواء ساخن يتسرب} (\en{carb heat linkage}).}
+\qsep
+
+\Q{8804}{When starting an engine equipped with a carburetor air heater, in what position should the heater be placed?}
+{Hot.}
+{Cold.}
+{Neutral.}{B}
+\tr{عند بدء تشغيل محرك مزود بمسخن هواء الكاربوريتر، في أي وضع يجب أن يكون المسخن؟}
+\ans{B}{بارد (\en{Cold}).}
+\sharh{الهواء البارد يأتي عبر \textbf{فلتر الهواء}. أما الهواء الساخن فيُسحب من حول أنابيب العادم داخل غطاء المحرك، وهو \textbf{غير مفلتر}. على الأرض يوجد غبار ورمل وحصى صغيرة كثيرة، فإذا كان المسخن على \en{HOT} ستدخل هذه الأوساخ مباشرة إلى المحرك وتسبب تآكلاً. لذلك عند التشغيل وعلى الأرض يكون على \en{COLD} الكامل.}
+\nohead
+\no{A}{\en{HOT} = هواء غير مفلتر على الأرض المغبرة.}
+\no{C}{لا يوجد وضع «محايد» صحيح للتشغيل؛ الصحيح هو البارد الكامل.}
+\tip{الهواء الساخن = \textbf{بلا فلتر} $\Leftarrow$ على الأرض دائماً \en{\textbf{COLD}}.}
+
+\newpage
+% =====================================================================
+\section{الهواء البديل، الرمل، حريق السحب، وتبخير الوقود}
+% =====================================================================
+
+\begin{concept}{المفهوم: مشاكل أخرى في طريق الهواء}
+\begin{itemize}
+  \item \textbf{الهواء البديل (\en{alternate air}):} إذا انسد الفلتر الرئيسي (جليد أو أوساخ)، يُفتح باب بنابض تلقائياً بسبب الضغط المنخفض خلفه، فيدخل هواء \textbf{دافئ غير مفلتر} من داخل غطاء المحرك.
+  \item \textbf{الرمل والغبار:} الرمل مادة كاشطة كالصنفرة، فيُسرّع تآكل الأسطوانات والحلقات. وفيه \textbf{سيليكا} تذوب على عازل الشمعة وتكوّن طبقة زجاجية.
+  \item \textbf{حريق في نظام السحب أثناء التشغيل:} سببه عادة الإفراط في حقن الوقود (\en{priming}) فيتجمع وقود في المجمع، ثم يحدث ارتداد لهب (\en{backfire}) يشعله. الحل: \textbf{استمر في التدوير} حتى يُسحب اللهب إلى داخل المحرك.
+  \item \textbf{تبخير الوقود:} في المحركات الصغيرة يمر الخليط عبر أنابيب داخل \textbf{حوض الزيت} الدافئ، فيسخن ويتبخر الوقود بشكل أفضل وتتوزع الشحنة بالتساوي على الأسطوانات.
+\end{itemize}
+\end{concept}
+
+\Q{8809}{In an airplane equipped with an alternate air system, if the main air duct air filter becomes blocked or clogged, the}
+{System will automatically allow warm, unfiltered air to be drawn into the engine.}
+{Flow of air into the engine will be slowed or cut off unless alternate air is selected.}
+{System will automatically allow warm, filtered alternate air to be drawn into the engine.}{A}
+\tr{في طائرة مزودة بنظام هواء بديل، إذا انسد فلتر مجرى الهواء الرئيسي:}
+\ans{A}{يسمح النظام تلقائياً بسحب هواء دافئ غير مفلتر إلى المحرك.}
+\sharh{في بعض الطائرات يوجد باب هواء بديل يُمسكه \textbf{نابض} مغلقاً. في الحالة الطبيعية يأتي الهواء عبر الفلتر. إذا انسد الفلتر (بالجليد مثلاً)، يحاول المحرك أن يسحب الهواء، فينخفض الضغط خلف الفلتر كثيراً. هذا الضغط المنخفض يتغلب على النابض، فيُفتح الباب \textbf{تلقائياً} ويدخل هواء من داخل حجرة المحرك. هذا الهواء:
+\begin{itemize}
+  \item \textbf{دافئ} لأنه من داخل غطاء المحرك الساخن.
+  \item \textbf{غير مفلتر} لأنه لا يمر عبر الفلتر المسدود.
+\end{itemize}}
+\nohead
+\no{B}{الباب يُفتح تلقائياً بالنابض؛ لا يلزم أن يختاره الطيار.}
+\no{C}{الهواء البديل \textbf{غير مفلتر}.}
+\tip{بديل = \textbf{تلقائي + دافئ + غير مفلتر}.}
+\qsep
+
+\Q{8808}{In addition to causing accelerated wear, dust or sand ingested by a reciprocating engine may also cause}
+{Silicon fouling of spark plugs.}
+{Sludge formation.}
+{Acid formation.}{A}
+\tr{بالإضافة إلى تسريع التآكل، الغبار أو الرمل الذي يبتلعه المحرك المكبسي قد يسبب أيضاً:}
+\ans{A}{اتساخ الشمعات بالسيليكون.}
+\sharh{الرمل يتكون أساساً من \textbf{السيليكا} (ثاني أكسيد السيليكون). داخل غرفة الاحتراق الحارة، تذوب ذرات السيليكا وتلتصق على طرف عازل الشمعة على شكل طبقة \textbf{زجاجية} لامعة. الغريب في هذه الطبقة:
+\begin{itemize}
+  \item عند الحرارة المنخفضة هي \textbf{عازل}، فالشمعة تعمل طبيعياً (مثلاً في الخمول).
+  \item عند الحرارة العالية (قدرة عالية) تصبح \textbf{موصلة}، فيتسرب الجهد العالي عبرها بدلاً من القفز عبر الفجوة، فيبدأ المحرك يتقطع (\en{miss}) عند القدرة العالية فقط.
+\end{itemize}
+وهذا بالإضافة إلى أن الرمل يعمل مثل الصنفرة فيسرّع تآكل جدران الأسطوانات.}
+\nohead
+\no{B}{الحمأة (\en{sludge}) في الزيت سببها عادة الماء والأكسدة ونواتج الاحتراق، لا الرمل.}
+\no{C}{الأحماض تتكون من نواتج الاحتراق والرطوبة في الزيت، لا من الرمل.}
+\tip{رمل = \textbf{سيليكا} = \textbf{سيليكون} على الشمعة.}
+\qsep
+
+\Q{8810}{If a fire starts in the induction system during the engine starting procedure, what should the operator do?}
+{Turn off the fuel switches to stop the fuel.}
+{Continue cranking the engine.}
+{Turn off all switches.}{B}
+\tr{إذا بدأ حريق في نظام السحب أثناء إجراء بدء تشغيل المحرك، ماذا يجب على المشغّل أن يفعل؟}
+\ans{B}{الاستمرار في تدوير المحرك.}
+\sharh{الحريق في نظام السحب يكون وقوداً مشتعلاً داخل المجمع أو الكاربوريتر. إذا استمر المحرك في الدوران (أو اشتغل)، فإنه \textbf{يسحب} الهواء بقوة إلى الداخل، فيُسحب اللهب والوقود المشتعل إلى داخل الأسطوانات حيث يحترق بأمان ويخرج مع العادم. إذا أوقفت المحرك، يبقى الوقود المشتعل في نظام السحب ويحرق ما حوله. لذلك: \textbf{استمر في التدوير} (وإذا اشتغل المحرك، دعه يعمل).}
+\nohead
+\no{A}{قطع الوقود وحده لا يطفئ الوقود المشتعل الموجود أصلاً في السحب، وإيقاف الدوران يتركه يحترق خارج المحرك.}
+\no{C}{إطفاء كل المفاتيح يوقف التدوير، فيبقى الحريق مكانه.}
+\tip{حريق في السحب $\Leftarrow$ «\textbf{اسحبه إلى الداخل}» بالاستمرار في التدوير.}
+\qsep
+
+\Q{8811}{On small aircraft engines, fuel vaporization may be increased by}
+{Cooling the air before it enters the engine.}
+{Circulating the fuel and air mixture through passages in the oil sump.}
+{Heating the fuel before it enters the carburetor.}{B}
+\tr{في محركات الطائرات الصغيرة، يمكن زيادة تبخير الوقود عن طريق:}
+\ans{B}{تمرير خليط الوقود والهواء عبر ممرات في حوض الزيت.}
+\sharh{في كثير من المحركات الصغيرة يكون الكاربوريتر مركباً أسفل المحرك تحت حوض الزيت. الخليط يخرج من الكاربوريتر ويمر عبر أنابيب تمر \textbf{داخل حوض الزيت}، والزيت حوله ساخن، فيسخّن الخليط. الخليط الدافئ يتبخر فيه الوقود بشكل أفضل، فيتوزع بالتساوي على كل الأسطوانات بدلاً من أن تبقى قطرات وقود سائلة على جدران المجمع.}
+\nohead
+\no{A}{التبريد يقلل التبخير ولا يزيده.}
+\no{C}{تسخين الوقود السائل قبل الكاربوريتر قد يسبب انسداداً بخارياً (\en{vapor lock}) في أنابيب الوقود، وليس الطريقة المستخدمة.}
+\tip{الحوض الساخن «يطبخ» الخليط $\Leftarrow$ تبخير أفضل (\en{oil sump passages}).}
+
+\newpage
+% =====================================================================
+\section{الشاحن الفائق والشاحن التوربيني}
+% =====================================================================
+
+\begin{concept}{المفهوم: كيف يُتحكَّم بالشاحن التوربيني؟}
+\textbf{نوعان من الشواحن:}
+\begin{itemize}
+  \item \textbf{\en{Supercharger}:} ضاغط تديره \textbf{تروس} من العمود المرفقي (يأخذ قدرة من المحرك مباشرة).
+  \item \textbf{\en{Turbocharger}:} ضاغط يديره \textbf{توربين} تدفعه غازات العادم (يستغل طاقة كانت ستضيع).
+\end{itemize}
+
+\textbf{بوابة الفضلات ومشغّلها:} بوابة الفضلات (\en{waste gate}) صمام في أنبوب العادم يسمح للعادم بأن يتجاوز التوربين. في الأنظمة الشائعة يحركها \textbf{مشغّل يعمل بزيت المحرك}:
+\begin{itemize}
+  \item \textbf{نابض} يدفع البوابة لتُفتح.
+  \item \textbf{ضغط زيت المحرك} يدفع مكبس المشغّل ليُغلق البوابة.
+  \item \textbf{المتحكمات} لا تحرك البوابة مباشرة؛ بل تفتح أو تغلق ممراً يسرّب زيت المشغّل إلى الحوض (\en{bleed oil}). تسريب أكثر $\Leftarrow$ ضغط زيت أقل في المشغّل $\Leftarrow$ النابض يفتح البوابة $\Leftarrow$ التوربين أبطأ.
+\end{itemize}
+
+\textbf{المتحكمات (نظام \en{sea-level boosted}):}
+\begin{center}
+\begin{tabular}{|p{4.6cm}|p{9.4cm}|}
+\hline
+\textbf{المكوّن} & \textbf{وظيفته}\\\hline
+\en{Exhaust bypass assembly} (بوابة الفضلات ومشغّلها) & تحدد كم من العادم يمر بالتوربين $\Leftarrow$ تحدد سرعة الشاحن.\\\hline
+\en{Density controller} & يحد \textbf{أقصى} ضغط مجمع عند \textbf{الخانق الكامل} (تحت الارتفاع الحرج). يعمل عند الخانق الكامل فقط.\\\hline
+\en{Differential pressure controller} & يعمل عند \textbf{الخانق الجزئي}: يحافظ على فرق ضغط صغير ثابت بين ما قبل الخانق وما بعده، فيمنع \textbf{\en{bootstrapping}}.\\\hline
+\en{Rate-of-change controller} & يتحكم في \textbf{سرعة} ارتفاع ضغط الشاحن عند فتح الخانق بسرعة، فيمنع التعزيز الزائد المفاجئ.\\\hline
+\en{Absolute pressure controller} (في المحركات الصغيرة) & يتحسس ضغط السطح العلوي ويحد الضغط الأقصى.\\\hline
+\end{tabular}
+\end{center}
+
+\textbf{\en{Bootstrapping}:} دائرة مفرغة: زيادة صغيرة في القدرة $\Leftarrow$ عادم أكثر $\Leftarrow$ التوربين أسرع $\Leftarrow$ هواء أكثر $\Leftarrow$ قدرة أكثر $\Leftarrow$ ... فتظهر على شكل \textbf{انجراف مستمر} في ضغط المجمع لا يستقر.
+\end{concept}
+
+\Q{8795}{What is used to drive a supercharger?}
+{Exhaust gases.}
+{Gear train from the crankshaft.}
+{Belt drive through a pulley arrangement.}{B}
+\tr{ما الذي يُستخدم لإدارة الشاحن الفائق (\en{supercharger})؟}
+\ans{B}{مجموعة تروس من العمود المرفقي.}
+\sharh{كلاهما «ضاغط هواء» يزيد كمية الهواء الداخلة إلى المحرك، والفرق في مصدر الحركة:
+\begin{itemize}
+  \item \textbf{\en{Supercharger}} (في المصطلحات الحديثة): يُدار بـ\textbf{تروس} من العمود المرفقي.
+  \item \textbf{\en{Turbosupercharger} = \en{Turbocharger}}: يُدار بـ\textbf{توربين} تدفعه غازات العادم.
+\end{itemize}
+السؤال يقول \en{supercharger} وحده $\Leftarrow$ التروس.}
+\nohead
+\no{A}{غازات العادم تدير الشاحن \textbf{التوربيني} (\en{turbo})، وليس الشاحن الفائق بالمعنى الحديث.}
+\no{C}{السيور والبكرات ليست الطريقة المستخدمة في محركات الطائرات.}
+\tip{\en{\textbf{Turbo}} = توربين = عادم. بدون \en{turbo} = \textbf{تروس}.}
+\qsep
+
+\Q{8791}{What is the purpose of a turbocharger system for a small reciprocating aircraft engine?}
+{Compresses the air to hold the cabin pressure constant after the aircraft has reached its critical altitude.}
+{Maintains constant air velocity in the intake manifold.}
+{Compresses air to maintain manifold pressure constant from sea level to the critical altitude of the engine.}{C}
+\tr{ما الغرض من نظام الشاحن التوربيني في محرك طائرة مكبسي صغير؟}
+\ans{C}{يضغط الهواء للحفاظ على ضغط المجمع ثابتاً من سطح البحر حتى الارتفاع الحرج للمحرك.}
+\sharh{كلما صعدت الطائرة، يقل ضغط الهواء وكثافته، فتنخفض قدرة المحرك غير المشحون (عند 10,000 قدم يفقد حوالي ثلث قدرته). الشاحن التوربيني يضغط الهواء قبل دخوله نظام السحب، فيعوّض هذا النقص. ومع الصعود تُغلق بوابة الفضلات تدريجياً ليدور التوربين أسرع ويضغط أكثر، فيبقى ضغط المجمع ثابتاً. يستمر هذا حتى \textbf{الارتفاع الحرج}، حيث تكون البوابة مغلقة تماماً. فوقه لا يستطيع الشاحن أن يعوّض أكثر، فيبدأ ضغط المجمع بالانخفاض.}
+\nohead
+\no{A}{الهدف هو ضغط المجمع (قدرة المحرك)، لا ضغط المقصورة؛ وكلمة «بعد الارتفاع الحرج» خاطئة، فالعمل يكون \textbf{حتى} الارتفاع الحرج.}
+\no{B}{الشاحن لا يهدف إلى سرعة هواء ثابتة في المجمع.}
+\tip{\en{Turbo} = نفس ضغط المجمع \textbf{من سطح البحر حتى الارتفاع الحرج}.}
+\qsep
+
+\Q{8786}{If the turbocharger waste gate is completely closed,}
+{None of the exhaust gases are directed through the turbine.}
+{The turbocharger is in the OFF position.}
+{All the exhaust gases are directed through the turbine.}{C}
+\tr{إذا كانت بوابة الفضلات في الشاحن التوربيني مغلقة تماماً:}
+\ans{C}{توجَّه كل غازات العادم عبر التوربين.}
+\sharh{بوابة الفضلات هي «الطريق المختصر» الذي يتجاوز التوربين. فكّر بها كبوابة على طريق جانبي:
+\begin{itemize}
+  \item \textbf{مفتوحة تماماً:} أغلب العادم يسلك الطريق الجانبي ويخرج مباشرة $\Leftarrow$ التوربين يدور ببطء $\Leftarrow$ ضغط قليل.
+  \item \textbf{مغلقة تماماً:} الطريق الجانبي مسدود، فكل العادم مجبر على المرور بالتوربين $\Leftarrow$ أقصى سرعة $\Leftarrow$ أقصى ضغط.
+\end{itemize}}
+\nohead
+\no{A}{هذا وصف البوابة \textbf{المفتوحة} تماماً.}
+\no{B}{البوابة المغلقة تعني أن الشاحن يعمل بأقصى طاقته، لا أنه متوقف.}
+\tip{\textbf{مغلقة = كل العادم للتوربين = أقصى تعزيز}. (انتبه: عكس ما توحي به كلمة «مغلقة»).}
+\qsep
+
+\Q{8790}{What directly regulates the speed of a turbocharger?}
+{Turbine.}
+{Waste gate.}
+{Throttle.}{B}
+\tr{ما الذي ينظم سرعة الشاحن التوربيني بشكل مباشر؟}
+\ans{B}{بوابة الفضلات.}
+\sharh{سرعة الشاحن تحددها كمية العادم التي تمر عبر التوربين. وبوابة الفضلات هي التي تحدد هذه الكمية (ما لا يمر عبرها يذهب إلى التوربين). إذن هي المنظم \textbf{المباشر} للسرعة.}
+\nohead
+\no{A}{التوربين هو الذي \textbf{يدور}؛ لا ينظم سرعته بنفسه.}
+\no{C}{الخانق يؤثر \textbf{بشكل غير مباشر} (قدرة أكثر = عادم أكثر)، لكن المنظم المباشر هو بوابة الفضلات.}
+\tip{\en{\textbf{directly}} = بوابة الفضلات.}
+\qsep
+
+\Q{8792}{What are the three basic regulating components of a sea-level boosted turbocharger system? 1. Exhaust bypass assembly. 2. Compressor assembly. 3. Pump and bearing casing. 4. Density controller. 5. Differential pressure controller.}
+{2, 3, 4.}
+{1, 4, 5.}
+{1, 2, 3.}{B}
+\tr{ما المكونات \textbf{التنظيمية} الثلاثة الأساسية لنظام شاحن توربيني معزّز من سطح البحر؟ 1. مجموعة تجاوز العادم. 2. مجموعة الضاغط. 3. غلاف المضخة والمحامل. 4. متحكم الكثافة. 5. متحكم الضغط التفاضلي.}
+\ans{B}{1، 4، 5.}
+\sharh{الكلمة المفتاحية: «\textbf{تنظيمية}» (\en{regulating}). أي المكونات التي تتحكم في الضغط، لا التي تصنعه.
+\begin{itemize}
+  \item \textbf{(1) مجموعة تجاوز العادم} (بوابة الفضلات ومشغّلها): المنفّذ الذي يغير سرعة الشاحن.
+  \item \textbf{(4) متحكم الكثافة:} يحدد الحد الأقصى عند الخانق الكامل.
+  \item \textbf{(5) متحكم الضغط التفاضلي:} يتحكم عند الخانق الجزئي.
+\end{itemize}
+أما الضاغط (2) وغلاف المحامل (3) فهما أجزاء من الشاحن نفسه، تعمل لكنها لا «تنظّم».}
+\nohead
+\no{A}{2 و3 ليسا مكونين تنظيميين.}
+\no{C}{2 و3 ليسا تنظيميين، وينقصه المتحكمان.}
+\tip{تنظيم = \textbf{البوابة + متحكم الكثافة + المتحكم التفاضلي}.}
+\qsep
+
+\Q{8788}{What is the purpose of the density controller in a turbocharger system?}
+{Limits the maximum manifold pressure that can be produced at other than full throttle conditions.}
+{Limits the maximum manifold pressure that can be produced by the turbocharger at full throttle.}
+{Maintains constant air velocity at the carburetor inlet.}{B}
+\tr{ما الغرض من متحكم الكثافة في نظام الشاحن التوربيني؟}
+\ans{B}{يحد أقصى ضغط مجمع يستطيع الشاحن إنتاجه عند الخانق الكامل.}
+\sharh{عند الخانق الكامل وتحت الارتفاع الحرج، يستطيع الشاحن أن ينتج ضغطاً أكبر مما يتحمله المحرك. متحكم الكثافة يتحسس \textbf{ضغط وحرارة} الهواء الخارج من الضاغط (أي كثافته)، ويسرّب زيت مشغّل البوابة عند الحاجة فتنفتح البوابة قليلاً، فلا يتجاوز الضغط الحد المسموح. ويعمل هذا المتحكم \textbf{فقط عند وضع الخانق الكامل}.}
+\nohead
+\no{A}{«في غير الخانق الكامل» هو مجال عمل \textbf{المتحكم التفاضلي}.}
+\no{C}{لا يهدف إلى سرعة هواء ثابتة.}
+\tip{\en{Density} = \en{\textbf{full throttle}} = الحد الأقصى. \en{Differential} = \en{part throttle}.}
+\qsep
+
+\Q{8793}{The differential pressure controller in a turbocharger system}
+{Reduces bootstrapping during part-throttle operation.}
+{Positions the waste gate valve for maximum power.}
+{Provides a constant fuel-to-air ratio.}{A}
+\tr{متحكم الضغط التفاضلي في نظام الشاحن التوربيني:}
+\ans{A}{يقلل الانجراف الذاتي (\en{bootstrapping}) أثناء التشغيل بخانق جزئي.}
+\sharh{عند الخانق الجزئي، لو تُرك الشاحن بلا تحكم، قد يدخل في الدائرة المفرغة (\en{bootstrapping}): أي زيادة صغيرة في القدرة تزيد العادم فيسرع التوربين فتزيد القدرة أكثر... فينجرف ضغط المجمع باستمرار، ويضطر الطيار لتعديل الخانق مرة بعد مرة.
+
+المتحكم التفاضلي يتحسس \textbf{الفرق} بين الضغط قبل الخانق (السطح العلوي) والضغط بعده (المجمع)، ويحافظ على هذا الفرق صغيراً وثابتاً (بضع بوصات زئبق)، فلا ينتج الشاحن ضغطاً أكثر من الحاجة. هكذا تستقر القدرة ويختفي الانجراف.}
+\nohead
+\no{B}{وضع البوابة لأقصى قدرة يتعلق بالخانق الكامل (متحكم الكثافة).}
+\no{C}{نسبة الوقود إلى الهواء يحددها نظام الوقود، لا متحكم الشاحن.}
+\tip{\en{Differential} $\Leftarrow$ \en{\textbf{part throttle}} $\Leftarrow$ \textbf{ضد} \en{bootstrapping}.}
+\qsep
+
+\Q{8784}{Bootstrapping of a turbocharged engine is indicated by}
+{An overboost condition of the engine on takeoff.}
+{A transient increase in engine power.}
+{A maximum increase in manifold pressure.}{B}
+\tr{يُستدل على الانجراف الذاتي (\en{bootstrapping}) في محرك ذي شاحن توربيني بـ:}
+\ans{B}{زيادة عابرة في قدرة المحرك.}
+\sharh{\en{Bootstrapping} هو زيادة \textbf{عابرة} (مؤقتة غير مستقرة) في القدرة تجعل الشاحن يتسارع، وتسارعه يزيد القدرة أكثر. تظهر للطيار على شكل \textbf{انجراف مستمر} في قراءة ضغط المجمع: يتحرك ببطء صعوداً (أو نزولاً) ولا يستقر.}
+\nohead
+\no{A}{التعزيز الزائد عند الإقلاع (\en{overboost}) مشكلة أخرى، يمنعها متحكم معدل التغير والمتحكمات الأخرى.}
+\no{C}{\en{Bootstrapping} ليس «أقصى زيادة» في الضغط، بل تغيّر غير منتظم ينجرف.}
+\tip{\en{Bootstrapping} = \textbf{زيادة عابرة} + \textbf{انجراف} في ضغط المجمع.}
+\qsep
+
+\Q{8789}{What is the purpose of the rate-of-change controller in a turbocharger system?}
+{Limits the maximum manifold pressure that can be produced by the turbocharger at full throttle conditions.}
+{Controls the rate at which the turbocharger discharge pressure will increase.}
+{Controls the position of the waste gate after the aircraft has reached its critical altitude.}{B}
+\tr{ما الغرض من متحكم معدل التغير في نظام الشاحن التوربيني؟}
+\ans{B}{يتحكم في المعدل (السرعة) الذي يزداد به ضغط تصريف الشاحن.}
+\sharh{اسمه يشرح نفسه: «معدل التغير». إذا دفع الطيار الخانق إلى الأمام بسرعة، يتسارع الشاحن بسرعة وقد يتجاوز ضغط المجمع الحد قبل أن تلحق المتحكمات الأخرى (\en{overboost}). متحكم معدل التغير يحد \textbf{سرعة} ارتفاع ضغط الضاغط، فيرتفع الضغط بشكل تدريجي آمن.}
+\nohead
+\no{A}{هذه وظيفة متحكم \textbf{الكثافة}.}
+\no{C}{بعد الارتفاع الحرج تكون البوابة مغلقة تماماً أصلاً، ولا يوجد ما يُتحكم فيه.}
+\tip{\en{Rate} = \textbf{سرعة} الارتفاع، لا حدّه.}
+\qsep
+
+\Q{8793-1}{The absolute pressure controller on some small engines is designed to sense oil pressure which flows through the waste gate actuator and then through the controllers on the turbocharger system; the pressure between the turbocharger and the throttle valve is called}
+{Turbocharger boost pressure.}
+{Induction manifold pressure.}
+{Upper deck pressure.}{C}
+\tr{متحكم الضغط المطلق في بعض المحركات الصغيرة يعمل بضغط الزيت الذي يمر عبر مشغّل بوابة الفضلات ثم عبر المتحكمات. الضغط بين الشاحن التوربيني وصمام الخانق يسمى:}
+\ans{C}{ضغط السطح العلوي (\en{upper deck pressure}).}
+\sharh{لا تنشغل بالجزء الطويل الأول من السؤال؛ المطلوب فقط اسم الضغط في مكان محدد. راجع رسم الشاحن في «الصورة الكبيرة»:
+\begin{itemize}
+  \item الضاغط $\Leftarrow$ \textbf{[ضغط السطح العلوي]} $\Leftarrow$ الخانق $\Leftarrow$ \textbf{[ضغط المجمع]} $\Leftarrow$ الأسطوانات.
+\end{itemize}
+الضغط بين الشاحن والخانق = \textbf{\en{upper deck}}. والضغط بعد الخانق = ضغط المجمع.}
+\nohead
+\no{A}{«ضغط التعزيز» وصف عام لأي ضغط أعلى من الضغط الجوي، وليس اسم هذا الموقع.}
+\no{B}{ضغط المجمع يكون \textbf{بعد} الخانق، لا قبله.}
+\tip{\textbf{قبل} الخانق = \en{Upper deck}. \textbf{بعد} الخانق = \en{Manifold}.}
+\qsep
+
+\Q{8794}{The purpose of a sonic venturi on a turbocharged engine is to}
+{Limit the amount of air that can flow from the turbocharger into the cabin for pressurization.}
+{Increase the amount of air that can flow from the turbocharger into the cabin for pressurization.}
+{Increase the velocity of the fuel/air charge.}{A}
+\tr{الغرض من الفنتوري الصوتي في المحرك ذي الشاحن التوربيني هو:}
+\ans{A}{تحديد كمية الهواء التي يمكن أن تتدفق من الشاحن إلى المقصورة لضغطها.}
+\sharh{بعض الطائرات تأخذ جزءاً من الهواء المضغوط من الشاحن التوربيني لتضغط المقصورة (\en{cabin pressurization}). يجب ألا يُسحب هواء كثير فيُحرم المحرك منه. الحل: \textbf{فنتوري صوتي} في خط الهواء إلى المقصورة. عندما تصل سرعة الهواء في أضيق نقطة إلى \textbf{سرعة الصوت (ماخ 1)}، تتكون موجة صدمية، ولا يمكن أن يمر هواء أكثر مهما زاد الضغط قبله (يصبح التدفق «مختنقاً»). فهو \textbf{محدد للتدفق}.
+
+(هذه نفس فكرة «الفوهة المختنقة» في المُدوِّر الهوائي من فصل بدء التشغيل).}
+\nohead
+\no{B}{العكس: الفنتوري الصوتي \textbf{يحد} التدفق.}
+\no{C}{لا علاقة له بخليط الوقود والهواء الداخل إلى المحرك.}
+\tip{\en{Sonic} = ماخ 1 = \textbf{لا يمر أكثر} $\Leftarrow$ محدد تدفق للمقصورة.}
+
+\newpage
+% =====================================================================
+\section{مداخل المحركات التوربينية، فواصل الرمل، ومنع الجليد}
+% =====================================================================
+
+\begin{concept}{المفهوم: ما الذي يحتاجه المحرك التوربيني من مدخله؟}
+الضاغط في المحرك التوربيني حساس جداً: يحتاج هواءً \textbf{منتظماً} (بلا دوامات)، و\textbf{نظيفاً} (بلا رمل أو حصى أو قطع جليد).
+\begin{itemize}
+  \item \textbf{مدخل فم الجرس (\en{bellmouth}):} حواف مستديرة كالبوق، تجعل الهواء يدخل بانسيابية تامة. كفاءته الهوائية عالية جداً، لكنه لا يصلح للسرعات العالية؛ لذلك يُستخدم في الهليكوبتر وبعض محركات \en{turboprop} ومنصات اختبار المحركات.
+  \item \textbf{المجرى المتباعد (\en{divergent}):} يتسع من الأمام إلى الخلف. عندما يتسع المجرى، يتباطأ الهواء ويرتفع ضغطه (عكس الفنتوري). هذا هو شكل المدخل في الطائرات دون الصوتية.
+  \item \textbf{فاصل الرمل والجليد:} يجبر الهواء على \textbf{انعطاف حاد}. الهواء الخفيف ينعطف بسهولة، أما الرمل وقطع الجليد الثقيلة فتستمر في خط مستقيم بسبب قصورها الذاتي (والقوة الطاردة) فتدخل في مصيدة.
+  \item \textbf{مبدد الدوامة:} المحرك القريب من الأرض يكوّن دوامة (مثل إعصار صغير) بين المدخل والأرض تسحب الحصى. نفثة \textbf{هواء نزف} سريعة نحو الأرض تكسرها. تعمل على الأرض فقط (\textbf{مفتاح عجلات الهبوط}).
+  \item \textbf{منع جليد المدخل (\en{anti-ice}):} هواء نزف ساخن يُمرر في حواف المدخل ودليلات الهواء ليمنع \textbf{تكوّن} الجليد أصلاً، لأن أي قطعة جليد تنكسر وتدخل الضاغط قد تحطمه. وسحب هذا الهواء من الضاغط يغيّر مؤشرات المحرك.
+\end{itemize}
+\end{concept}
+
+\Q{8796}{The purpose of a bellmouth compressor inlet is to}
+{Provide an increased ram air effect at low airspeeds.}
+{Maximize the aerodynamic efficiency of the inlet.}
+{Provide an increased pressure drop in the inlet.}{B}
+\tr{الغرض من مدخل الضاغط على شكل فم الجرس (\en{bellmouth}) هو:}
+\ans{B}{تحقيق أقصى كفاءة هوائية للمدخل.}
+\sharh{مدخل فم الجرس شكله مثل البوق: حوافه مستديرة كبيرة تنحني نحو الداخل. هذا الشكل يجعل الهواء يدخل من كل الاتجاهات بانسيابية دون أن ينفصل عن الجدران أو يكوّن دوامات، فالفقد في الضغط يكون أقل ما يمكن. لذلك هو \textbf{أعلى المداخل كفاءة هوائية}. يُستخدم في:
+\begin{itemize}
+  \item الهليكوبتر (سرعتها منخفضة، والمحرك يحتاج أن يسحب الهواء من حوله).
+  \item بعض محركات \en{turboprop}.
+  \item \textbf{منصات اختبار المحركات} (لقياس أداء المحرك الحقيقي بدون فقد في المدخل).
+\end{itemize}}
+\nohead
+\no{A}{تأثير الاندفاع يحتاج إلى سرعة أمامية؛ فم الجرس يُستخدم أصلاً حيث السرعة منخفضة أو صفر، ولا يصنع اندفاعاً.}
+\no{C}{الهدف \textbf{تقليل} فقد الضغط، لا زيادته.}
+\tip{\en{Bellmouth} = \textbf{أكثر المداخل انسيابية} (\en{max aerodynamic efficiency}).}
+\qsep
+
+\Q{8800}{When an engine with a subsonic divergent type inlet duct is running in place at high speed on the ground, the air pressure within the inlet is}
+{Negative.}
+{Positive.}
+{Ambient.}{B}
+\tr{عندما يعمل محرك ذو مجرى مدخل متباعد دون صوتي بسرعة عالية على الأرض والطائرة واقفة، يكون ضغط الهواء داخل المدخل:}
+\ans{B}{موجباً (أعلى من الضغط المحيط).}
+\sharh{يدخل الهواء إلى فتحة المجرى تقريباً عند الضغط المحيط. ولأن المجرى \textbf{متباعد} (يتسع كلما تقدمنا نحو الضاغط)، يتباطأ الهواء فيه، وعندما يتباطأ الهواء يتحول جزء من سرعته إلى ضغط. فيرتفع الضغط إلى قيمة \textbf{موجبة} أعلى قليلاً من المحيط قبل أن يصل إلى الضاغط. (هذا عكس الفنتوري الذي يضيق فيسرّع الهواء ويخفض ضغطه).
+
+ملاحظة: هذا هو الجواب المعتمد في دليل الامتحان، فاحفظه كما هو.}
+\nohead
+\no{A}{الضغط السالب يحدث عندما يتسارع الهواء، أما المجرى المتباعد فيبطئه.}
+\no{C}{الضغط لا يبقى مساوياً للمحيط، لأن المجرى المتباعد يرفعه.}
+\tip{\textbf{متباعد} = يتسع = يبطئ الهواء = \textbf{ضغط أعلى} (\en{positive}).}
+\qsep
+
+\Q{8797}{What method(s) is/are used to provide clean air to the engines of helicopters and turboprop airplanes that have particle (sand and ice) separators installed?}
+{Positive and negative charged areas to attract and/or repel particulates out of the airflow.}
+{Air/moisture separators, and “washing” the air clean utilizing water droplets.}
+{Sharp airflow directional change to take advantage of inertia and/or centrifugal force, and filters or engine inlet screens.}{C}
+\tr{ما الطريقة (الطرق) المستخدمة لتوفير هواء نظيف لمحركات الهليكوبتر وطائرات \en{turboprop} المزودة بفواصل الجسيمات (الرمل والجليد)؟}
+\ans{C}{تغيير حاد في اتجاه تدفق الهواء للاستفادة من القصور الذاتي و/أو القوة الطاردة المركزية، مع فلاتر أو شبكات على مدخل المحرك.}
+\sharh{تخيّل سيارة تنعطف بحدة وفي صندوقها كرة ثقيلة: الكرة تستمر في خط مستقيم وتصطدم بجانب الصندوق. هذا هو القصور الذاتي.
+\begin{itemize}
+  \item الفاصل يجبر الهواء على \textbf{انعطاف حاد}.
+  \item الهواء خفيف فينعطف بسهولة ويدخل إلى المحرك.
+  \item حبات الرمل وقطع الجليد ثقيلة، فلا تستطيع الانعطاف، وتُقذف بالقوة الطاردة إلى \textbf{مصيدة رواسب} (أو تخرج من فتحة خلفية)، وتُزال في الصيانة الدورية.
+\end{itemize}
+وتُضاف أيضاً فلاتر أو شبكات على مدخل المحرك.}
+\nohead
+\no{A}{الشحنات الكهربائية لجذب الجسيمات (مثل المرسبات الكهروستاتيكية في المصانع) ليست الطريقة المستخدمة في مداخل المحركات.}
+\no{B}{«غسل» الهواء بقطرات الماء ليس طريقة مستخدمة، والماء نفسه يسبب الجليد.}
+\tip{الرمل \textbf{ثقيل فلا ينعطف} $\Leftarrow$ انعطاف حاد + قصور ذاتي + فلاتر.}
+\qsep
+
+\Q{8798}{The vortex dissipators installed on some turbine-powered aircraft to prevent engine FOD utilize}
+{Variable inlet guide vanes (IGV) and/or variable first stage fan blades.}
+{Variable geometry inlet ducts.}
+{A stream of engine bleed air blown toward the ground ahead of the engine.}{C}
+\tr{مبددات الدوامة المركبة على بعض الطائرات التوربينية لمنع ضرر الأجسام الغريبة (\en{FOD}) تستخدم:}
+\ans{C}{تياراً من هواء النزف يُنفخ نحو الأرض أمام المحرك.}
+\sharh{المحركات المعلقة تحت الجناح في حاضنات (\en{pods}) تكون أحياناً قريبة جداً من الأرض. عندما يسحب المحرك الهواء بقوة وهو واقف أو بطيء، تتكون أمام المدخل \textbf{دوامة} تمتد من الأرض إلى فتحة المحرك (مثل إعصار صغير)، فتلتقط الرمل والحصى الصغيرة من المدرج وترفعها إلى داخل المحرك فتتلف شفراته.
+
+الحل: فوهة أسفل غطاء المدخل تنفث \textbf{هواء نزف} من الضاغط بسرعة عالية نحو الأرض داخل الدوامة، فتكسرها وتبددها.}
+\nohead
+\no{A}{دليلات الهواء المتغيرة تتحكم بتدفق الهواء داخل الضاغط، ولا تكسر دوامة على الأرض.}
+\no{B}{المجاري متغيرة الشكل تُستخدم في الطائرات فوق الصوتية، لا لكسر دوامة الأرض.}
+\tip{دوامة من الأرض $\Leftarrow$ \textbf{انفخ عليها هواء نزف} نحو الأرض.}
+\qsep
+
+\Q{8799}{Vortex dissipator systems are generally activated by}
+{A landing gear switch.}
+{A fuel pressure switch anytime an engine is operating.}
+{An engine inlet airflow sensor.}{A}
+\tr{تُفعَّل أنظمة مبددات الدوامة عموماً بواسطة:}
+\ans{A}{مفتاح على عجلات الهبوط.}
+\sharh{الدوامة مشكلة \textbf{على الأرض فقط} (حيث يوجد حصى ورمل قريب من المدخل). في الجو لا حاجة إليها، وسحب هواء النزف بلا داعٍ يضيع قدرة المحرك. لذلك هواء النزف يمر عبر \textbf{صمام ملف لولبي} (\en{solenoid valve})، وهذا الصمام يتحكم فيه \textbf{مفتاح على عجلات الهبوط} يتحسس وجود وزن الطائرة على العجلات (\en{weight-on-wheels}): على الأرض $\Leftarrow$ النفث يعمل، في الجو $\Leftarrow$ يتوقف.}
+\nohead
+\no{B}{التشغيل «كلما عمل المحرك» يعني أنه سيعمل في الجو أيضاً بلا فائدة.}
+\no{C}{لا يُستخدم حساس لتدفق الهواء في المدخل لتفعيله.}
+\tip{مشكلة \textbf{أرضية} $\Leftarrow$ مفتاح \textbf{العجلات}.}
+\qsep
+
+\Q{8802}{The purpose of an engine/inlet anti-ice system is primarily to}
+{Remove ice from engine and/or inlet areas.}
+{Prevent ice formation in engine and/or inlet areas.}
+{Remove ice from engine and/or inlet areas and prevent ice formation in engine and/or inlet areas.}{B}
+\tr{الغرض الأساسي من نظام منع الجليد في المحرك والمدخل هو:}
+\ans{B}{منع تكوّن الجليد في المحرك و/أو مناطق المدخل.}
+\sharh{انتبه للفرق بين الكلمتين:
+\begin{itemize}
+  \item \textbf{\en{Anti-ice}} (منع الجليد): يمنعه من \textbf{التكوّن أصلاً}.
+  \item \textbf{\en{De-ice}} (إزالة الجليد): يزيله \textbf{بعد} أن يتكوّن.
+\end{itemize}
+في مدخل المحرك التوربيني لا نستطيع أن نسمح للجليد بأن يتكون ثم نزيله، لأن إزالته تعني أن قطعاً منه ستنكسر وتدخل الضاغط مباشرة وتسبب أضراراً خطيرة. لذلك النظام هنا \textbf{منع} (\en{anti-ice}): يُشغَّل قبل الدخول في ظروف التجمد ويبقي الأسطح ساخنة.}
+\nohead
+\no{A}{الإزالة هي وظيفة \en{de-ice}، وهي خطيرة هنا.}
+\no{C}{الوظيفة \textbf{الأساسية} هي المنع فقط.}
+\tip{\en{\textbf{Anti}} = \textbf{ضد} التكوّن (منع). \en{De} = إزالة.}
+\qsep
+
+\Q{8801}{What indications may shift when a turbofan engine anti-icing (bleed air) system is turned on? 1. Tachometer. 2. EGT. 3. EPR.}
+{1 and 2.}
+{2 and 3.}
+{1, 2, and 3.}{C}
+\tr{أي المؤشرات قد تتغير عند تشغيل نظام منع الجليد (بهواء النزف) في المحرك المروحي التوربيني؟ 1. عداد السرعة. 2. حرارة غاز العادم \en{EGT}. 3. نسبة ضغط المحرك \en{EPR}.}
+\ans{C}{1، 2، و3 (كلها).}
+\sharh{نظام منع الجليد يأخذ \textbf{هواء نزف} ساخناً من الضاغط. هذا الهواء ضُغط بطاقة المحرك، لكنه لن يذهب إلى غرفة الاحتراق والتوربين. النتيجة:
+\begin{itemize}
+  \item \textbf{\en{EGT} يرتفع قليلاً:} هواء أقل يمر في غرفة الاحتراق لنفس كمية الوقود، فيصبح الاحتراق أسخن.
+  \item \textbf{\en{EPR} يتغير:} لأن الانضغاط الواصل إلى غرفة الاحتراق تغيّر.
+  \item \textbf{السرعة (\en{RPM}) تتغير:} للسبب نفسه، يتغير التوازن بين الضاغط والتوربين.
+\end{itemize}
+لهذا تتضمن جداول أداء المحرك تصحيحات عند تشغيل منع الجليد.}
+\nohead
+\no{A}{ينقصه \en{EPR}، وهو يتغير أيضاً.}
+\no{B}{ينقصه عداد السرعة، وهو يتغير أيضاً.}
+\tip{أخذ هواء النزف «يسرق» من المحرك $\Leftarrow$ \textbf{كل المؤشرات} تتحرك.}
+
+\newpage
+% =====================================================================
+\section{ملخص سريع قبل الامتحان (أهم القواعد في سطور)}
+% =====================================================================
+\begin{enumerate}[label=\arabic*.]
+  \item أقصى قدرة عند خليط \textbf{12:1} (وقود/هواء ≈ 0.083).
+  \item ضغط المجمع = ضغط \textbf{مطلق}؛ أعلى = هواء \textbf{أكثف}. التعزيز = فوق \textbf{30 \en{in. Hg}} (انتبه: 14.7 بوحدة \en{psi}).
+  \item أعلى ضغط في محرك غير مشحون = \textbf{مجرف الهواء} (تأثير الاندفاع). الفنتوري والمجمع أقل من المحيط.
+  \item الكفاءة الحجمية يمكن أن تتجاوز \textbf{100\%} بالشاحن فقط.
+  \item الكاربوريتر \textbf{أول} جزء يتجمد؛ أخطره بين \textbf{30 و40°F} مع رطوبة عالية. المنع: \textbf{تسخين هواء السحب}، والكحول يُرش \textbf{أمام الكاربوريتر}.
+  \item حقن الوقود: \textbf{لا} يحتاج مسخن كاربوريتر (لكن فيه هواء بديل).
+  \item مروحة ثابتة السرعة + جليد = \textbf{ضغط المجمع ينخفض} و\en{RPM} ثابتة. التسخين ثم \textbf{ارتفاع} ضغط المجمع = كان هناك جليد.
+  \item التسخين: هواء أخف $\Leftarrow$ خليط \textbf{أغنى} (حتى يعوّض \en{AMC})، وزن شحنة أقل، قدرة أقل، خطر \textbf{تفجّر}. وصلات التسخين غير المضبوطة = قدرة إقلاع ناقصة. عند التشغيل على الأرض: \textbf{\en{COLD}} (الساخن غير مفلتر).
+  \item الهواء البديل: \textbf{تلقائي، دافئ، غير مفلتر}. الرمل = \textbf{سيليكون} على الشمعات. حريق السحب = \textbf{استمر في التدوير}. حوض الزيت يسخّن الخليط لتبخير أفضل.
+  \item \en{Supercharger} = \textbf{تروس}. \en{Turbocharger} = \textbf{عادم}، يحافظ على ضغط المجمع حتى \textbf{الارتفاع الحرج}.
+  \item بوابة الفضلات \textbf{تنظم السرعة مباشرة}؛ \textbf{مغلقة} = كل العادم للتوربين.
+  \item المكونات التنظيمية: \textbf{البوابة + الكثافة + التفاضلي}. الكثافة = \textbf{خانق كامل}، التفاضلي = \textbf{خانق جزئي} ضد \en{bootstrapping}، معدل التغير = \textbf{سرعة} الارتفاع.
+  \item \en{Bootstrapping} = \textbf{زيادة عابرة} في القدرة وانجراف في ضغط المجمع. بين الشاحن والخانق = \textbf{\en{upper deck}}. الفنتوري الصوتي = \textbf{يحد} الهواء للمقصورة.
+  \item \en{Bellmouth} = \textbf{أعلى كفاءة هوائية}. مجرى متباعد على الأرض = ضغط \textbf{موجب}.
+  \item فاصل الرمل = \textbf{انعطاف حاد} + قصور ذاتي + فلاتر. مبدد الدوامة = \textbf{هواء نزف نحو الأرض}، يُفعّل بـ\textbf{مفتاح العجلات}.
+  \item \en{Anti-ice} = \textbf{منع} التكوّن. تشغيله يغيّر \textbf{\en{RPM} و\en{EGT} و\en{EPR}} كلها.
+\end{enumerate}
+
+\newpage
+% =====================================================================
+\section{الفهرس الرقمي للأسئلة}
+% =====================================================================
+اضغط على رقم السؤال للانتقال إليه مباشرة.
+
+{\small
+\begin{longtable}{|c|c||c|c||c|c||c|c||c|c|}
+\hline
+\textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص} & \textbf{السؤال} & \textbf{ص}\\\hline\endhead
+\hyperref[q8771]{\en{8771}} & \pageref{q8771} & \hyperref[q8772]{\en{8772}} & \pageref{q8772} & \hyperref[q8773]{\en{8773}} & \pageref{q8773} & \hyperref[q8774]{\en{8774}} & \pageref{q8774} & \hyperref[q8775]{\en{8775}} & \pageref{q8775}\\\hline
+\hyperref[q8776]{\en{8776}} & \pageref{q8776} & \hyperref[q8777]{\en{8777}} & \pageref{q8777} & \hyperref[q8778]{\en{8778}} & \pageref{q8778} & \hyperref[q8779]{\en{8779}} & \pageref{q8779} & \hyperref[q8780]{\en{8780}} & \pageref{q8780}\\\hline
+\hyperref[q8781]{\en{8781}} & \pageref{q8781} & \hyperref[q8782]{\en{8782}} & \pageref{q8782} & \hyperref[q8783]{\en{8783}} & \pageref{q8783} & \hyperref[q8784]{\en{8784}} & \pageref{q8784} & \hyperref[q8785]{\en{8785}} & \pageref{q8785}\\\hline
+\hyperref[q8786]{\en{8786}} & \pageref{q8786} & \hyperref[q8787]{\en{8787}} & \pageref{q8787} & \hyperref[q8788]{\en{8788}} & \pageref{q8788} & \hyperref[q8789]{\en{8789}} & \pageref{q8789} & \hyperref[q8790]{\en{8790}} & \pageref{q8790}\\\hline
+\hyperref[q8791]{\en{8791}} & \pageref{q8791} & \hyperref[q8792]{\en{8792}} & \pageref{q8792} & \hyperref[q8793]{\en{8793}} & \pageref{q8793} & \hyperref[q8793-1]{\en{8793-1}} & \pageref{q8793-1} & \hyperref[q8794]{\en{8794}} & \pageref{q8794}\\\hline
+\hyperref[q8795]{\en{8795}} & \pageref{q8795} & \hyperref[q8796]{\en{8796}} & \pageref{q8796} & \hyperref[q8797]{\en{8797}} & \pageref{q8797} & \hyperref[q8798]{\en{8798}} & \pageref{q8798} & \hyperref[q8799]{\en{8799}} & \pageref{q8799}\\\hline
+\hyperref[q8800]{\en{8800}} & \pageref{q8800} & \hyperref[q8801]{\en{8801}} & \pageref{q8801} & \hyperref[q8802]{\en{8802}} & \pageref{q8802} & \hyperref[q8803]{\en{8803}} & \pageref{q8803} & \hyperref[q8804]{\en{8804}} & \pageref{q8804}\\\hline
+\hyperref[q8805]{\en{8805}} & \pageref{q8805} & \hyperref[q8806]{\en{8806}} & \pageref{q8806} & \hyperref[q8807]{\en{8807}} & \pageref{q8807} & \hyperref[q8808]{\en{8808}} & \pageref{q8808} & \hyperref[q8809]{\en{8809}} & \pageref{q8809}\\\hline
+\hyperref[q8810]{\en{8810}} & \pageref{q8810} & \hyperref[q8811]{\en{8811}} & \pageref{q8811} & \hyperref[q8812]{\en{8812}} & \pageref{q8812} &  &  &  & \\\hline
+\end{longtable}
+}
+
+\end{document}
